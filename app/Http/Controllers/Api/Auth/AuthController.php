@@ -21,19 +21,29 @@ class AuthController extends Controller
 		$validatedData = $request->validate([
 			'name' => 'required|string|max:255',
 			'email' => 'required|email|unique:users,email',
-			'password' => 'required|min:6|confirmed'
+			'password' => 'required|min:6|confirmed',
+			'role' => 'required'
 		]);
 
 		$validatedData['password'] = Hash::make($validatedData['password']);
 
-		$user = User::create($validatedData);
-		if($user) {
-			$user->sendEmailVerificationNotification();
+		$created = User::create($validatedData);
+		if($created) {
+			$created->sendEmailVerificationNotification();
+
+			$user = User::where('email', $created->email)->first();
 
 			//admin, patient, psychologist
-			User::find($user->id)->assignRole($request->role);
+			$user->assignRole($request->role);
 			
-			return response()->json(null, 201);
+			// original
+			// return response()->json(null, 201);
+
+			// login
+			return response()->json([
+				'user' => $user,
+				'access_token' => $user->createToken($request->email)->plainTextToken
+			], 200);
 		}
 
 		return response()->json(null, 404);
