@@ -19,7 +19,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
     ];
@@ -42,4 +41,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = ['is_profile_set', 'role'];
+
+    public function getIsProfileSetAttribute() {
+        $is_profile_set = false;
+        // if($this->getRoleNames()[0] == 'patient'){
+        //     if(Patient::where('user_id', $this->id)->first()){
+        //         $this->is_profile_set = true;
+        //     }
+        // }
+        // if($this->getRoleNames()[0] == 'psychologist'){
+        //     if(Psychologist::where('user_id', $this->id)->first()){
+        //         $this->is_profile_set = true;
+        //     }
+        // }
+        return $is_profile_set;
+    }
+
+    public function getRoleAttribute() {
+        $role = $this->getRoleNames()[0];
+        return $role;
+    }
 }

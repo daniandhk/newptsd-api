@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Http\Controllers\Api\BaseController;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
 
 	/*
@@ -19,7 +19,6 @@ class AuthController extends Controller
 	*/
 	public function signup(Request $request) {
 		$validatedData = $request->validate([
-			'name' => 'required|string|max:255',
 			'email' => 'required|email|unique:users,email',
 			'password' => 'required|min:6|confirmed',
 			'role' => 'required'
@@ -40,13 +39,13 @@ class AuthController extends Controller
 			// return response()->json(null, 201);
 
 			// login
-			return response()->json([
+			return $this->respond([
 				'user' => $user,
 				'access_token' => $user->createToken($request->email)->plainTextToken
-			], 200);
+			]);
 		}
 
-		return response()->json(null, 404);
+		return $this->respondNotFound(null);
 	}
 
 	/*
@@ -66,10 +65,10 @@ class AuthController extends Controller
 			]);
 		}
 
-		return response()->json([
+		return $this->respond([
 			'user' => $user,
 			'access_token' => $user->createToken($request->email)->plainTextToken
-		], 200);
+		]);
 	}
 
 
@@ -81,7 +80,7 @@ class AuthController extends Controller
 		// Revoke the token that was used to authenticate the current request
 		$request->user()->currentAccessToken()->delete();
 		//$request->user->tokens()->delete(); // use this to revoke all tokens (logout from all devices)
-		return response()->json(null, 200);
+		return $this->respond(null);
 	}
 
 
@@ -89,7 +88,8 @@ class AuthController extends Controller
 	 * Get authenticated user details
 	*/
 	public function getAuthenticatedUser(Request $request) {
-		return $request->user();
+		$user = $request->user();
+        return $this->respond($user);
 	}
 
 
