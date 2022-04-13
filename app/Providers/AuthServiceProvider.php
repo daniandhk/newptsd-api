@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -35,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         // update url in ResetPassword Email to frontend url
         ResetPassword::createUrlUsing(function ($user, string $token) use ($frontEndUrl) {
-            return $frontEndUrl . '/auth/password/email/reset?token=' . $token;
+            return Redirect::to($frontEndUrl . '/reset/' . $token);
         });
     }
 

@@ -6,6 +6,7 @@ use App\Models\Patient;
 use App\Models\Psychologist;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -18,16 +19,16 @@ class UserSeeder extends Seeder
     {
         $admin = User::create([
             'email' => 'admin@admin.com',
-            'password' => 'admin',
+            'password' => Hash::make('admin'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
         $admin->assignRole('admin');
 
         $user_patient = User::create([
-            'email' => 'patient01@patient.com',
-            'password' => 'patient',
-            'email_verified_at' => '2021-12-10 02:42:41'
+            'email' => 'daniandhika01@gmail.com',
+            'password' => Hash::make('patient'),
+            'email_verified_at' => null
         ]);
 
         $patient = Patient::create([
@@ -43,18 +44,17 @@ class UserSeeder extends Seeder
         $user_patient->assignRole('patient');
 
         $user_psychologist = User::create([
-            'email' => 'psy@psy.com',
-            'password' => 'psy 01',
+            'email' => 'psikolog@psikolog.com',
+            'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'first_name' => 'Norman',
-            'last_name' => 'Kamaru',
-            'degree' => '71',
+            'full_name' => 'Norman Kamaru',
+            'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
-            'years_experience' => 3,
+            'firstyear_experience' => '2020',
             'workplace' => 'Samudera Hindia',
         ]);
 

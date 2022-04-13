@@ -46,16 +46,16 @@ class User extends Authenticatable
 
     public function getIsProfileSetAttribute() {
         $is_profile_set = false;
-        // if($this->getRoleNames()[0] == 'patient'){
-        //     if(Patient::where('user_id', $this->id)->first()){
-        //         $this->is_profile_set = true;
-        //     }
-        // }
-        // if($this->getRoleNames()[0] == 'psychologist'){
-        //     if(Psychologist::where('user_id', $this->id)->first()){
-        //         $this->is_profile_set = true;
-        //     }
-        // }
+        if($this->getRoleNames()[0] == 'patient'){
+            if(Patient::where('user_id', $this->id)->first()){
+                $is_profile_set = true;
+            }
+        }
+        if($this->getRoleNames()[0] == 'psychologist'){
+            if(Psychologist::where('user_id', $this->id)->first()){
+                $is_profile_set = true;
+            }
+        }
         return $is_profile_set;
     }
 

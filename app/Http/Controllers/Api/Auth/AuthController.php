@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Patient;
+use App\Models\Psychologist;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
@@ -39,10 +41,8 @@ class AuthController extends BaseController
 			// return response()->json(null, 201);
 
 			// login
-			return $this->respond([
-				'user' => $user,
-				'access_token' => $user->createToken($request->email)->plainTextToken
-			]);
+			$user['access_token'] = $user->createToken($request->email)->plainTextToken;
+			return $this->respond($user);
 		}
 
 		return $this->respondNotFound(null);
@@ -60,15 +60,11 @@ class AuthController extends BaseController
 		$user = User::where('email', $request->email)->first();
 
 		if (! $user || ! Hash::check($request->password, $user->password)) {
-			throw ValidationException::withMessages([
-				'email' => ['The provided credentials are incorrect.'],
-			]);
+			return $this->errorNotFound('Email atau password salah!');
 		}
 
-		return $this->respond([
-			'user' => $user,
-			'access_token' => $user->createToken($request->email)->plainTextToken
-		]);
+		$user['access_token'] = $user->createToken($request->email)->plainTextToken;
+		return $this->respond($user);
 	}
 
 
@@ -89,6 +85,14 @@ class AuthController extends BaseController
 	*/
 	public function getAuthenticatedUser(Request $request) {
 		$user = $request->user();
+		if($user->is_profile_set){
+			if($user->role == 'patient'){
+				$user->profile = Patient::where('user_id', $user->id)->first();
+			}
+			if($user->role == 'psychologist'){
+				$user->profile = Psychologist::where('user_id', $user->id)->first();
+			}
+		}
         return $this->respond($user);
 	}
 

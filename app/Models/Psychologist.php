@@ -10,11 +10,10 @@ class Psychologist extends Model
 
     protected $fillable = [
         'user_id',
-        'first_name',
-        'last_name',
-        'degree',
+        'full_name',
+        'speciality',
         'datebirth',
-        'years_experience',
+        'firstyear_experience',
         'workplace',
         'str_number',
     ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
 
 class VerificationController extends Controller
 {
@@ -19,7 +20,8 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }
     
-        return response()->json(null, 200);
+        $frontEndUrl = env('FRONTEND_URL');
+        return Redirect::to($frontEndUrl);
     }
     
     public function resend(Request $request) {
