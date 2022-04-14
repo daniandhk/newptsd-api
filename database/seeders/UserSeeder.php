@@ -54,9 +54,11 @@ class UserSeeder extends Seeder
             'full_name' => 'Norman Kamaru',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
-            'firstyear_experience' => '2020',
-            'workplace' => 'Samudera Hindia',
-            'phone' => '0812345678'
+            'graduation_year' => '2020',
+            'graduation_university' => 'Samudera Hindia',
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
+            'str_number' => '12345'
         ]);
 
         $user_psychologist->assignRole('psychologist');

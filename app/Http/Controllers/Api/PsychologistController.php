@@ -29,11 +29,12 @@ class PsychologistController extends BaseController
             'user_id' => 'required',
             'full_name' => 'required',
             'speciality' => 'required',
-            'firstyear_experience' => 'required',
-            'workplace' => 'required',
             'datebirth' => 'required',
+            'graduation_university' => 'required',
+            'graduation_year' => 'required',
+            'city' => 'required',
+            'province' => 'required',
             'str_number' => 'required',
-            'phone' => 'required',
         ]);
         if(Psychologist::where('user_id', $request->user_id)->first() == null){
             if (User::find($request->user_id)->email_verified_at != null) {
@@ -53,11 +54,12 @@ class PsychologistController extends BaseController
             'user_id' => 'required',
             'full_name' => 'required',
             'speciality' => 'required',
-            'firstyear_experience' => 'required',
-            'workplace' => 'required',
             'datebirth' => 'required',
+            'graduation_university' => 'required',
+            'graduation_year' => 'required',
+            'city' => 'required',
+            'province' => 'required',
             'str_number' => 'required',
-            'phone' => 'required',
         ]);
         if (Psychologist::find($id) != null) {
             $psychologist = Psychologist::findOrFail($id);

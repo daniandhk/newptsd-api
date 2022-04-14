@@ -19,10 +19,11 @@ class CreatePshychologists extends Migration
             $table->string('full_name');
             $table->string('speciality');
             $table->string('datebirth');
-            $table->integer('firstyear_experience');
-            $table->string('workplace');
-            $table->string('str_number')->nullable();
-            $table->string('phone');
+            $table->string('graduation_university');
+            $table->string('graduation_year');
+            $table->string('city');
+            $table->string('province');
+            $table->string('str_number');
             $table->timestamps();
 
             $table->foreign('user_id')

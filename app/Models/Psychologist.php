@@ -13,10 +13,11 @@ class Psychologist extends Model
         'full_name',
         'speciality',
         'datebirth',
-        'firstyear_experience',
-        'workplace',
-        'str_number',
-        'phone'
+        'graduation_university',
+        'graduation_year',
+        'city',
+        'province',
+        'str_number'
     ];
 
     public function relation() {
