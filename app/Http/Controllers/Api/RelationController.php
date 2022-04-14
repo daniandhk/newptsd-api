@@ -45,7 +45,6 @@ class RelationController extends BaseController
         if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) {
             if (Patient::find($request->patient_id) != null) {
                 if (Psychologist::find($request->psychologist_id) != null) {
-                    Patient::find($request->patient_id)->update(['have_relation'=>true]);
                     $relation = Relation::create($request->all());
                     return $this->respond($relation);
                 } else {

@@ -16,6 +16,7 @@ class Psychologist extends Model
         'firstyear_experience',
         'workplace',
         'str_number',
+        'phone'
     ];
 
     public function relation() {

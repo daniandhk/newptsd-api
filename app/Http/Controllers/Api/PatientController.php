@@ -26,7 +26,7 @@ class PatientController extends BaseController
     {
         $patient = Patient::find($id);
         if(!$patient) {
-            return $this->errorNotFound('invalid consult id');
+            return $this->errorNotFound('invalid patient id');
         }
         return $this->respond($patient);
     }
@@ -39,7 +39,8 @@ class PatientController extends BaseController
             'last_name' => 'required',
             'datebirth' => 'required',
             'city' => 'required',
-            'province' => 'required'
+            'province' => 'required',
+            'phone' => 'required'
         ]);
         if(Patient::where('user_id', $request->user_id)->first() == null){
             if (User::find($request->user_id)->email_verified_at != null) {
@@ -62,7 +63,7 @@ class PatientController extends BaseController
             'datebirth' => 'required',
             'city' => 'required',
             'province' => 'required',
-            'have_relation' => 'required'
+            'phone' => 'required'
         ]);
         if (Patient::find($id) != null) {
             $patient = Patient::findOrFail($id);
@@ -104,14 +105,12 @@ class PatientController extends BaseController
         }
 
         //chat and consult
-        if($patient->have_relation == 1){
-            $data->have_relation = true;
-            $relation = Relation::where('patient_id', $patient->id)->first();
+        if($patient->relation){
+            $relation = $patient->relation;
             $data->psychologists[0] = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
             $data->consult = Consult::with(['consult_info','note_question'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
-            $data->have_relation = false;
             $data->psychologists = Psychologist::with('chatSchedule')->get();
             $data->consult = null;
         }
@@ -172,8 +171,8 @@ class PatientController extends BaseController
         }
 
         //chat and consult
-        if($patient->have_relation == 1){
-            $relation = Relation::where('patient_id', $patient->id)->first();
+        if($patient->relation){
+            $relation = $patient->relation;
             $consult = Consult::with(['consult_info','note_question','note_question.note_answer'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{

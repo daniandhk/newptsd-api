@@ -15,6 +15,7 @@ class RegisterTokenController extends BaseController
 
     public function create()
     {
+        RegisterToken::query()->delete();
         $date = \Carbon\Carbon::now()->addHours(2)->toDateTimeString();
         $token = RegisterToken::create(
             ['token' => strval(uniqid()), 'expired_at' => $date]

@@ -42,25 +42,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['is_profile_set', 'role'];
-
-    public function getIsProfileSetAttribute() {
-        $is_profile_set = false;
-        if($this->getRoleNames()[0] == 'patient'){
-            if(Patient::where('user_id', $this->id)->first()){
-                $is_profile_set = true;
-            }
-        }
-        if($this->getRoleNames()[0] == 'psychologist'){
-            if(Psychologist::where('user_id', $this->id)->first()){
-                $is_profile_set = true;
-            }
-        }
-        return $is_profile_set;
-    }
+    protected $appends = ['role'];
 
     public function getRoleAttribute() {
-        $role = $this->getRoleNames()[0];
-        return $role;
+        return $this->getRoleNames()[0];
+    }
+
+    public function profile() {
+        if($this->getRoleNames()[0] == 'patient'){
+            return $this->hasOne(Patient::class);
+        }
+        if($this->getRoleNames()[0] == 'psychologist'){
+            return $this->hasOne(Psychologist::class);
+        }
     }
 }

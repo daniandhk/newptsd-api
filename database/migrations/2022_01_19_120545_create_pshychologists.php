@@ -21,7 +21,8 @@ class CreatePshychologists extends Migration
             $table->string('datebirth');
             $table->integer('firstyear_experience');
             $table->string('workplace');
-            $table->integer('str_number')->nullable();
+            $table->string('str_number')->nullable();
+            $table->string('phone');
             $table->timestamps();
 
             $table->foreign('user_id')

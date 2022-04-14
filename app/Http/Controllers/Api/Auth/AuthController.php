@@ -85,14 +85,8 @@ class AuthController extends BaseController
 	*/
 	public function getAuthenticatedUser(Request $request) {
 		$user = $request->user();
-		if($user->is_profile_set){
-			if($user->role == 'patient'){
-				$user->profile = Patient::where('user_id', $user->id)->first();
-			}
-			if($user->role == 'psychologist'){
-				$user->profile = Psychologist::where('user_id', $user->id)->first();
-			}
-		}
+		$user->profile;
+		$user->profile->guardian;
         return $this->respond($user);
 	}
 

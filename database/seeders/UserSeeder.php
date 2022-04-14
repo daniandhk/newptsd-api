@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
             'datebirth' => "07/07/1999",
             'city' => 'Sexcity',
             'province' => 'CA',
-            'have_relation' => false,
+            'phone' => '0812345678'
         ]);
 
         $user_patient->assignRole('patient');
@@ -56,6 +56,7 @@ class UserSeeder extends Seeder
             'datebirth' => "07/07/1999",
             'firstyear_experience' => '2020',
             'workplace' => 'Samudera Hindia',
+            'phone' => '0812345678'
         ]);
 
         $user_psychologist->assignRole('psychologist');

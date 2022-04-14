@@ -75,7 +75,6 @@ class ConsultController extends BaseController
             ]);
             $relation_id = $relation->id;
 
-            $patient->have_relation = true;
             $patient->save();
         }
 

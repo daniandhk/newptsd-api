@@ -18,7 +18,7 @@ class PsychologistController extends BaseController
     {
         $psychologist = Psychologist::find($id);
         if(!$psychologist) {
-            return $this->errorNotFound('invalid consult id');
+            return $this->errorNotFound('invalid psychologist id');
         }
         return $this->respond($psychologist);
     }
@@ -27,12 +27,13 @@ class PsychologistController extends BaseController
     {
         $this->validate($request, [
             'user_id' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'degree' => 'required',
-            'years_experience' => 'required',
+            'full_name' => 'required',
+            'speciality' => 'required',
+            'firstyear_experience' => 'required',
             'workplace' => 'required',
+            'datebirth' => 'required',
             'str_number' => 'required',
+            'phone' => 'required',
         ]);
         if(Psychologist::where('user_id', $request->user_id)->first() == null){
             if (User::find($request->user_id)->email_verified_at != null) {
@@ -50,12 +51,13 @@ class PsychologistController extends BaseController
     {
         $this->validate($request, [
             'user_id' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'degree' => 'required',
-            'years_experience' => 'required',
+            'full_name' => 'required',
+            'speciality' => 'required',
+            'firstyear_experience' => 'required',
             'workplace' => 'required',
+            'datebirth' => 'required',
             'str_number' => 'required',
+            'phone' => 'required',
         ]);
         if (Psychologist::find($id) != null) {
             $psychologist = Psychologist::findOrFail($id);
