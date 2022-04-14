@@ -6,7 +6,7 @@ use App\Models\Guardian;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class GuardianController extends Controller
+class GuardianController extends BaseController
 {
     public function index()
     {
@@ -26,6 +26,7 @@ class GuardianController extends Controller
             'full_name' => 'required',
             'status' => 'required',
             'phone' => 'required',
+            'is_available' => 'required'
         ]);
         if(Guardian::where('patient_id', $request->patient_id)->first() == null){
             $guardian = Guardian::create($request->all());
@@ -56,6 +57,7 @@ class GuardianController extends Controller
             'full_name' => 'required',
             'status' => 'required',
             'phone' => 'required',
+            'is_available' => 'required'
         ]);
         if (Guardian::find($id) != null) {
             $guardian = Guardian::findOrFail($id);

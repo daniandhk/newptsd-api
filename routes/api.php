@@ -122,3 +122,14 @@ Route::group([
     Route::get('/show/{token}', 'RegisterTokenController@show');
     Route::post('/create', 'RegisterTokenController@create');
 });
+
+Route::group([
+    'prefix' => 'guardian',
+    'namespace' => 'Api',
+], function ($router) {
+    Route::get('/', 'GuardianController@index');
+    Route::get('/show/{id}', 'GuardianController@show');
+    Route::post('/create', 'GuardianController@store');
+    Route::post('/update/{id}', 'GuardianController@update');
+    Route::delete('/delete/{id}', 'GuardianController@delete');
+});

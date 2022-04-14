@@ -19,6 +19,7 @@ class CreateTableGuardians extends Migration
             $table->string('full_name');
             $table->string('status');
             $table->string('phone');
+            $table->boolean('is_available');
             $table->timestamps();
 
             $table->foreign('patient_id')

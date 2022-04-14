@@ -14,6 +14,7 @@ class Guardian extends Model
         'full_name',
         'status',
         'phone',
+        'is_available'
     ];
 
     public function patient() {
