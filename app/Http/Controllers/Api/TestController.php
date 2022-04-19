@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Test;
 use App\Models\Answer;
 use App\Models\Patient;
+use App\Models\TestType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -58,6 +59,7 @@ class TestController extends BaseController
         $validation = Validator::make($request->all(), [
             'patient_id' => 'required',
             'data_input' => 'required',
+            'test_type' => 'required',
         ]);
         if($validation->fails()) {
             return $this->validationError();
@@ -67,12 +69,24 @@ class TestController extends BaseController
             return $this->errorNotFound('invalid patient id');
         }
 
-        $score = $this->sumTestScore($request->data_input[1]); //data_input[1][type] = diagnosa
+        $test_type = TestType::where('type', $request->test_type)->first();
+        if(!$test_type){
+            return $this->errorNotFound('invalid test type id');
+        }
+
+        $score = 0;
+        foreach($request->data_input as $type) {
+            if($type['type'] == 'score' || $type['type'] == 'diagnosa'){
+                $score = $this->sumTestScore($type);
+                break;
+            }
+        }
 
         $test = Test::create([
-           'patient_id'  => $request->patient_id,
-           'score' => $score,
-        ]);
+            'patient_id'  => $request->patient_id,
+            'score' => $score,
+            'test_type_id' => $test_type->id,
+         ]);
 
         foreach($request->data_input as $type) {
             foreach($type['answers'] as $no) {

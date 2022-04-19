@@ -11,6 +11,7 @@ class Test extends Model
 
     protected $fillable = [
         'patient_id',
+        'test_type_id',
         'next_date',
         'score',
         'videocall_link',
@@ -22,13 +23,18 @@ class Test extends Model
     {
         parent::boot();
         static::creating(function($test) {
-            $test->next_date = Carbon::now('Asia/Jakarta')->addMonth();
+            $test_type = TestType::find($test->test_type_id);
+            $test->next_date = Carbon::now('Asia/Jakarta')->addDays($test_type->delay_days);
             $test->is_finished = false;
         });
     }
 
     public function patient() {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function test_type() {
+        return $this->belongsTo(TestType::class);
     }
 
     public function answer() {

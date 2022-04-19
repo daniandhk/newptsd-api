@@ -64,7 +64,8 @@ Route::group([
     Route::post('/create', 'PatientController@create');
     Route::post('/update/{id}', 'PatientController@update');
     Route::delete('/delete/{id}', 'PatientController@delete');
-    Route::get('/dashboard/{user_id}', 'PatientController@getDashboard');
+    Route::get('/test-dashboard/{user_id}', 'PatientController@getTestDashboard');
+    Route::get('/consult-dashboard/{user_id}', 'PatientController@getConsultDashboard');
     Route::get('/journal-dashboard/{user_id}', 'PatientController@getJournalByDate');
 });
 
@@ -132,4 +133,15 @@ Route::group([
     Route::post('/create', 'GuardianController@store');
     Route::post('/update/{id}', 'GuardianController@update');
     Route::delete('/delete/{id}', 'GuardianController@delete');
+});
+
+Route::group([
+    'prefix' => 'testtype',
+    'namespace' => 'Api',
+], function ($router) {
+    Route::get('/', 'TestTypeController@index');
+    Route::get('/show/{id}', 'TestTypeController@show');
+    Route::post('/create', 'TestTypeController@store');
+    Route::post('/update/{id}', 'TestTypeController@update');
+    Route::delete('/delete/{id}', 'TestTypeController@delete');
 });

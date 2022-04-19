@@ -9,6 +9,7 @@ use App\Models\Patient;
 use App\Models\Psychologist;
 use App\Models\Relation;
 use App\Models\Test;
+use App\Models\TestType;
 use App\Models\User;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
@@ -86,7 +87,7 @@ class PatientController extends BaseController
         return $this->respond($patient);
     }
 
-    public function getDashboard($user_id){
+    public function getTestDashboard($user_id){
         $patient = Patient::where('user_id', $user_id)->first();
         if(!$patient){
             return $this->errorNotFound('invalid user id');
@@ -95,14 +96,36 @@ class PatientController extends BaseController
         $data = new stdClass();
 
         //tests
-        $tests = Test::where('patient_id', $patient->id)->orderBy('created_at', 'desc')->get();
-        if(count($tests) == 0){
-            $data->test = null;
+        $data->test_types = TestType::all();
+
+        if(count($data->test_types) > 0){
+            foreach($data->test_types as $test_type) {
+                $test_type->current_test = $test_type->tests
+                                                        ->where('patient_id','=', $patient->id)
+                                                        ->sortByDesc('created_at')
+                                                        ->first();
+            }
+        }
+
+        //chat and consult
+        if($patient->relation){
+            $relation = $patient->relation;
+            $data->psychologists[0] = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
         }
         else{
-            $test = $tests->first();
-            $data->test = $test;
+            $data->psychologists = Psychologist::with('chatSchedule')->get();
         }
+
+        return $this->respond($data);
+    }
+
+    public function getConsultDashboard($user_id){
+        $patient = Patient::where('user_id', $user_id)->first();
+        if(!$patient){
+            return $this->errorNotFound('invalid user id');
+        }
+
+        $data = new stdClass();
 
         //chat and consult
         if($patient->relation){
@@ -113,23 +136,6 @@ class PatientController extends BaseController
         else{
             $data->psychologists = Psychologist::with('chatSchedule')->get();
             $data->consult = null;
-        }
-
-        //jurnal
-        $today = date("Y-m-d");
-        $journals = Journal::where('user_id', $user_id)->get();
-        if(count($journals)){
-            foreach($journals as $j) {
-                $date = $j->created_at->format("Y-m-d");
-                if($today == $date){
-                    $data->journal = $j;
-                    break;
-                }
-                $data->journal = null;
-            }
-        }
-        else{
-            $data->journal = null;
         }
 
         return $this->respond($data);
@@ -155,6 +161,8 @@ class PatientController extends BaseController
         $data = new stdClass();
 
         //jurnal
+        $data->journal = null;
+
         $journals = Journal::where('user_id', $user_id)->get();
         if(count($journals)){
             foreach($journals as $j) {
@@ -163,14 +171,12 @@ class PatientController extends BaseController
                     $data->journal = $j;
                     break;
                 }
-                $data->journal = null;
             }
         }
-        else{
-            $data->journal = null;
-        }
 
-        //chat and consult
+        //note_question
+        $data->note_question = [];
+
         if($patient->relation){
             $relation = $patient->relation;
             $consult = Consult::with(['consult_info','note_question','note_question.note_answer'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
@@ -204,16 +210,7 @@ class PatientController extends BaseController
                     }
                     $data->note_question = $consult->note_question;
                 }
-                else{
-                    $data->note_question = [];
-                }
             }
-            else{
-                $data->note_question = [];
-            }
-        }
-        else{
-            $data->note_question = [];
         }
 
         return $this->respond($data);
