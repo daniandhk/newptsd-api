@@ -7,13 +7,12 @@ use App\Models\Journal;
 use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\Psychologist;
-use App\Models\Relation;
-use App\Models\Test;
 use App\Models\TestType;
 use App\Models\User;
 use DateTime;
-use Illuminate\Support\Facades\Auth;
 use stdClass;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class PatientController extends BaseController
 {
@@ -64,10 +63,31 @@ class PatientController extends BaseController
             'datebirth' => 'required',
             'city' => 'required',
             'province' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
         if (Patient::find($id) != null) {
             $patient = Patient::findOrFail($id);
+
+            if($patient->image){
+                File::delete([
+                    public_path($patient->image),
+                    public_path($patient->thumbnail),
+                ]);
+            }
+            $image = request()->file('image');
+            $imageName = $image->getClientOriginalName();
+            $imageName = time().'_'.$imageName;
+            $thumbnail = $image->getClientOriginalName();
+            $thumbnail= time().'_thumbnail'.$thumbnail;
+
+            Image::make($image)
+            ->fit(100, 100)
+            ->save(public_path('/images/').$thumbnail);
+            $image->move(public_path('/images'), $imageName);
+            $request['image'] = 'images/'.$imageName;
+            $request['thumbnail'] = 'images/'.$thumbnail;
+
             $patient->fill($request->all());
             $patient->save();
             return $this->respond($patient);
@@ -110,16 +130,13 @@ class PatientController extends BaseController
         //chat and consult
         if($patient->relation){
             $relation = $patient->relation;
-            $data->psychologists[0] = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
-        }
-        else{
-            $data->psychologists = Psychologist::with('chatSchedule')->get();
+            $data->psychologist = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
         }
 
         return $this->respond($data);
     }
 
-    public function getConsultDashboard($user_id){
+    public function getConsultDashboard($user_id, Request $request){
         $patient = Patient::where('user_id', $user_id)->first();
         if(!$patient){
             return $this->errorNotFound('invalid user id');
@@ -130,13 +147,26 @@ class PatientController extends BaseController
         //chat and consult
         if($patient->relation){
             $relation = $patient->relation;
-            $data->psychologists[0] = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
+            $data->psychologist = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
             $data->consult = Consult::with(['consult_info','note_question'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
-            $data->psychologists = Psychologist::with('chatSchedule')->get();
+            $psychologists = Psychologist::query()->with('chatSchedule');
+            $per_page = 3;
+            $request->whenHas('per_page', function($size) use (&$per_page) {
+                $per_page = $size;
+            });
+
+            if($request->has('search')) {
+                $search = $request->get('search');
+                $psychologists = $psychologists->where('full_name', 'ILIKE', '%'.$search.'%');
+            }
+            $psychologists = $this->paginator($psychologists,$per_page);
+            $data->psychologists = $psychologists;
             $data->consult = null;
         }
+
+
 
         return $this->respond($data);
     }

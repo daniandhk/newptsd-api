@@ -17,7 +17,9 @@ class Psychologist extends Model
         'graduation_year',
         'city',
         'province',
-        'str_number'
+        'str_number',
+        'image',
+        'thumbnail'
     ];
 
     public function relation() {

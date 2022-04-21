@@ -15,7 +15,9 @@ class Patient extends Model
         'datebirth',
         'city',
         'province',
-        'phone'
+        'phone',
+        'image',
+        'thumbnail'
     ];
 
     public function test() {

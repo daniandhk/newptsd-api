@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\Psychologist;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class PsychologistController extends BaseController
 {
@@ -60,9 +62,30 @@ class PsychologistController extends BaseController
             'city' => 'required',
             'province' => 'required',
             'str_number' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
         if (Psychologist::find($id) != null) {
             $psychologist = Psychologist::findOrFail($id);
+
+            if($psychologist->image){
+                File::delete([
+                    public_path($psychologist->image),
+                    public_path($psychologist->thumbnail),
+                ]);
+            }
+            $image = request()->file('image');
+            $imageName = $image->getClientOriginalName();
+            $imageName = time().'_'.$imageName;
+            $thumbnail = $image->getClientOriginalName();
+            $thumbnail= time().'_thumbnail'.$thumbnail;
+
+            Image::make($image)
+            ->fit(100, 100)
+            ->save(public_path('/images/').$thumbnail);
+            $image->move(public_path('/images'), $imageName);
+            $request['image'] = 'images/'.$imageName;
+            $request['thumbnail'] = 'images/'.$thumbnail;
+
             $psychologist->fill($request->all());
             $psychologist->save();
             return $this->respond($psychologist);

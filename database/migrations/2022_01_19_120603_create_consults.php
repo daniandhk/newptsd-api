@@ -17,7 +17,7 @@ class CreateConsults extends Migration
             $table->id();
             $table->unsignedBigInteger('relation_id');
             $table->string('consult_index');
-            $table->datetime('last_date');
+            $table->datetime('last_date')->nullable();
             $table->datetime('next_date');
             $table->timestamps();
 

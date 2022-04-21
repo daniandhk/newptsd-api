@@ -24,6 +24,8 @@ class CreatePshychologists extends Migration
             $table->string('city');
             $table->string('province');
             $table->string('str_number');
+            $table->string('image')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

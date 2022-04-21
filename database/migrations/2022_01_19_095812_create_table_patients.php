@@ -22,6 +22,8 @@ class CreateTablePatients extends Migration
             $table->string('city');
             $table->string('province');
             $table->string('phone');
+            $table->string('image')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

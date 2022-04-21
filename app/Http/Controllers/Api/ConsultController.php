@@ -17,12 +17,12 @@ class ConsultController extends BaseController
 {
     public function index()
     {
-        $consults = Relation::with('patient','psychologist','consult','consult.consult_info')
+        $consults = Consult::with('relation.patient', 'relation.psychologist',
+                                'consult_info', 'note_question',
+                                'note_question.note_answer')
                             ->get();
 
-        $data['data'] = $consults;
-
-        return $data;
+        return $this->respond($consults);
     }
 
     public function show($id)
@@ -68,9 +68,7 @@ class ConsultController extends BaseController
             $relation = Relation::create([
                 'patient_id' => $request->patient_id,
                 'psychologist_id' => $request->psychologist_id,
-                'patient_user_id' => $patient->user_id,
-                'psychologist_user_id' => $psychologist->user_id,
-                'status_test' => 'busy',
+                'status_test' => 'none',
                 'status_chat' => false,
             ]);
             $relation_id = $relation->id;

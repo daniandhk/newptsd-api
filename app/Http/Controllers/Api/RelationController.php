@@ -36,15 +36,17 @@ class RelationController extends BaseController
         $this->validate($request, [
             'patient_id' => 'required',
             'psychologist_id' => 'required',
-            'patient_user_id' => 'required',
-            'psychologist_user_id' => 'required',
             'status_test' => 'required',
             'status_chat' => 'required'
         ]);
 
         if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) {
-            if (Patient::find($request->patient_id) != null) {
-                if (Psychologist::find($request->psychologist_id) != null) {
+            $patient = Patient::find($request->patient_id);
+            if ($patient) {
+                $psychologist = Psychologist::find($request->psychologist_id);
+                if ($psychologist) {
+                    $request['patient_user_id'] = $psychologist->user_id;
+                    $request['psychologist_user_id'] = $psychologist->user_id;
                     $relation = Relation::create($request->all());
                     return $this->respond($relation);
                 } else {
@@ -63,17 +65,27 @@ class RelationController extends BaseController
         $this->validate($request, [
             'patient_id' => 'required',
             'psychologist_id' => 'required',
-            'patient_user_id' => 'required',
-            'psychologist_user_id' => 'required',
             'status_test' => 'required',
             'status_chat' => 'required'
         ]);
         if (Relation::find($id) != null) {
-            if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) {    
-                $relation = Relation::findOrFail($id);
-                $relation->fill($request->all());
-                $relation->save();
-                return $this->respond($relation);
+            if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) { 
+                $patient = Patient::find($request->patient_id);
+                if ($patient) {
+                    $psychologist = Psychologist::find($request->psychologist_id);
+                    if ($psychologist) {
+                        $request['patient_user_id'] = $psychologist->user_id;
+                        $request['psychologist_user_id'] = $psychologist->user_id;
+                        $relation = Relation::findOrFail($id);
+                        $relation->fill($request->all());
+                        $relation->save();
+                        return $this->respond($relation);
+                    } else {
+                        return $this->errorNotFound('Psychologist id not found');
+                    }
+                } else {
+                    return $this->errorNotFound('Patient id not found');
+                }
             } else {
                 return $this->errorNotFound('id has been used');
             }

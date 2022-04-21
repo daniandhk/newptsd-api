@@ -20,7 +20,7 @@ class TestController extends BaseController
     public function index(Request $request)
     {
         if(is_null($request->patient_id)) {
-            $test_taken = Test::with('patient')
+            $test_taken = Test::with('patient','answer')
                         ->orderBy('created_at', 'desc')
                         ->get();
         } else {
@@ -29,7 +29,7 @@ class TestController extends BaseController
                 return $this->errorNotFound('invalid patient id');
             }
 
-            $test_taken = Test::with('patient')
+            $test_taken = Test::with('patient','answer')
                         ->where('patient_id', $patient->id)
                         ->orderBy('created_at', 'desc')
                         ->get();
@@ -164,6 +164,7 @@ class TestController extends BaseController
         }
 
         $test->delete();
+        return $this->respond($test);
     }
 
     public function updateVideoCall(Request $request, $test_id) {
@@ -184,5 +185,6 @@ class TestController extends BaseController
         $test->videocall_date = $request->videocall_date;
 
         $test->save();
+        return $this->respond($test);
     }
 }

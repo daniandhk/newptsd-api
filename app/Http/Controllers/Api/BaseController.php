@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Response;
+use stdClass;
 
 class BaseController extends Controller
 {
@@ -29,5 +30,18 @@ class BaseController extends Controller
             'data'      => $data
         );
         return Response::json($result, 200);
+    }
+
+    public function paginator($data,$per_page) {
+        $data = $data->paginate($per_page);
+        $result = new stdClass();
+        
+        $result->total = $data->total();
+        $result->per_page = $data->perPage();
+        $result->current_page = $data->currentPage();
+        $result->last_page = $data->lastPage();
+        $result->data = $data->toArray()['data'];
+        
+        return $result;
     }
 }
