@@ -17,8 +17,6 @@ class CreateRelations extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('psychologist_id');
-            $table->unsignedBigInteger('patient_user_id');
-            $table->unsignedBigInteger('psychologist_user_id');
             $table->string('status_test');
             $table->boolean('status_chat');
             $table->timestamps();
@@ -31,16 +29,6 @@ class CreateRelations extends Migration
             $table->foreign('psychologist_id')
                 ->references('id')
                 ->on('psychologists')
-                ->onDelete('cascade');
-
-                $table->foreign('patient_user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
-
-            $table->foreign('psychologist_user_id')
-                ->references('id')
-                ->on('users')
                 ->onDelete('cascade');
         });
     }

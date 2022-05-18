@@ -45,8 +45,6 @@ class RelationController extends BaseController
             if ($patient) {
                 $psychologist = Psychologist::find($request->psychologist_id);
                 if ($psychologist) {
-                    $request['patient_user_id'] = $psychologist->user_id;
-                    $request['psychologist_user_id'] = $psychologist->user_id;
                     $relation = Relation::create($request->all());
                     return $this->respond($relation);
                 } else {
@@ -74,8 +72,6 @@ class RelationController extends BaseController
                 if ($patient) {
                     $psychologist = Psychologist::find($request->psychologist_id);
                     if ($psychologist) {
-                        $request['patient_user_id'] = $psychologist->user_id;
-                        $request['psychologist_user_id'] = $psychologist->user_id;
                         $relation = Relation::findOrFail($id);
                         $relation->fill($request->all());
                         $relation->save();

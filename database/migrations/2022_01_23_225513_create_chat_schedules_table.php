@@ -16,15 +16,7 @@ class CreateChatSchedulesTable extends Migration
         Schema::create('chat_schedules', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('psychologist_id');
-            $table->enum('day', [
-                'Sunday',
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday'
-                ])->unique();
+            $table->string('day');
             $table->string('time_start');
             $table->string('time_end');
             $table->timestamps();

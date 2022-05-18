@@ -107,8 +107,8 @@ class PatientController extends BaseController
         return $this->respond($patient);
     }
 
-    public function getTestDashboard($user_id){
-        $patient = Patient::where('user_id', $user_id)->first();
+    public function getTestDashboard($patient_id){
+        $patient = Patient::find($patient_id);
         if(!$patient){
             return $this->errorNotFound('invalid user id');
         }
@@ -136,8 +136,8 @@ class PatientController extends BaseController
         return $this->respond($data);
     }
 
-    public function getConsultDashboard($user_id, Request $request){
-        $patient = Patient::where('user_id', $user_id)->first();
+    public function getConsultDashboard(Request $request, $patient_id){
+        $patient = Patient::find($patient_id);
         if(!$patient){
             return $this->errorNotFound('invalid user id');
         }
@@ -171,8 +171,8 @@ class PatientController extends BaseController
         return $this->respond($data);
     }
 
-    public function getJournalByDate(Request $request, $user_id){
-        $patient = Patient::where('user_id', $user_id)->first();
+    public function getJournalByDate(Request $request, $patient_id){
+        $patient = Patient::find($patient_id);
         if(!$patient){
             return $this->errorNotFound('invalid user id');
         }
@@ -193,7 +193,7 @@ class PatientController extends BaseController
         //jurnal
         $data->journal = null;
 
-        $journals = Journal::where('user_id', $user_id)->get();
+        $journals = Journal::where('patient_id', $patient_id)->get();
         if(count($journals)){
             foreach($journals as $j) {
                 $journal_date = date("Y-m-d", strtotime($j->created_at));

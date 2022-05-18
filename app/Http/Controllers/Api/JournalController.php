@@ -34,25 +34,29 @@ class JournalController extends BaseController
     public function create(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required',
+            'patient_id' => 'required',
             'text' => 'required',
         ]);
 
-        if (Patient::where('user_id', $request->user_id)->first() != null) {
+        if (Patient::find($request->patient_id) != null) {
             $journal = Journal::create($request->all());
             return $this->respond($journal);
         } else {
-            return $this->errorNotFound('User id not found');
+            return $this->errorNotFound('Patient id not found');
         }
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'user_id' => 'required',
+            'patient_id' => 'required',
             'text' => 'required',
         ]);
         if (Journal::find($id) != null) {
+            if (Patient::find($request->patient_id) == null) {
+                return $this->errorNotFound('Patient id not found');
+            }
+            
             $journal = Journal::find($id);
             $journal->fill($request->all());
             $journal->save();

@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
 
         $patient = Patient::create([
             'user_id' => $user_patient->id,
-            'first_name' => 'Iwan',
+            'first_name' => 'Iwan 1',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
             'city' => 'Sexcity',
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
 
         $patient = Patient::create([
             'user_id' => $user_patient->id,
-            'first_name' => 'Iwan',
+            'first_name' => 'Iwan 2',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
             'city' => 'Sexcity',
@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
 
         $patient = Patient::create([
             'user_id' => $user_patient->id,
-            'first_name' => 'Iwan',
+            'first_name' => 'Iwan 3',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
             'city' => 'Sexcity',
@@ -91,7 +91,7 @@ class UserSeeder extends Seeder
 
         $patient = Patient::create([
             'user_id' => $user_patient->id,
-            'first_name' => 'Iwan',
+            'first_name' => 'Iwan 4',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
             'city' => 'Sexcity',
@@ -110,7 +110,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 1',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -131,7 +131,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 2',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -152,7 +152,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 3',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -173,7 +173,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 4',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -194,7 +194,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 5',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -215,7 +215,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru',
+            'full_name' => 'Norman Kamaru 6',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
