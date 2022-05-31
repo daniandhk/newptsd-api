@@ -68,8 +68,6 @@ class ConsultController extends BaseController
             $relation = Relation::create([
                 'patient_id' => $request->patient_id,
                 'psychologist_id' => $request->psychologist_id,
-                'status_test' => 'none',
-                'status_chat' => false,
             ]);
             $relation_id = $relation->id;
 

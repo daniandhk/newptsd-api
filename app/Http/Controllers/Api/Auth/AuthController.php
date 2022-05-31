@@ -88,6 +88,7 @@ class AuthController extends BaseController
 		$profile = $user->profile;
 		if($profile){
 			$user->profile->guardian;
+			$user->profile->chatSchedule;
 		}
         return $this->respond($user);
 	}

@@ -36,8 +36,6 @@ class RelationController extends BaseController
         $this->validate($request, [
             'patient_id' => 'required',
             'psychologist_id' => 'required',
-            'status_test' => 'required',
-            'status_chat' => 'required'
         ]);
 
         if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) {
@@ -63,8 +61,6 @@ class RelationController extends BaseController
         $this->validate($request, [
             'patient_id' => 'required',
             'psychologist_id' => 'required',
-            'status_test' => 'required',
-            'status_chat' => 'required'
         ]);
         if (Relation::find($id) != null) {
             if (Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first() == null) { 

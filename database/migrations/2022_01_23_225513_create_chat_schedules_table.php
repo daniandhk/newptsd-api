@@ -17,6 +17,7 @@ class CreateChatSchedulesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('psychologist_id');
             $table->string('day');
+            $table->integer('index_day');
             $table->string('time_start');
             $table->string('time_end');
             $table->timestamps();

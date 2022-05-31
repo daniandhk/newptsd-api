@@ -10,6 +10,8 @@ use App\Models\Psychologist;
 use App\Models\TestType;
 use App\Models\User;
 use DateTime;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use stdClass;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -161,12 +163,19 @@ class PatientController extends BaseController
                 $search = $request->get('search');
                 $psychologists = $psychologists->where('full_name', 'ILIKE', '%'.$search.'%');
             }
-            $psychologists = $this->paginator($psychologists,$per_page);
+
+            //Paginate
+            // $psychologists = $this->paginator($psychologists,$per_page);
+
+            //Paginate Collection or Array
+            $psychologists = $psychologists->get()->sortByDesc(function($psychologist){
+                return ($psychologist->online_schedule['is_online']);
+            });
+            $psychologists = $this->paginateArray($psychologists,$per_page);
+
             $data->psychologists = $psychologists;
             $data->consult = null;
         }
-
-
 
         return $this->respond($data);
     }

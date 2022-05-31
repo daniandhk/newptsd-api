@@ -17,9 +17,9 @@ class ChatScheduleController extends BaseController
 
     public function show($id)
     {
-        $chatschedule = ChatSchedule::find($id);
+        $chatschedule = ChatSchedule::where('psychologist_id',$id)->get();
         if(!$chatschedule) {
-            return $this->errorNotFound('invalid consult id');
+            return $this->errorNotFound('invalid psychologist_id');
         }
         return $this->respond($chatschedule);
     }
@@ -28,18 +28,30 @@ class ChatScheduleController extends BaseController
     {
         $this->validate($request, [
             'psychologist_id' => 'required',
-            'day' => 'required',
-            'time_start' => 'required',
-            'time_end' => 'required'
+            'schedules' => 'required',
         ]);
         if (Psychologist::find($request->psychologist_id) != null) {
-            if(ChatSchedule::where('psychologist_id', $request->psychologist_id)->where('day', $request->day)->exists()){
-                return $this->errorNotFound('The day has been used');
+            if(!is_array($request->schedules) or sizeof($request->schedules) < 1) {
+                return $this->validationError();
             }
-            else{
-                $chat_schedule = ChatSchedule::create($request->all());
-                return $this->respond($chat_schedule);
+            foreach($request->schedules as $schedule) {
+                if(ChatSchedule::where('psychologist_id', $request->psychologist_id)
+                                ->where('day', $schedule['day'])
+                                ->exists())
+                {
+                    ChatSchedule::where('psychologist_id', $request->psychologist_id)
+                                ->where('day', $schedule['day'])
+                                ->delete();
+                }
+                $chat_schedule = ChatSchedule::create([
+                                    'psychologist_id' => $request->psychologist_id,
+                                    'day' => $schedule['day'],
+                                    'index_day' => $schedule['index_day'],
+                                    'time_start' => $schedule['time_start'],
+                                    'time_end' => $schedule['time_end'],
+                                ]);
             }
+            return $this->respond(null);
         } else {
             return $this->errorNotFound('Psychologist id not found');
         }
@@ -81,12 +93,12 @@ class ChatScheduleController extends BaseController
         if(!$schedule) {
             return $this->errorNotFound('invalid psychologist id');
         } 
-        $data['schedule'] = $schedule ;
+        $data['schedules'] = $schedule ;
 
         $relation = Relation::with('patient', 'patient.test')
-                        ->where('psychologist_id',$id)->where('status_chat', true)->get();
+                        ->where('psychologist_id',$id)->get();
 
-        $data['chatting'] = $relation ;
+        $data['chattings'] = $relation ;
 
         return $this->respond($data);
     }

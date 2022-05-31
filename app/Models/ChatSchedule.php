@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ChatSchedule extends Model
@@ -18,6 +17,7 @@ class ChatSchedule extends Model
         'id',
         'psychologist_id',
         'day',
+        'index_day',
         'time_start',
         'time_end',
     ];

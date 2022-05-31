@@ -13,8 +13,6 @@ class Relation extends Model
         'relation_id',
         'patient_id',
         'psychologist_id',
-        'status_test',
-        'status_chat',
     ];
 
     public function consult() {

@@ -17,8 +17,6 @@ class CreateRelations extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('psychologist_id');
-            $table->string('status_test');
-            $table->boolean('status_chat');
             $table->timestamps();
 
             $table->foreign('patient_id')
