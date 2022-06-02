@@ -14,8 +14,8 @@ class CreateJournalsTable extends Migration
     public function up()
     {
         Schema::create('journals', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedBigInteger('patient_id');
+            $table->char('id', 26)->primary();
+            $table->char('patient_id', 26);
             $table->text('text')->nullable();
             $table->timestamps();
 

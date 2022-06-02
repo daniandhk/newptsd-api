@@ -14,8 +14,8 @@ class CreateTableGuardians extends Migration
     public function up()
     {
         Schema::create('guardians', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('patient_id');
+            $table->char('id', 26)->primary();
+            $table->char('patient_id', 26);
             $table->string('full_name');
             $table->string('status');
             $table->string('phone');

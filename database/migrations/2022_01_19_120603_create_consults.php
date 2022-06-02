@@ -14,8 +14,8 @@ class CreateConsults extends Migration
     public function up()
     {
         Schema::create('consults', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('relation_id');
+            $table->char('id', 26)->primary();
+            $table->char('relation_id', 26);
             $table->string('consult_index');
             $table->datetime('last_date')->nullable();
             $table->datetime('next_date');

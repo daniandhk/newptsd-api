@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChatSchedule;
 use App\Models\Patient;
 use App\Models\Psychologist;
 use App\Models\User;
@@ -29,7 +30,7 @@ class UserSeeder extends Seeder
         $user_patient = User::create([
             'email' => 'daniandhika01@gmail.com',
             'password' => Hash::make('patient'),
-            'email_verified_at' => null
+            'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
         $patient = Patient::create([
@@ -37,8 +38,8 @@ class UserSeeder extends Seeder
             'first_name' => 'Iwan 1',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
-            'city' => 'Sexcity',
-            'province' => 'CA',
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
             'phone' => '0812345678'
         ]);
 
@@ -56,8 +57,8 @@ class UserSeeder extends Seeder
             'first_name' => 'Iwan 2',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
-            'city' => 'Sexcity',
-            'province' => 'CA',
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
             'phone' => '0812345678'
         ]);
 
@@ -67,18 +68,18 @@ class UserSeeder extends Seeder
         $user_patient = User::create([
             'email' => 'daniandhika03@gmail.com',
             'password' => Hash::make('patient'),
-            'email_verified_at' => '2021-12-10 02:42:41'
+            'email_verified_at' => null
         ]);
 
-        $patient = Patient::create([
-            'user_id' => $user_patient->id,
-            'first_name' => 'Iwan 3',
-            'last_name' => 'Gunawan',
-            'datebirth' => "07/07/1999",
-            'city' => 'Sexcity',
-            'province' => 'CA',
-            'phone' => '0812345678'
-        ]);
+        // $patient = Patient::create([
+        //     'user_id' => $user_patient->id,
+        //     'first_name' => 'Iwan 3',
+        //     'last_name' => 'Gunawan',
+        //     'datebirth' => "07/07/1999",
+        //     'city' => 'Bandung',
+        //     'province' => 'Jawa Barat',
+        //     'phone' => '0812345678'
+        // ]);
 
         $user_patient->assignRole('patient');
 
@@ -94,8 +95,8 @@ class UserSeeder extends Seeder
             'first_name' => 'Iwan 4',
             'last_name' => 'Gunawan',
             'datebirth' => "07/07/1999",
-            'city' => 'Sexcity',
-            'province' => 'CA',
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
             'phone' => '0812345678'
         ]);
 
@@ -108,17 +109,17 @@ class UserSeeder extends Seeder
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
-        $psychologist = Psychologist::create([
-            'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 1',
-            'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
-            'graduation_year' => '2020',
-            'graduation_university' => 'Samudera Hindia',
-            'city' => 'Bandung',
-            'province' => 'Jawa Barat',
-            'str_number' => '12345'
-        ]);
+        // $psychologist = Psychologist::create([
+        //     'user_id' => $user_psychologist->id,
+        //     'full_name' => 'Norman Kamaru M.Psi, Psikolog',
+        //     'speciality' => 'Psikolog Klinis',
+        //     'datebirth' => "07/07/1999",
+        //     'graduation_year' => '2020',
+        //     'graduation_university' => 'Samudera Hindia',
+        //     'city' => 'Bandung',
+        //     'province' => 'Jawa Barat',
+        //     'str_number' => '12345'
+        // ]);
 
         $user_psychologist->assignRole('psychologist');
 
@@ -131,7 +132,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 2',
+            'full_name' => 'Norman Kamaru M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -142,6 +143,19 @@ class UserSeeder extends Seeder
         ]);
 
         $user_psychologist->assignRole('psychologist');
+
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Rabu',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Jumat',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
 
         //psikolog 3
         $user_psychologist = User::create([
@@ -152,7 +166,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 3',
+            'full_name' => 'Jayde Mill M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -163,6 +177,19 @@ class UserSeeder extends Seeder
         ]);
 
         $user_psychologist->assignRole('psychologist');
+
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Kamis',
+            'time_start' => '18:00:00',
+            'time_end' => '22:00:00',
+        ]);
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Senin',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
 
         //psikolog 4
         $user_psychologist = User::create([
@@ -173,7 +200,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 4',
+            'full_name' => 'Adele M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -184,6 +211,19 @@ class UserSeeder extends Seeder
         ]);
 
         $user_psychologist->assignRole('psychologist');
+
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Sabtu',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]);
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Selasa',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
 
         //psikolog 5
         $user_psychologist = User::create([
@@ -194,7 +234,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 5',
+            'full_name' => 'Bruno M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -205,6 +245,19 @@ class UserSeeder extends Seeder
         ]);
 
         $user_psychologist->assignRole('psychologist');
+
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Kamis',
+            'time_start' => '07:00:00',
+            'time_end' => '18:00:00',
+        ]); 
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Jumat',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
 
         //psikolog 6
         $user_psychologist = User::create([
@@ -215,7 +268,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru 6',
+            'full_name' => 'Alan Jayde M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "07/07/1999",
             'graduation_year' => '2020',
@@ -226,5 +279,18 @@ class UserSeeder extends Seeder
         ]);
 
         $user_psychologist->assignRole('psychologist');
+
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Minggu',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
+        $schedule = ChatSchedule::create([
+            'psychologist_id' => $psychologist->id,
+            'day' => 'Sabtu',
+            'time_start' => '01:00:00',
+            'time_end' => '23:00:00',
+        ]); 
     }
 }

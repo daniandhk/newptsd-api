@@ -14,7 +14,7 @@ class CreateTestTypeTable extends Migration
     public function up()
     {
         Schema::create('test_types', function (Blueprint $table) {
-            $table->id();
+            $table->char('id', 26)->primary();
             $table->string('type');
             $table->string('name');
             $table->integer('total_score');

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ConsultInfo extends Model
+class ConsultInfo extends BaseModel
 {
     protected $table = 'consult_infos';
 

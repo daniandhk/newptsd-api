@@ -118,9 +118,9 @@ class TestController extends BaseController
     public function show($test_id)
     {
         $test = Test::with('patient','answer')->find($test_id);
-        if(!$test) {
-            return $this->errorNotFound('invalid test id');
-        }
+        // if(!$test) {
+        //     return $this->errorNotFound('invalid test id');
+        // }
 
         $result['test'] = $test;
 

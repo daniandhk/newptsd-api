@@ -14,8 +14,8 @@ class CreatePshychologists extends Migration
     public function up()
     {
         Schema::create('psychologists', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->char('id', 26)->primary();
+            $table->char('user_id', 26);
             $table->string('full_name');
             $table->string('speciality');
             $table->string('datebirth');

@@ -5,7 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Psychologist extends Model
+class Psychologist extends BaseModel
 {
     protected $table = 'psychologists';
 

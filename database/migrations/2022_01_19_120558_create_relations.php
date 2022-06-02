@@ -14,9 +14,9 @@ class CreateRelations extends Migration
     public function up()
     {
         Schema::create('relations', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('psychologist_id');
+            $table->char('id', 26)->primary();
+            $table->char('patient_id', 26);
+            $table->char('psychologist_id', 26);
             $table->timestamps();
 
             $table->foreign('patient_id')

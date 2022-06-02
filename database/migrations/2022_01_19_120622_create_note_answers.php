@@ -14,8 +14,8 @@ class CreateNoteAnswers extends Migration
     public function up()
     {
         Schema::create('note_answers', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('note_question_id');
+            $table->char('id', 26)->primary();
+            $table->char('note_question_id', 26);
             $table->datetime('date');
             $table->string('answer_text');
             $table->timestamps();

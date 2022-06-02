@@ -14,9 +14,9 @@ class CreateTableTests extends Migration
     public function up()
     {
         Schema::create('tests', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('test_type_id');
+            $table->char('id', 26)->primary();
+            $table->char('patient_id', 26);
+            $table->char('test_type_id', 26);
             $table->dateTime('next_date');
             $table->integer('score');
             $table->string('videocall_link')->nullable();

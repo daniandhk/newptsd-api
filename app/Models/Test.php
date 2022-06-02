@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Test extends Model
+class Test extends BaseModel
 {
     protected $table = 'tests';
 
@@ -19,8 +19,7 @@ class Test extends Model
         'is_finished'
     ];
 
-    public static function boot()
-    {
+    public static function boot() {
         parent::boot();
         static::creating(function($test) {
             $test_type = TestType::find($test->test_type_id);

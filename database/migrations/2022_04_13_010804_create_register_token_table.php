@@ -14,7 +14,7 @@ class CreateRegisterTokenTable extends Migration
     public function up()
     {
         Schema::create('register_tokens', function (Blueprint $table) {
-            $table->id();
+            $table->char('id', 26)->primary();
             $table->string('token');
             $table->datetime('expired_at');
             $table->timestamps();

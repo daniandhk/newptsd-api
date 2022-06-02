@@ -14,8 +14,8 @@ class CreateNoteQuestions extends Migration
     public function up()
     {
         Schema::create('note_questions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('consult_id');
+            $table->char('id', 26)->primary();
+            $table->char('consult_id', 26);
             $table->string('question_text');
             $table->timestamps();
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TestType extends Model
+class TestType extends BaseModel
 {
     protected $table = 'test_types';
 

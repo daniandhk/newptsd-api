@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RegisterToken extends Model
+class RegisterToken extends BaseModel
 {
     protected $table = 'register_tokens';
 

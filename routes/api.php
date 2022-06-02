@@ -35,6 +35,7 @@ Route::prefix('auth')->group(function () {
 Route::group([
     'prefix' => 'test',
     'namespace' => 'Api',
+    // 'middleware' => 'auth:sanctum'
 ], function ($router) {
     Route::post('/', 'TestController@store');
     Route::get('/', 'TestController@index');

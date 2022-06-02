@@ -46,7 +46,6 @@ class ChatScheduleController extends BaseController
                 $chat_schedule = ChatSchedule::create([
                                     'psychologist_id' => $request->psychologist_id,
                                     'day' => $schedule['day'],
-                                    'index_day' => $schedule['index_day'],
                                     'time_start' => $schedule['time_start'],
                                     'time_end' => $schedule['time_end'],
                                 ]);

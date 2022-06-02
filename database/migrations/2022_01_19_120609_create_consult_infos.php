@@ -14,8 +14,8 @@ class CreateConsultInfos extends Migration
     public function up()
     {
         Schema::create('consult_infos', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('consult_id');
+            $table->char('id', 26)->primary();
+            $table->char('consult_id', 26);
             $table->string('videocall_link')->nullable();
             $table->datetime('videocall_date')->nullable();
             $table->timestamps();
