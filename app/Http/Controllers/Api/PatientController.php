@@ -42,10 +42,18 @@ class PatientController extends BaseController
             'datebirth' => 'required',
             'city' => 'required',
             'province' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
         ]);
         if(Patient::where('user_id', $request->user_id)->first() == null){
             if (User::find($request->user_id)->email_verified_at != null) {
+                if($request->hasFile('avatar')){
+                    $image = $request->file('avatar');
+                    $imageName = $request->image_name;
+                    $imageName = time().'_'.$imageName;
+                    $image->move(public_path('/avatars'), $imageName);
+                    $request['image'] = 'avatars/'.$imageName;
+                }
+
                 $patient = Patient::create($request->all());
                 return $this->respond($patient);
             } else {
@@ -66,29 +74,22 @@ class PatientController extends BaseController
             'city' => 'required',
             'province' => 'required',
             'phone' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
         if (Patient::find($id) != null) {
             $patient = Patient::findOrFail($id);
 
-            if($patient->image){
-                File::delete([
-                    public_path($patient->image),
-                    public_path($patient->thumbnail),
-                ]);
+            if($request->hasFile('avatar')){
+                if($patient->image){
+                    File::delete([
+                        public_path($patient->image),
+                    ]);
+                }
+                $image = $request->file('avatar');
+                $imageName = $request->image_name;
+                $imageName = time().'_'.$imageName;
+                $image->move(public_path('/avatars'), $imageName);
+                $request['image'] = 'avatars/'.$imageName;
             }
-            $image = request()->file('image');
-            $imageName = $image->getClientOriginalName();
-            $imageName = time().'_'.$imageName;
-            $thumbnail = $image->getClientOriginalName();
-            $thumbnail= time().'_thumbnail'.$thumbnail;
-
-            Image::make($image)
-            ->fit(100, 100)
-            ->save(public_path('/images/').$thumbnail);
-            $image->move(public_path('/images'), $imageName);
-            $request['image'] = 'images/'.$imageName;
-            $request['thumbnail'] = 'images/'.$thumbnail;
 
             $patient->fill($request->all());
             $patient->save();

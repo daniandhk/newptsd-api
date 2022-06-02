@@ -17,7 +17,6 @@ class Patient extends Model
         'province',
         'phone',
         'image',
-        'thumbnail'
     ];
 
     public function test() {

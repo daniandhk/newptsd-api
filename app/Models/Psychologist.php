@@ -20,7 +20,6 @@ class Psychologist extends Model
         'province',
         'str_number',
         'image',
-        'thumbnail'
     ];
 
     protected $appends = ['online_schedule'];

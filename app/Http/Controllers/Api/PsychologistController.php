@@ -40,6 +40,14 @@ class PsychologistController extends BaseController
         ]);
         if(Psychologist::where('user_id', $request->user_id)->first() == null){
             if (User::find($request->user_id)->email_verified_at != null) {
+                if($request->hasFile('avatar')){
+                    $image = $request->file('avatar');
+                    $imageName = $request->image_name;
+                    $imageName = time().'_'.$imageName;
+                    $image->move(public_path('/avatars'), $imageName);
+                    $request['image'] = 'avatars/'.$imageName;
+                }
+
                 $psychologist = Psychologist::create($request->all());
                 return $this->respond($psychologist);
             } else {
@@ -62,29 +70,22 @@ class PsychologistController extends BaseController
             'city' => 'required',
             'province' => 'required',
             'str_number' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
         if (Psychologist::find($id) != null) {
             $psychologist = Psychologist::findOrFail($id);
 
-            if($psychologist->image){
-                File::delete([
-                    public_path($psychologist->image),
-                    public_path($psychologist->thumbnail),
-                ]);
+            if($request->hasFile('avatar')){
+                if($psychologist->image){
+                    File::delete([
+                        public_path($psychologist->image),
+                    ]);
+                }
+                $image = $request->file('avatar');
+                $imageName = $request->image_name;
+                $imageName = time().'_'.$imageName;
+                $image->move(public_path('/avatars'), $imageName);
+                $request['image'] = 'avatars/'.$imageName;
             }
-            $image = request()->file('image');
-            $imageName = $image->getClientOriginalName();
-            $imageName = time().'_'.$imageName;
-            $thumbnail = $image->getClientOriginalName();
-            $thumbnail= time().'_thumbnail'.$thumbnail;
-
-            Image::make($image)
-            ->fit(100, 100)
-            ->save(public_path('/images/').$thumbnail);
-            $image->move(public_path('/images'), $imageName);
-            $request['image'] = 'images/'.$imageName;
-            $request['thumbnail'] = 'images/'.$thumbnail;
 
             $psychologist->fill($request->all());
             $psychologist->save();
