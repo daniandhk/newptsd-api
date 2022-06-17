@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRelations extends Migration
+class CreateConsultInfosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,16 @@ class CreateRelations extends Migration
      */
     public function up()
     {
-        Schema::create('relations', function (Blueprint $table) {
+        Schema::create('consult_infos', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->char('patient_id', 26);
-            $table->char('psychologist_id', 26);
+            $table->char('consult_id', 26);
+            $table->string('videocall_link')->nullable();
+            $table->datetime('videocall_date')->nullable();
             $table->timestamps();
 
-            $table->foreign('patient_id')
+            $table->foreign('consult_id')
                 ->references('id')
-                ->on('patients')
-                ->onDelete('cascade');
-
-            $table->foreign('psychologist_id')
-                ->references('id')
-                ->on('psychologists')
+                ->on('consults')
                 ->onDelete('cascade');
         });
     }
@@ -38,6 +34,6 @@ class CreateRelations extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('relations');
+        Schema::dropIfExists('consult_infos');
     }
 }

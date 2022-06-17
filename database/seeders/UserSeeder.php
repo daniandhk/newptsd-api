@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_patient->id,
             'first_name' => 'Iwan 1',
             'last_name' => 'Gunawan',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
             'phone' => '0812345678'
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_patient->id,
             'first_name' => 'Iwan 2',
             'last_name' => 'Gunawan',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
             'phone' => '0812345678'
@@ -68,14 +68,14 @@ class UserSeeder extends Seeder
         $user_patient = User::create([
             'email' => 'daniandhika03@gmail.com',
             'password' => Hash::make('patient'),
-            'email_verified_at' => null
+            'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
         // $patient = Patient::create([
         //     'user_id' => $user_patient->id,
         //     'first_name' => 'Iwan 3',
         //     'last_name' => 'Gunawan',
-        //     'datebirth' => "07/07/1999",
+        //     'datebirth' => "1999-04-07",
         //     'city' => 'Bandung',
         //     'province' => 'Jawa Barat',
         //     'phone' => '0812345678'
@@ -94,7 +94,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_patient->id,
             'first_name' => 'Iwan 4',
             'last_name' => 'Gunawan',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
             'phone' => '0812345678'
@@ -113,7 +113,7 @@ class UserSeeder extends Seeder
         //     'user_id' => $user_psychologist->id,
         //     'full_name' => 'Norman Kamaru M.Psi, Psikolog',
         //     'speciality' => 'Psikolog Klinis',
-        //     'datebirth' => "07/07/1999",
+        //     'datebirth' => "1999-04-07",
         //     'graduation_year' => '2020',
         //     'graduation_university' => 'Samudera Hindia',
         //     'city' => 'Bandung',
@@ -134,7 +134,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_psychologist->id,
             'full_name' => 'Norman Kamaru M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
@@ -168,7 +168,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_psychologist->id,
             'full_name' => 'Jayde Mill M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
@@ -202,7 +202,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_psychologist->id,
             'full_name' => 'Adele M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
@@ -236,7 +236,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_psychologist->id,
             'full_name' => 'Bruno M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
@@ -270,7 +270,7 @@ class UserSeeder extends Seeder
             'user_id' => $user_psychologist->id,
             'full_name' => 'Alan Jayde M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
-            'datebirth' => "07/07/1999",
+            'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',

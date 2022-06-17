@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Models\Test;
 use App\Models\Answer;
 use App\Models\Patient;
+use App\Models\TestAnswer;
+use App\Models\TestPage;
+use App\Models\TestQuestion;
 use App\Models\TestType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,11 +15,6 @@ use Illuminate\Validation\Rule;
 
 class TestController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if(is_null($request->patient_id)) {
@@ -29,7 +27,7 @@ class TestController extends BaseController
                 return $this->errorNotFound('invalid patient id');
             }
 
-            $test_taken = Test::with('patient','answer')
+            $test_taken = Test::with('test_type')
                         ->where('patient_id', $patient->id)
                         ->orderBy('created_at', 'desc')
                         ->get();
@@ -38,124 +36,141 @@ class TestController extends BaseController
         return $this->respond($test_taken);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function createTest(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'patient_id' => 'required',
-            'data_input' => 'required',
             'test_type' => 'required',
+            'data_input' => 'required',
         ]);
         if($validation->fails()) {
             return $this->validationError();
         }
+        $test_type = TestType::where('type', $request->test_type->type)->first();
+        if($test_type){
+            return $this->errorForbidden('code test already used');
+        }
+
+        $test_type = TestType::create([
+            'type'  => $request->test_type->type,
+            'name' => $request->test_type->name,
+            'delay_days' => $request->test_type->delay_days,
+            'description' => $request->test_type->description,
+            'total_page' => $request->test_type->total_page,
+         ]);
+
+         $total_score = 0;
+         foreach($request->data_input as $key1=>$data) {
+            $test_page = TestPage::create([
+                'test_type_id' => $test_type['id'],
+                'number' => $data['page_number'],
+                'title' => $data['page_title'],
+                'description' => $data['page_description'],
+            ]);
+
+            foreach($data['questions'] as $key2=>$q) {
+                $qstion = TestQuestion::create([
+                    'test_page_id' => $test_page['id'],
+                    'text' => $q['text'],
+                    'answer_type' => $q['answer_type'],
+                ]);
+    
+                $max_score = 0;
+                foreach($q['answers'] as $key3=>$ans) {
+                    $answer = TestAnswer::create([
+                        'test_question_id' => $qstion['id'],
+                        'text' => $ans['text'],
+                        'description' => $ans['description'],
+                        'weight' => $ans['weight'],
+                        'is_essay' => $ans['is_essay'],
+                    ]);
+    
+                    if ($ans['weight'] > $max_score){
+                        $max_score = $ans['weight'];
+                    }
+                }
+    
+                $total_score += $max_score;
+            }
+
+         }
+
+         $test_type = TestType::find($test_type['id']);
+         $test_type->total_score = $total_score;
+         $test_type->save();
+
+         return $this->respond(null);
+    }
+
+    public function storePatientAnswers(Request $request)
+    {
+        $this->validate($request, [
+            'patient_id' => 'required',
+            'test_type_id' => 'required',
+            'pages' => 'required',
+        ]);
 
         if(!Patient::find($request->patient_id)) {
             return $this->errorNotFound('invalid patient id');
         }
 
-        $test_type = TestType::where('type', $request->test_type)->first();
-        if(!$test_type){
+        if(!TestType::find($request->test_type_id)){
             return $this->errorNotFound('invalid test type id');
         }
 
-        $score = 0;
-        foreach($request->data_input as $type) {
-            if($type['type'] == 'score' || $type['type'] == 'diagnosa'){
-                $score = $this->sumTestScore($type);
-                break;
-            }
-        }
+        $count = count(Test::where('patient_id', $request->patient_id)->get());
 
         $test = Test::create([
             'patient_id'  => $request->patient_id,
-            'score' => $score,
-            'test_type_id' => $test_type->id,
+            'test_type_id' => $request->test_type_id,
+            'index' => $count+1,
          ]);
 
-        foreach($request->data_input as $type) {
-            foreach($type['answers'] as $no) {
-                Answer::create([
-                    'test_id' => $test->id,
-                    'answer_text' => $no['resp'],
-                    'answer_type' => $type['type'],
-                    'question_index' => $no['index'],
-                ]);
+        $sum_score = 0;
+        foreach($request->pages as $page) {
+            foreach($page['questions'] as $question) {
+                foreach($question['answers'] as $patient_answer) {
+                    Answer::create([
+                        'test_id' => $test['id'],
+                        'test_answer_id' => $patient_answer['id'],
+                        'test_question_id' => $patient_answer['test_question_id'],
+                        'text' => $patient_answer['text'],
+                    ]);
+                
+                    if($question['answer_type'] == 'score'){
+                        $test_ans = TestAnswer::find($patient_answer['id']);
+                        $sum_score += $test_ans['weight'];
+                    }
+                }
             }
         }
+
+        $test = Test::find($test['id']);
+        $test->score = $sum_score;
+        $test->save();
+
+        return $this->respond(null);
     }
 
-    public function sumTestScore($answers) {
-        $total = 0;
-        foreach($answers['answers'] as $key=>$ans) {
-            $total += $ans['resp'];
-        }
-
-        return $total;
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Test  $test
-     * @return \Illuminate\Http\Response
-     */
     public function show($test_id)
     {
-        $test = Test::with('patient','answer')->find($test_id);
+        $test = Test::with('patient','answers')->find($test_id);
         // if(!$test) {
         //     return $this->errorNotFound('invalid test id');
         // }
 
-        $result['test'] = $test;
-
-        return $this->respond($result);
+        return $this->respond($test);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Test  $test
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Test $test)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Test  $test
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Test $test)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Test  $test
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($test_id)
     {
         $test = Test::find($test_id);

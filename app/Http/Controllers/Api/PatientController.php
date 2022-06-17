@@ -133,7 +133,7 @@ class PatientController extends BaseController
         //chat and consult
         if($patient->relation){
             $relation = $patient->relation;
-            $data->psychologist = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
+            $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
         }
 
         return $this->respond($data);
@@ -142,7 +142,7 @@ class PatientController extends BaseController
     public function getConsultDashboard(Request $request, $patient_id){
         $patient = Patient::find($patient_id);
         if(!$patient){
-            return $this->errorNotFound('invalid user id');
+            return $this->errorNotFound('invalid patient id');
         }
 
         $data = new stdClass();
@@ -150,11 +150,11 @@ class PatientController extends BaseController
         //chat and consult
         if($patient->relation){
             $relation = $patient->relation;
-            $data->psychologist = Psychologist::with('chatSchedule')->find($relation->psychologist_id);
-            $data->consult = Consult::with(['consult_info','note_question'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
+            $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
+            $data->consult = Consult::with(['consult_info','note_questions'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
-            $psychologists = Psychologist::query()->with('chatSchedule');
+            $psychologists = Psychologist::query()->with('chat_schedules');
             $per_page = 3;
             $request->whenHas('per_page', function($size) use (&$per_page) {
                 $per_page = $size;
@@ -176,6 +176,8 @@ class PatientController extends BaseController
 
             $data->psychologists = $psychologists;
             $data->consult = null;
+
+            $data->psychologists->total_data = Psychologist::get()->count();
         }
 
         return $this->respond($data);
@@ -215,26 +217,26 @@ class PatientController extends BaseController
         }
 
         //note_question
-        $data->note_question = [];
+        $data->note_questions = [];
 
         if($patient->relation){
             $relation = $patient->relation;
-            $consult = Consult::with(['consult_info','note_question','note_question.note_answer'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
+            $consult = Consult::with(['consult_info','note_questions','note_questions.note_answers'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
             $consult = null;
         }
 
         if($consult){
-            if(count($consult->note_question) > 0){
+            if(count($consult->note_questions) > 0){
                 $next_date = $consult->next_date;
                 $nextDate = date("Y-m-d", strtotime($next_date));
                 $last_date = $consult->last_date;
                 $lastDate = date("Y-m-d", strtotime($last_date));
                 if($date <= $nextDate && $date >= $lastDate){
-                    foreach($consult->note_question as $question) {
-                        if(count($question->note_answer) > 0){
-                            foreach($question->note_answer as $answer) {
+                    foreach($consult->note_questions as $question) {
+                        if(count($question->note_answers) > 0){
+                            foreach($question->note_answers as $answer) {
                                 $answer_date = $answer->date;
                                 $newAnswerDate = date("Y-m-d", strtotime($answer_date));
                                 if($date == $newAnswerDate){
@@ -248,7 +250,7 @@ class PatientController extends BaseController
                             $question->answer = null;
                         }
                     }
-                    $data->note_question = $consult->note_question;
+                    $data->note_questions = $consult->note_questions;
                 }
             }
         }

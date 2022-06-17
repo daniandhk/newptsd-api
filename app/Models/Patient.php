@@ -19,7 +19,7 @@ class Patient extends BaseModel
         'image',
     ];
 
-    public function test() {
+    public function tests() {
         return $this->hasMany(Test::class);
     }
 

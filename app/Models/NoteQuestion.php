@@ -17,7 +17,7 @@ class NoteQuestion extends BaseModel
         return $this->belongsTo(Consult::class);
     }
 
-    public function note_answer() {
+    public function note_answers() {
         return $this->hasMany(NoteAnswer::class);
     }
 }

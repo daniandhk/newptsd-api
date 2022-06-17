@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNoteAnswers extends Migration
+class CreateTestPagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,17 @@ class CreateNoteAnswers extends Migration
      */
     public function up()
     {
-        Schema::create('note_answers', function (Blueprint $table) {
+        Schema::create('test_pages', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->char('note_question_id', 26);
-            $table->datetime('date');
-            $table->string('answer_text');
+            $table->char('test_type_id', 26);
+            $table->integer('number');
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
 
-            $table->foreign('note_question_id')
+            $table->foreign('test_type_id')
                 ->references('id')
-                ->on('note_questions')
+                ->on('test_types')
                 ->onDelete('cascade');
         });
     }
@@ -34,6 +35,6 @@ class CreateNoteAnswers extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('note_answers');
+        Schema::dropIfExists('test_pages');
     }
 }

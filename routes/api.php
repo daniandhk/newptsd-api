@@ -37,11 +37,12 @@ Route::group([
     'namespace' => 'Api',
     // 'middleware' => 'auth:sanctum'
 ], function ($router) {
-    Route::post('/', 'TestController@store');
     Route::get('/', 'TestController@index');
     Route::delete('/{test_id}', 'TestController@destroy');
     Route::get('/show/{test_id?}', 'TestController@show');
     Route::put('/video/{test_id}', 'TestController@updateVideoCall');
+    Route::post('/createTest', 'TestController@createTest');
+    Route::post('/storePatientAnswers', 'TestController@storePatientAnswers');
 });
 
 Route::group([
@@ -63,7 +64,7 @@ Route::group([
     Route::get('/', 'PatientController@index');
     Route::get('/show/{id}', 'PatientController@show');
     Route::post('/create', 'PatientController@create');
-    Route::post('/update/{id}', 'PatientController@update');
+    Route::put('/update/{id}', 'PatientController@update');
     Route::delete('/delete/{id}', 'PatientController@delete');
     Route::get('/test-dashboard/{user_id}', 'PatientController@getTestDashboard');
     Route::get('/consult-dashboard/{user_id}', 'PatientController@getConsultDashboard');
@@ -141,6 +142,7 @@ Route::group([
     'namespace' => 'Api',
 ], function ($router) {
     Route::get('/', 'TestTypeController@index');
+    Route::get('/questions', 'TestTypeController@getTestQuestions');
     Route::get('/show/{id}', 'TestTypeController@show');
     Route::post('/create', 'TestTypeController@store');
     Route::post('/update/{id}', 'TestTypeController@update');

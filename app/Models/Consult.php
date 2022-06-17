@@ -23,7 +23,7 @@ class Consult extends BaseModel
         return $this->hasOne(ConsultInfo::class);
     }
 
-    public function note_question() {
+    public function note_questions() {
         return $this->hasMany(NoteQuestion::class);
     }
 }

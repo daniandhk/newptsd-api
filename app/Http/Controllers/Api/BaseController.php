@@ -18,6 +18,14 @@ class BaseController extends Controller
         return Response::json($result, 404);
     }
 
+    public function errorForbidden($message = '') {
+        $result = array(
+            'status'    => 'error',
+            'message'   => $message,
+        );
+        return Response::json($result, 403);
+    }
+
     public function validationError() {
         $result = array(
             'status'    => 'error',

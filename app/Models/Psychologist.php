@@ -30,23 +30,19 @@ class Psychologist extends BaseModel
 
         setlocale (LC_TIME, 'id_ID');
         $now = Carbon::now('Asia/Jakarta')->translatedFormat('l');
-        $chatSchedules = $this->chatSchedule->toArray();
-        $idx_today = array_search($now, array_column($chatSchedules, 'day'));
+        $chat_schedules = $this->chat_schedules->toArray();
+        $idx_today = array_search($now, array_column($chat_schedules, 'day'));
         if(is_int($idx_today)){
             $date = Carbon::now('Asia/Jakarta')->format('Y-m-d');
             $str_now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:m:s');
-            $str_start = $date." ".$chatSchedules[$idx_today]['time_start'];
-            $str_end = $date." ".$chatSchedules[$idx_today]['time_end'];
+            $str_start = $date." ".$chat_schedules[$idx_today]['time_start'];
+            $str_end = $date." ".$chat_schedules[$idx_today]['time_end'];
 
             if($str_now >= $str_start && $str_now <= $str_end){
-                $data['schedule'] = $chatSchedules[$idx_today];
                 $data['is_online'] = true;
-                return $data;
             }
-            else if($str_now < $str_start){
-                $data['schedule'] = $chatSchedules[$idx_today];
-                return $data;
-            }
+            $data['schedule'] = $chat_schedules[$idx_today];
+            return $data;
         }
         
         switch ($now) {
@@ -77,7 +73,7 @@ class Psychologist extends BaseModel
 
         if($idx_today){
             $getNextDays = array_filter(
-                $chatSchedules,
+                $chat_schedules,
                 function ($s) use($idx_today) {
                     return ($s['index_day'] > $idx_today);
                 }
@@ -87,7 +83,7 @@ class Psychologist extends BaseModel
             }
             else{
                 $getNextWeeks = array_filter(
-                    $chatSchedules,
+                    $chat_schedules,
                     function ($s) use($idx_today) {
                         return ($s['index_day'] < $idx_today);
                     }
@@ -101,11 +97,11 @@ class Psychologist extends BaseModel
         return $data;
     }
 
-    public function relation() {
+    public function relations() {
         return $this->hasMany(Relation::class);
     }
 
-    public function chatSchedule() {
+    public function chat_schedules() {
         return $this->hasMany(ChatSchedule::class)->orderBy('index_day', 'ASC');
     }
 

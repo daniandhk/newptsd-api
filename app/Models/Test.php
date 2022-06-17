@@ -12,16 +12,13 @@ class Test extends BaseModel
     protected $fillable = [
         'patient_id',
         'test_type_id',
-        'next_date',
-        'score',
-        'videocall_link',
-        'videocall_date',
-        'is_finished'
+        'index'
     ];
 
     public static function boot() {
         parent::boot();
         static::creating(function($test) {
+            $test->score = 0;
             $test_type = TestType::find($test->test_type_id);
             $test->next_date = Carbon::now('Asia/Jakarta')->addDays($test_type->delay_days);
             $test->is_finished = false;
@@ -36,7 +33,7 @@ class Test extends BaseModel
         return $this->belongsTo(TestType::class);
     }
 
-    public function answer() {
+    public function answers() {
         return $this->hasMany(Answer::class);
     }
 }

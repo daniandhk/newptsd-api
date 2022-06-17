@@ -9,18 +9,21 @@ class Answer extends BaseModel
     protected $table = 'answers';
 
     protected $fillable = [
-        // 'patient_id',
         'test_id',
-        'answer_text',
-        'answer_type',
-        'question_index',
+        'test_answer_id',
+        'test_question_id',
+        'text',
     ];
 
     public function test() {
         return $this->belongsTo(Test::class);
     }
 
-    // public function patient() {
-    //     return $this->belongsTo(Patient::class);
-    // }
+    public function test_answer() {
+        return $this->belongsTo(TestAnswer::class);
+    }
+
+    public function test_question() {
+        return $this->belongsTo(TestQuestion::class);
+    }
 }

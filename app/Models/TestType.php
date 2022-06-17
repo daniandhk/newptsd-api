@@ -12,12 +12,25 @@ class TestType extends BaseModel
     protected $fillable = [
         'type',
         'name',
-        'total_score',
         'delay_days',
-        'description'
+        'description',
+        'total_page'
     ];
+
+    public static function boot() {
+        parent::boot();
+        static::creating(function($test_type) {
+            if(!$test_type->total_score){
+                $test_type->total_score = 0;
+            }
+        });
+    }
 
     public function tests() {
         return $this->hasMany(Test::class);
+    }
+
+    public function test_pages() {
+        return $this->hasMany(TestPage::class)->orderBy('number');
     }
 }

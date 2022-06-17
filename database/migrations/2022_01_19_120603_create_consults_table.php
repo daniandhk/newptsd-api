@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNoteQuestions extends Migration
+class CreateConsultsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateNoteQuestions extends Migration
      */
     public function up()
     {
-        Schema::create('note_questions', function (Blueprint $table) {
+        Schema::create('consults', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->char('consult_id', 26);
-            $table->string('question_text');
+            $table->char('relation_id', 26);
+            $table->string('consult_index');
+            $table->datetime('last_date')->nullable();
+            $table->datetime('next_date');
             $table->timestamps();
 
-            $table->foreign('consult_id')
+            $table->foreign('relation_id')
                 ->references('id')
-                ->on('consults')
+                ->on('relations')
                 ->onDelete('cascade');
         });
     }
@@ -33,6 +35,6 @@ class CreateNoteQuestions extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('note_questions');
+        Schema::dropIfExists('consults');
     }
 }

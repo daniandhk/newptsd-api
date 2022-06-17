@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableTests extends Migration
+class CreateTestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -22,6 +22,7 @@ class CreateTableTests extends Migration
             $table->string('videocall_link')->nullable();
             $table->string('videocall_date')->nullable();
             $table->boolean('is_finished');
+            $table->integer('index');
             $table->timestamps();
 
             $table->foreign('patient_id')

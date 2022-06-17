@@ -12,9 +12,26 @@ class TestTypeController extends BaseController
         $types = TestType::all();
         if($request->has('test_type')) {
             $test_type = $request->get('test_type');
-            $types = $types->where('type', $test_type);
+            $types = $types->where('type', $test_type)->first();
         }
         return $this->respond($types);
+    }
+
+    public function getTestQuestions(Request $request)
+    {
+        if($request->has('test_type')) {
+            $types = TestType::with(
+                'test_pages', 
+                'test_pages.test_questions', 
+                'test_pages.test_questions.test_answers',
+            );
+            $test_type = $request->get('test_type');
+            $type = $types->where('type', $test_type)->first();
+            return $this->respond($type);
+        }
+        else{
+            return $this->errorNotFound('invalid TestType');
+        }
     }
 
     public function create()

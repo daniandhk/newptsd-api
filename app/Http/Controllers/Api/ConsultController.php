@@ -18,8 +18,8 @@ class ConsultController extends BaseController
     public function index()
     {
         $consults = Consult::with('relation.patient', 'relation.psychologist',
-                                'consult_info', 'note_question',
-                                'note_question.note_answer')
+                                'consult_info', 'note_questions',
+                                'note_questions.note_answers')
                             ->get();
 
         return $this->respond($consults);
@@ -28,8 +28,8 @@ class ConsultController extends BaseController
     public function show($id)
     {
         $consult = Consult::with('relation.patient', 'relation.psychologist',
-                            'consult_info', 'note_question',
-                            'note_question.note_answer')
+                            'consult_info', 'note_questions',
+                            'note_questions.note_answers')
                         ->find($id);
         if(!$consult) {
             return $this->errorNotFound('invalid consult id');
