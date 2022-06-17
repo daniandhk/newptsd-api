@@ -18,17 +18,14 @@ class TestController extends BaseController
     public function index(Request $request)
     {
         if(is_null($request->patient_id)) {
-            $test_taken = Test::with('patient','answer')
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+            $test_taken = Test::orderBy('created_at', 'desc')->get();
         } else {
             $patient = Patient::find($request->patient_id);
             if(!$patient) {
                 return $this->errorNotFound('invalid patient id');
             }
 
-            $test_taken = Test::with('test_type')
-                        ->where('patient_id', $patient->id)
+            $test_taken = Test::where('patient_id', $patient->id)
                         ->orderBy('created_at', 'desc')
                         ->get();
         }
