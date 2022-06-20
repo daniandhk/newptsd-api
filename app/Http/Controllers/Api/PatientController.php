@@ -119,16 +119,7 @@ class PatientController extends BaseController
         $data = new stdClass();
 
         //tests
-        $data->test_types = TestType::all();
-
-        if(count($data->test_types) > 0){
-            foreach($data->test_types as $test_type) {
-                $test_type->current_test = $test_type->tests
-                                                        ->where('patient_id','=', $patient->id)
-                                                        ->sortByDesc('created_at')
-                                                        ->first();
-            }
-        }
+        $data->test_types = TestType::FilteredTest($patient_id)->get();
 
         //chat and consult
         if($patient->relation){

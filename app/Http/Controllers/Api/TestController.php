@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Test;
 use App\Models\Answer;
+use App\Models\NoteQuestion;
 use App\Models\Patient;
 use App\Models\TestAnswer;
 use App\Models\TestPage;
@@ -197,6 +198,34 @@ class TestController extends BaseController
         $test->videocall_date = $request->videocall_date;
 
         $test->save();
+        return $this->respond($test);
+    }
+
+    public function finishTest(Request $request, $test_id) {
+        $test = Test::find($test_id);
+        if(!$test) {
+            return $this->errorNotFound('invalid test id');
+        }
+
+        $test->is_finished = true;
+        $test->save();
+
+        if($request->is_consult == true){
+            $request->not_json = true;
+            $consult = json_decode(app('App\Http\Controllers\Api\ConsultController')->store($request));
+
+            if(is_array($request->notes) && sizeof($request->notes) > 0){
+                foreach($request->notes as $note){
+                    if($note['question_text']){
+                        NoteQuestion::create([
+                            'consult_id' => $consult->id,
+                            'question_text' => $note['question_text'],
+                        ]);
+                    }
+                }
+            }
+        }
+        
         return $this->respond($test);
     }
 }

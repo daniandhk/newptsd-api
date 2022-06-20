@@ -11,15 +11,40 @@ class RelationController extends BaseController
 {
     public function index(Request $request)
     {
-        if(is_null($request->patient_id)) {
-            $relations = Relation::all();
-        } else {
+        if(!is_null($request->patient_id) && !is_null($request->psychologist_id)){
+            $patient = Patient::find($request->patient_id);
+            if(!$patient) {
+                return $this->errorNotFound('invalid patient id');
+            }
+
+            $psychologist = Psychologist::find($request->psychologist_id);
+            if(!$psychologist) {
+                return $this->errorNotFound('invalid psychologist id');
+            }
+
+            $relations = Relation::where('patient_id', $patient->id)
+                                    ->where('psychologist_id', $psychologist->id)->get();
+        }
+        else if(!is_null($request->patient_id)) {
             $patient = Patient::find($request->patient_id);
             if(!$patient) {
                 return $this->errorNotFound('invalid patient id');
             }
 
             $relations = Relation::where('patient_id', $patient->id)->get();
+            
+        }
+        else if(!is_null($request->psychologist_id)) {
+            $psychologist = Psychologist::find($request->psychologist_id);
+            if(!$psychologist) {
+                return $this->errorNotFound('invalid psychologist id');
+            }
+
+            $relations = Relation::where('psychologist_id', $psychologist->id)->get();
+            
+        }
+        else {
+            $relations = Relation::all();
         }
         
         return $this->respond($relations);

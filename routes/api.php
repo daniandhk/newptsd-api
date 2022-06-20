@@ -41,6 +41,7 @@ Route::group([
     Route::delete('/{test_id}', 'TestController@destroy');
     Route::get('/show/{test_id?}', 'TestController@show');
     Route::put('/video/{test_id}', 'TestController@updateVideoCall');
+    Route::put('/finish/{test_id}', 'TestController@finishTest');
     Route::post('/createTest', 'TestController@createTest');
     Route::post('/storePatientAnswers', 'TestController@storePatientAnswers');
 });
@@ -78,7 +79,7 @@ Route::group([
     Route::get('/', 'PsychologistController@index');
     Route::get('/show/{id}', 'PsychologistController@show');
     Route::post('/create', 'PsychologistController@create');
-    Route::post('/update/{id}', 'PsychologistController@update');
+    Route::put('/update/{id}', 'PsychologistController@update');
     Route::delete('/delete/{id}', 'PsychologistController@delete');
 });
 
@@ -90,7 +91,7 @@ Route::group([
     Route::get('/show/{id}', 'ChatScheduleController@show');
     Route::get('/chat/{id}', 'ChatScheduleController@get_detail_chat');
     Route::post('/create', 'ChatScheduleController@create');
-    Route::post('/update/{id}', 'ChatScheduleController@update');
+    Route::put('/update/{id}', 'ChatScheduleController@update');
     Route::delete('/delete/{id}', 'ChatScheduleController@delete');
 });
 
@@ -102,7 +103,7 @@ Route::group([
     Route::get('/show/{id}', 'RelationController@show');
     Route::get('/patient/{id}', 'RelationController@get_patient');
     Route::post('/create', 'RelationController@create');
-    Route::post('/update/{id}', 'RelationController@update');
+    Route::put('/update/{id}', 'RelationController@update');
     Route::delete('/delete/{id}', 'RelationController@delete');
 });
 
@@ -113,7 +114,7 @@ Route::group([
     Route::get('/', 'JournalController@index');
     Route::get('/show/{id}', 'JournalController@show');
     Route::post('/create', 'JournalController@create');
-    Route::post('/update/{id}', 'JournalController@update');
+    Route::put('/update/{id}', 'JournalController@update');
     Route::delete('/delete/{id}', 'JournalController@delete');
 });
 
@@ -133,7 +134,7 @@ Route::group([
     Route::get('/', 'GuardianController@index');
     Route::get('/show/{id}', 'GuardianController@show');
     Route::post('/create', 'GuardianController@store');
-    Route::post('/update/{id}', 'GuardianController@update');
+    Route::put('/update/{id}', 'GuardianController@update');
     Route::delete('/delete/{id}', 'GuardianController@delete');
 });
 
@@ -145,6 +146,6 @@ Route::group([
     Route::get('/questions', 'TestTypeController@getTestQuestions');
     Route::get('/show/{id}', 'TestTypeController@show');
     Route::post('/create', 'TestTypeController@store');
-    Route::post('/update/{id}', 'TestTypeController@update');
+    Route::put('/update/{id}', 'TestTypeController@update');
     Route::delete('/delete/{id}', 'TestTypeController@delete');
 });

@@ -70,8 +70,6 @@ class ConsultController extends BaseController
                 'psychologist_id' => $request->psychologist_id,
             ]);
             $relation_id = $relation->id;
-
-            $patient->save();
         }
 
         $last_date = null;
@@ -92,6 +90,10 @@ class ConsultController extends BaseController
             'consult_id' => $consult->id,
             'videocall_date' => $request->date,
         ]);
+
+        if($request->not_json == true){
+            return $consult;
+        }
 
         return $this->respond($consult);
     }

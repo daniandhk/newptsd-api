@@ -36,4 +36,8 @@ class Test extends BaseModel
     public function answers() {
         return $this->hasMany(Answer::class);
     }
+
+    public function scopeFiltered($query, $patient_id) {
+        return $query->where('patient_id', '=', $patient_id)->orderBy('created_at', 'desc')->first();
+    }
 }
