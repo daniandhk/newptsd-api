@@ -30,4 +30,8 @@ class Patient extends BaseModel
     public function guardian() {
         return $this->hasOne(Guardian::class);
     }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

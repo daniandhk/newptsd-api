@@ -57,4 +57,16 @@ class User extends Authenticatable
             return $this->hasOne(Psychologist::class);
         }
     }
+
+    public function patients() {
+        return $this->hasMany(Patient::class);
+    }
+
+    public function psychologists() {
+        return $this->hasMany(Psychologist::class);
+    }
+
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
 }
