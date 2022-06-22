@@ -67,7 +67,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         videocall_date: "",
         videocall_link: "",
         created_at: "",
-        is_finished: true
+        is_finished: true,
+        patient: null
       },
       questionData: [],
       pageData: {
@@ -293,13 +294,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _this2.patient = _this2.test_review.patient;
+                if (_this2.test_review.patient) {
+                  _this2.patient = _this2.test_review.patient;
+                }
 
                 if (_this2.user.role == 'patient') {
-                  if (_this2.patient_id != _this2.user.profile.id) {
-                    _this2.$router.push('/404');
-                  }
-
                   _this2.isPsychologist = false;
                   _this2.disabled_bg.backgroundColor = "#F0F4F6";
 
@@ -386,14 +385,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                params = _this4.getRequestParams(null, _this4.patient_id, null);
+                params = _this4.getRequestParams(_this4.test_type, _this4.patient_id, null);
                 return _context6.abrupt("return", _api__WEBPACK_IMPORTED_MODULE_1__.getTests(params) // eslint-disable-next-line no-unused-vars
                 .then(function (response) {
                   if (response.data.data) {
                     _this4.historyData = response.data.data;
                   }
                 })["catch"](function (error) {
-                  _this4.$router.push('/404');
+                  loading();
+
+                  _this4.$router.push('/404')["catch"](function () {});
                 }));
 
               case 2:
@@ -422,7 +423,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     }
                   }
                 })["catch"](function (error) {
-                  _this5.$router.push('/404');
+                  loading();
+
+                  _this5.$router.push('/404')["catch"](function () {});
                 }));
 
               case 2:
@@ -442,6 +445,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
+                if (_this6.user.role == 'patient') {
+                  if (_this6.patient_id != _this6.user.profile.id) {
+                    loading();
+
+                    _this6.$router.push('/404')["catch"](function () {});
+                  }
+                }
+
                 if (_this6.test_id && _this6.patient_id) {
                   _this6.isReview = true;
                 }
@@ -452,13 +463,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   if (response.data.data) {
                     _this6.test = response.data.data;
                   } else {
-                    _this6.$router.push('/404');
+                    loading();
+
+                    _this6.$router.push('/404')["catch"](function () {});
                   }
                 })["catch"](function (error) {
-                  _this6.$router.push('/404');
+                  loading();
+
+                  _this6.$router.push('/404')["catch"](function () {});
                 }));
 
-              case 3:
+              case 4:
               case "end":
                 return _context8.stop();
             }
@@ -512,10 +527,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return _api__WEBPACK_IMPORTED_MODULE_1__.showTest(this.test_id) // eslint-disable-next-line no-unused-vars
       .then(function (response) {
         if (response.data.data) {
-          if (response.data.data.patient_id != _this8.patient_id) {
-            _this8.$router.push('/404');
-          }
-
           _this8.test_review = response.data.data;
 
           _this8.test.test_pages.forEach(function (page, index1, array1) {
@@ -540,10 +551,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             });
           });
         } else {
-          _this8.$router.push('/404');
+          loading();
+
+          _this8.$router.push('/404')["catch"](function () {});
         }
       })["catch"](function (error) {
-        _this8.$router.push('/404');
+        loading();
+
+        _this8.$router.push('/404')["catch"](function () {});
       });
     },
     convertAnswers: function convertAnswers() {

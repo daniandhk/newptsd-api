@@ -36,6 +36,7 @@ export default {
         videocall_link: "",
         created_at: "",
         is_finished: true,
+        patient: null,
       },
 
       questionData: [],
@@ -181,13 +182,11 @@ export default {
     },
 
     async checkRole(){
-      this.patient = this.test_review.patient;
+      if(this.test_review.patient){
+        this.patient = this.test_review.patient;
+      }
 
       if(this.user.role == 'patient'){
-        if(this.patient_id != this.user.profile.id){
-          this.$router.push('/404')
-        }
-
         this.isPsychologist = false;
         this.disabled_bg.backgroundColor = "#F0F4F6";
 
@@ -252,7 +251,7 @@ export default {
 
     async loadHistory(){
       const params = this.getRequestParams(
-        null, this.patient_id, null
+        this.test_type, this.patient_id, null
       );
       return api.getTests(params)
         // eslint-disable-next-line no-unused-vars
@@ -262,7 +261,8 @@ export default {
           }
         })
         .catch(error => {
-          this.$router.push('/404')
+          loading();
+          this.$router.push('/404').catch(() => {});
         })
     },
 
@@ -280,11 +280,18 @@ export default {
           }
         })
         .catch(error => {
-          this.$router.push('/404')
+          loading();
+          this.$router.push('/404').catch(() => {});
         })
     },
 
     async checkAuth(){
+      if(this.user.role == 'patient'){
+        if(this.patient_id != this.user.profile.id){
+          loading();
+          this.$router.push('/404').catch(() => {});
+        }
+      }
       if(this.test_id && this.patient_id){
         this.isReview = true
       }
@@ -298,12 +305,13 @@ export default {
             this.test = response.data.data
           }
           else{
-            this.$router.push('/404')
+            loading();
+            this.$router.push('/404').catch(() => {});
           }
         })
         .catch(error => {
-
-          this.$router.push('/404')
+          loading();
+          this.$router.push('/404').catch(() => {});
         })
     },
 
@@ -336,9 +344,6 @@ export default {
         // eslint-disable-next-line no-unused-vars
         .then(response => {
           if(response.data.data){
-            if(response.data.data.patient_id != this.patient_id){
-              this.$router.push('/404')
-            }
             this.test_review = response.data.data
             this.test.test_pages.forEach((page, index1, array1) => {
               page.test_questions.forEach((question, index2, array2) => {
@@ -358,11 +363,13 @@ export default {
             });
           }
           else{
-            this.$router.push('/404')
+            loading();
+            this.$router.push('/404').catch(() => {});
           }
         })
         .catch(error => {
-          this.$router.push('/404')
+          loading();
+          this.$router.push('/404').catch(() => {});
         })
     },
 

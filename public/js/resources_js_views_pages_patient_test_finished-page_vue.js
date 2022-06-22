@@ -63,16 +63,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (response.data.data) {
           _this.test = response.data.data;
         } else {
-          _this.$router.push('/404');
+          loading();
+
+          _this.$router.push('/404')["catch"](function () {});
         }
 
         loading();
         _this.isLoading = false;
       })["catch"](function (error) {
         loading();
-        _this.isLoading = false;
 
-        _this.$router.push('/404');
+        _this.$router.push('/404')["catch"](function () {});
       });
     },
     onFinishButtonClick: function onFinishButtonClick() {

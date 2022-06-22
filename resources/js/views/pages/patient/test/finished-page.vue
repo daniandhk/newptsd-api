@@ -52,16 +52,15 @@ export default {
                     this.test = response.data.data
                 }
                 else{
-                    this.$router.push('/404')
+                    loading();
+                    this.$router.push('/404').catch(() => {});
                 }
                 loading();
                 this.isLoading = false;
             })
             .catch(error => {
                 loading();
-                this.isLoading = false;
-
-                this.$router.push('/404')
+                this.$router.push('/404').catch(() => {});
             })
     },
 

@@ -1,14 +1,5 @@
 <script>
-export default {
-  mounted() {
-      loading();
-  },
-};
-
-function loading() {
-  var x = document.getElementById("loading");
-  x.style.display = "none";
-}
+export default {};
 </script>
 
 <template>
