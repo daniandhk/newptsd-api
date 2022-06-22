@@ -149,3 +149,13 @@ Route::group([
     Route::put('/update/{id}', 'TestTypeController@update');
     Route::delete('/delete/{id}', 'TestTypeController@delete');
 });
+
+Route::group([
+    'prefix' => 'chat',
+    'namespace' => 'Api',
+], function ($router) {
+    Route::get('/messages', 'MessageController@fetchMessages');
+    Route::post('/messages', 'MessageController@sendMessage');
+    Route::get('/private-messages/{user}', 'MessageController@privateMessages')->name('privateMessages');
+    Route::post('/private-messages/{user}', 'MessageController@sendPrivateMessage')->name('privateMessages.store');
+});

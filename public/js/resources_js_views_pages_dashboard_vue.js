@@ -2968,7 +2968,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       user: _store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.getLoggedUser ? _store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.getLoggedUser : null,
       dashboard: {
         test_types: [],
-        psychologists: []
+        psychologist: ""
       },
       isTestSubmitted: [],
       isTestNull: [],
@@ -44058,9 +44058,6 @@ var render = function () {
                                                             {
                                                               staticClass:
                                                                 "text-dark",
-                                                              attrs: {
-                                                                href: "#",
-                                                              },
                                                             },
                                                             [
                                                               _vm._v(
@@ -44140,7 +44137,7 @@ var render = function () {
                                               )
                                                 ? _c("div", [
                                                     _c("hr", {
-                                                      staticClass: "my-4",
+                                                      staticClass: "mt-4 mb-3",
                                                     }),
                                                     _vm._v(" "),
                                                     _c(
@@ -44158,7 +44155,7 @@ var render = function () {
                                                           },
                                                           [
                                                             _vm._v(
-                                                              "\n                                Jadwal berikutnya: " +
+                                                              "\n                                Online berikutnya: " +
                                                                 _vm._s(
                                                                   _vm.getDate(
                                                                     _vm
@@ -44472,9 +44469,6 @@ var render = function () {
                                                                   {
                                                                     staticClass:
                                                                       "text-dark",
-                                                                    attrs: {
-                                                                      href: "#",
-                                                                    },
                                                                   },
                                                                   [
                                                                     _vm._v(

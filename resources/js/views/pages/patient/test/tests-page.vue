@@ -1384,6 +1384,7 @@ function loading() {
             <div
               v-for="(data, index) of historyData"
               :key="index"
+              class="mb-2"
             >
               <div class="mt-2">
                 <b-button

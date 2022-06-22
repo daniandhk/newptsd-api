@@ -15,7 +15,7 @@ export default {
       user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
       dashboard: {
           test_types: [],
-          psychologists: [],
+          psychologist: "",
       },
 
       isTestSubmitted: [],

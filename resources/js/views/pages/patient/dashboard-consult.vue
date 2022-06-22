@@ -488,7 +488,6 @@ function loading() {
                               <div class="media-body">
                                 <h5 class="text-truncate">
                                   <a
-                                    href="#"
                                     class="text-dark"
                                   >{{ dashboard.psychologist.full_name }}</a>
                                 </h5>
@@ -528,10 +527,10 @@ function loading() {
                               </div>
                             </div>
                             <div v-if="!isOnline(dashboard.psychologist)">
-                              <hr class="my-4">
+                              <hr class="mt-4 mb-3">
                               <div class="text-center">
                                 <div class="font-size-12">
-                                  Jadwal berikutnya: {{ getDate(dashboard.psychologist) ? getDate(dashboard.psychologist).day + ", " + formatDate(getDate(dashboard.psychologist).time_start, 'jam') + "-" + formatDate(getDate(dashboard.psychologist).time_end, 'jam') : "-" }}
+                                  Online berikutnya: {{ getDate(dashboard.psychologist) ? getDate(dashboard.psychologist).day + ", " + formatDate(getDate(dashboard.psychologist).time_start, 'jam') + "-" + formatDate(getDate(dashboard.psychologist).time_end, 'jam') : "-" }}
                                 </div>
                               </div>
                             </div>
@@ -643,7 +642,6 @@ function loading() {
                               <div class="media-body">
                                 <h5 class="text-truncate">
                                   <a
-                                    href="#"
                                     class="text-dark"
                                   >{{ psychologist.full_name }}</a>
                                 </h5>

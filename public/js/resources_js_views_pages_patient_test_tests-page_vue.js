@@ -29887,7 +29887,7 @@ var render = function () {
                     _c("label", [_vm._v(_vm._s(_vm.test.name))]),
                     _vm._v(" "),
                     _vm._l(_vm.historyData, function (data, index) {
-                      return _c("div", { key: index }, [
+                      return _c("div", { key: index, staticClass: "mb-2" }, [
                         _c(
                           "div",
                           { staticClass: "mt-2" },
