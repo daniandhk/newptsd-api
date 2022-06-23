@@ -11,7 +11,7 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
       
       statusData: [{name: "Orang tua", status: "Orang tua"}, {name: "Kerabat", status: "Kerabat"}, {name: "Lainnya", status: ""}],
       data_status: {name: "Orang tua", status: "Orang tua"},

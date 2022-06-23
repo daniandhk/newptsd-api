@@ -14,7 +14,7 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
       regions: regions,
       cities: [],
       data_province: "",

@@ -11,8 +11,8 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
-      backendUrl: process.env.VUE_APP_BACKEND_URL,
+      user: store.getters.getLoggedUser,
+      backendUrl: process.env.MIX_STORAGE_URL,
       dashboard: {
           test: {
               created_at: ""
@@ -529,7 +529,7 @@ function loading() {
                           <div class="card-body">
                             <div class="text-center">
                               <img
-                                :src="'/' + (dashboard.psychologist.image ? dashboard.psychologist.image : 'avatars/default_profile.jpg')"
+                                :src="backendUrl + (dashboard.psychologist.image ? dashboard.psychologist.image : 'avatars/default_profile.jpg')"
                                 alt
                                 class="avatar-lg mt-2 mb-4 rounded-circle"
                               >
@@ -683,7 +683,7 @@ function loading() {
                           <div class="card-body">
                             <div class="text-center">
                               <img
-                                :src="'/' + (psychologist.image ? psychologist.image : 'avatars/default_profile.jpg')"
+                                :src="backendUrl + (psychologist.image ? psychologist.image : 'avatars/default_profile.jpg')"
                                 alt
                                 class="avatar-lg mt-2 mb-4 rounded-circle"
                               >
@@ -833,7 +833,7 @@ function loading() {
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <img
               class="rounded-circle"
-              :src="'/' + (dataProfile ? (dataProfile.image ? dataProfile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg')"
+              :src="backendUrl + (dataProfile ? (dataProfile.image ? dataProfile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg')"
               alt="Header Avatar"
               width="120"
               height="120"

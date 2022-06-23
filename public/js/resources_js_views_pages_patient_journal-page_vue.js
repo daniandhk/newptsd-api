@@ -60,7 +60,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   data: function data() {
     return {
-      user: _store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.getLoggedUser ? _store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.getLoggedUser : null,
+      user: _store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.getLoggedUser,
       today: moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYYY-MM-DD'),
       date: moment__WEBPACK_IMPORTED_MODULE_3___default()().format('YYYY-MM-DD'),
       dashboard: {

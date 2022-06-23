@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
 
       today: moment().format('YYYY-MM-DD'),
       date: moment().format('YYYY-MM-DD'),

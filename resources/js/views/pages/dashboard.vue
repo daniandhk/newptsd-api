@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
       isPatient: false,
       isPsychologist: false,
     };

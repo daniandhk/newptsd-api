@@ -12,7 +12,7 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
       dashboard: {
           test_types: [],
           psychologist: "",

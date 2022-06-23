@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       user: store.getters.getLoggedUser,
-      backendUrl: process.env.VUE_APP_BACKEND_URL,
+      backendUrl: process.env.MIX_STORAGE_URL,
 
       test_type: this.$route.params.test_type,
       test_id: this.$route.params.test_id,
@@ -784,7 +784,7 @@ function loading() {
                         <div class="row justify-content-center mr-1 ml-1 mb-2">
                           <div class="col-sm-3 text-center">
                             <img
-                              :src="'/' + (patient.image ? patient.image : 'avatars/default_profile.jpg')"
+                              :src="backendUrl + (patient.image ? patient.image : 'avatars/default_profile.jpg')"
                               alt
                               class="avatar-md mt-2 rounded-circle"
                             >

@@ -11,8 +11,8 @@ export default {
   },
   data() {
     return {
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
-      backendUrl: process.env.VUE_APP_BACKEND_URL,
+      user: store.getters.getLoggedUser,
+      backendUrl: process.env.MIX_STORAGE_URL,
       avatarUrl: store.getters.getLoggedUser ? (store.getters.getLoggedUser.profile ? (store.getters.getLoggedUser.profile.image ? store.getters.getLoggedUser.profile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg'
     };
   },
@@ -106,7 +106,7 @@ export default {
           <template v-slot:button-content>
             <img
               class="rounded-circle header-profile-user"
-              :src="'/' + avatarUrl"
+              :src="backendUrl + avatarUrl"
               alt="Header Avatar"
             >
             <span

@@ -35,7 +35,7 @@ export default {
         }
       ],
 
-      user: store.getters.getLoggedUser ? store.getters.getLoggedUser : null,
+      user: store.getters.getLoggedUser,
       viewEmail: false,
       viewProfile: false,
       viewChatSchedule: false,

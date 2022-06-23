@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Psychologist;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class PsychologistController extends BaseController
@@ -42,10 +43,12 @@ class PsychologistController extends BaseController
             if (User::find($request->user_id)->email_verified_at != null) {
                 if($request->hasFile('avatar')){
                     $image = $request->file('avatar');
+                    $extension = $request->file('avatar')->extension();
                     $imageName = $request->user_id;
-                    $imageName = time().'_'.$imageName;
-                    $image->move(public_path('/avatars'), $imageName);
-                    $request['image'] = 'avatars/'.$imageName;
+                    $imageName = time().'_'.$imageName.'.'.$extension;
+                    $imagePath = 'avatars/'.$imageName;
+                    Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                    $request['image'] = $imagePath;
                 }
 
                 $psychologist = Psychologist::create($request->all());
@@ -76,15 +79,15 @@ class PsychologistController extends BaseController
 
             if($request->hasFile('avatar')){
                 if($psychologist->image){
-                    File::delete([
-                        public_path($psychologist->image),
-                    ]);
+                    Storage::disk(env('STORAGE_DRIVER', 'public'))->delete($psychologist->image);
                 }
                 $image = $request->file('avatar');
+                $extension = $request->file('avatar')->extension();
                 $imageName = $request->user_id;
-                $imageName = time().'_'.$imageName;
-                $image->move(public_path('/avatars'), $imageName);
-                $request['image'] = 'avatars/'.$imageName;
+                $imageName = time().'_'.$imageName.'.'.$extension;
+                $imagePath = 'avatars/'.$imageName;
+                Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                $request['image'] = $imagePath;
             }
 
             $psychologist->fill($request->all());

@@ -14,6 +14,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use stdClass;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class PatientController extends BaseController
@@ -48,10 +49,12 @@ class PatientController extends BaseController
             if (User::find($request->user_id)->email_verified_at != null) {
                 if($request->hasFile('avatar')){
                     $image = $request->file('avatar');
+                    $extension = $request->file('avatar')->extension();
                     $imageName = $request->user_id;
-                    $imageName = time().'_'.$imageName;
-                    $image->move(public_path('/avatars'), $imageName);
-                    $request['image'] = 'avatars/'.$imageName;
+                    $imageName = time().'_'.$imageName.'.'.$extension;
+                    $imagePath = 'avatars/'.$imageName;
+                    Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                    $request['image'] = $imagePath;
                 }
 
                 $patient = Patient::create($request->all());
@@ -80,15 +83,15 @@ class PatientController extends BaseController
 
             if($request->hasFile('avatar')){
                 if($patient->image){
-                    File::delete([
-                        public_path($patient->image),
-                    ]);
+                    Storage::disk(env('STORAGE_DRIVER', 'public'))->delete($patient->image);
                 }
                 $image = $request->file('avatar');
+                $extension = $request->file('avatar')->extension();
                 $imageName = $request->user_id;
-                $imageName = time().'_'.$imageName;
-                $image->move(public_path('/avatars'), $imageName);
-                $request['image'] = 'avatars/'.$imageName;
+                $imageName = time().'_'.$imageName.'.'.$extension;
+                $imagePath = 'avatars/'.$imageName;
+                Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                $request['image'] = $imagePath;
             }
 
             $patient->fill($request->all());
