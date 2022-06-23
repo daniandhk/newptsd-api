@@ -364,13 +364,16 @@ function loading() {
                             border: 0 none; 
                             color: #eee;"
                     >
-                    <div class="row">
+                    <div class="row mb-2">
                       <div class="col-lg-6 mt-4 mb-0 pb-0">
                         <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height:85%;">
                           <div style="color:#005C9A; font-weight: bolder;">
                             Tes terakhir dilakukan
                           </div>
-                          <div v-if="isTestNull[index]">
+                          <div 
+                            v-if="isTestNull[index]"
+                            class="mt-2"
+                          >
                             -
                           </div>
                           <div
@@ -454,7 +457,10 @@ function loading() {
                           <div style="color:#005C9A; font-weight: bolder;">
                             Hasil tes
                           </div>
-                          <div v-if="isTestNull[index]">
+                          <div 
+                            v-if="isTestNull[index]"
+                            class="mt-2"
+                          >
                             -
                           </div>
                           <div

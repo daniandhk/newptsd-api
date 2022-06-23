@@ -12,6 +12,14 @@ const baseRoutes = [
         },
         component: () => import('../../views/pages/dashboard')
     },
+    {
+        path: '/chat',
+        name: 'chat',
+        meta: {
+            authRequired: true,
+        },
+        component: () => import('../../views/pages/chat/index')
+    },
 ]
 
 const routes = baseRoutes.concat(etcRoutes, authRoutes, patientRoutes, psychologistRoutes);

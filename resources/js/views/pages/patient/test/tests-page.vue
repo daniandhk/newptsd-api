@@ -286,14 +286,14 @@ export default {
     },
 
     async checkAuth(){
-      if(this.user.role == 'patient'){
-        if(this.patient_id != this.user.profile.id){
-          loading();
-          this.$router.push('/404').catch(() => {});
-        }
-      }
       if(this.test_id && this.patient_id){
         this.isReview = true
+        if(this.user.role == 'patient'){
+          if(this.patient_id != this.user.profile.id){
+            loading();
+            this.$router.push('/404').catch(() => {});
+          }
+        }
       }
       const params = this.getRequestParams(
         this.test_type, null, null
@@ -453,7 +453,8 @@ export default {
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
         cancelButtonColor: "#f46a6a",
-        confirmButtonText: "Ya, akhiri tes!"
+        confirmButtonText: "Ya, akhiri tes!",
+        cancelButtonText: "Batalkan"
       }).then(result => {
         if (result.value) {
           this.inputTest();
@@ -638,7 +639,8 @@ export default {
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
         cancelButtonColor: "#f46a6a",
-        confirmButtonText: "Ya, akhiri video call!"
+        confirmButtonText: "Ya, akhiri video call!",
+        cancelButtonText: "Batalkan"
       }).then(result => {
         if (result.value) {
           this.inputConsult();

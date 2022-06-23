@@ -445,16 +445,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
-                if (_this6.user.role == 'patient') {
-                  if (_this6.patient_id != _this6.user.profile.id) {
-                    loading();
-
-                    _this6.$router.push('/404')["catch"](function () {});
-                  }
-                }
-
                 if (_this6.test_id && _this6.patient_id) {
                   _this6.isReview = true;
+
+                  if (_this6.user.role == 'patient') {
+                    if (_this6.patient_id != _this6.user.profile.id) {
+                      loading();
+
+                      _this6.$router.push('/404')["catch"](function () {});
+                    }
+                  }
                 }
 
                 params = _this6.getRequestParams(_this6.test_type, null, null);
@@ -473,7 +473,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this6.$router.push('/404')["catch"](function () {});
                 }));
 
-              case 4:
+              case 3:
               case "end":
                 return _context8.stop();
             }
@@ -657,7 +657,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
         cancelButtonColor: "#f46a6a",
-        confirmButtonText: "Ya, akhiri tes!"
+        confirmButtonText: "Ya, akhiri tes!",
+        cancelButtonText: "Batalkan"
       }).then(function (result) {
         if (result.value) {
           _this10.inputTest();
@@ -879,7 +880,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
         cancelButtonColor: "#f46a6a",
-        confirmButtonText: "Ya, akhiri video call!"
+        confirmButtonText: "Ya, akhiri video call!",
+        cancelButtonText: "Batalkan"
       }).then(function (result) {
         if (result.value) {
           _this14.inputConsult();

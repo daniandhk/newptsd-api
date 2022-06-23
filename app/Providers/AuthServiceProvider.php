@@ -27,16 +27,14 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        $frontEndUrl = env('FRONTEND_URL');
-        $this->setFrontEndUrlInResetPasswordEmail($frontEndUrl);
+        $this->setFrontEndUrlInResetPasswordEmail('/');
     }
 
     protected function setFrontEndUrlInResetPasswordEmail($frontEndUrl = '')
     {
         // update url in ResetPassword Email to frontend url
         ResetPassword::createUrlUsing(function ($user, string $token) use ($frontEndUrl) {
-            return Redirect::to($frontEndUrl . '/reset/' . $token);
+            return Redirect::to($frontEndUrl . 'reset-password/' . $token);
         });
     }
 

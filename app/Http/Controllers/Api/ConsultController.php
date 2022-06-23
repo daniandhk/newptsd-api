@@ -91,7 +91,7 @@ class ConsultController extends BaseController
             'videocall_date' => $request->date,
         ]);
 
-        if($request->not_json == true){
+        if($request->not_json && $request->not_json == true){
             return $consult;
         }
 
@@ -137,5 +137,33 @@ class ConsultController extends BaseController
             'date' => Carbon::now(),
             'answer_text' => $request->answer_text,
         ]);
+    }
+
+    public function finishConsult(Request $request, $consult_id) {
+        $consult = Consult::find($consult_id);
+        if(!$consult) {
+            return $this->errorNotFound('invalid consult id');
+        }
+
+        $consult->is_finished = true;
+        $consult->save();
+
+        if($request->is_consult == true){
+            $request->not_json = true;
+            $new_consult = json_decode(app('App\Http\Controllers\Api\ConsultController')->store($request));
+
+            if(is_array($request->notes) && sizeof($request->notes) > 0){
+                foreach($request->notes as $note){
+                    if($note['question_text']){
+                        NoteQuestion::create([
+                            'consult_id' => $new_consult->id,
+                            'question_text' => $note['question_text'],
+                        ]);
+                    }
+                }
+            }
+        }
+        
+        return $this->respond($consult);
     }
 }

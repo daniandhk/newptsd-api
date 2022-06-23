@@ -8,16 +8,6 @@ export default [
         name: '404',
         component: () => import('../../views/pages/utility/error-404')
     },
-    {
-        path :'/chat',
-        name: '404',
-        component: () => import('../../views/pages/etc/chat')
-    },
-    {
-        path :'/chat/{user_id}',
-        name: '404',
-        component: () => import('../../views/pages/etc/private-chat')
-    },
     // {
     //     path :'/about-us',
     //     name: 'about-us',

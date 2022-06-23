@@ -32,6 +32,7 @@ Route::prefix('auth')->group(function () {
     Route::get('email/resend', 'Api\VerificationController@resend')->middleware('auth:sanctum')->name('verification.resend');
 });
 
+// get()->middleware(['psychologist', 'patient', 'admin'])
 Route::group([
     'prefix' => 'test',
     'namespace' => 'Api',

@@ -30,15 +30,6 @@ class MessageController extends BaseController
         return $privateCommunication;
     }
 
-    public function sendMessage(Request $request) {
-        $message= $request->user()->messages()->create(['message'=>$request->message]);
-
-        broadcast(new MessageSent(auth()->user(),$message->load('user')))->toOthers();
-        
-        return response(['status'=>'Message sent successfully','message'=>$message]);
-
-    }
-
     public function sendPrivateMessage(Request $request,User $user) {
         $input=$request->all();
         $input['receiver_id']=$user->id;

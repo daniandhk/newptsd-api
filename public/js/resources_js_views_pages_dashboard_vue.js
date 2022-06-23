@@ -2586,6 +2586,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       haveConsult: false,
       isConsultToday: false,
       isLinkNull: true,
+      isConsultFinished: false,
+      isConsultLoaded: false,
       dataProfile: null,
       totalRows: 1,
       currentPage: 1,
@@ -2685,19 +2687,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.totalRows = this.dashboard.psychologists.total;
         }
 
+        this.isConsultLoaded = true;
+
         if (this.dashboard.consult) {
           this.haveConsult = true;
 
-          if (moment__WEBPACK_IMPORTED_MODULE_3___default()().isSameOrAfter(this.dashboard.consult.next_date)) {
-            this.isConsultToday = true;
+          if (this.dashboard.consult.is_finished) {
+            this.isConsultFinished = true;
           } else {
-            this.isConsultToday = false;
-          }
+            this.isConsultFinished = false;
 
-          if (this.dashboard.consult.consult_info.videocall_link) {
-            this.isLinkNull = false;
-          } else {
-            this.isLinkNull = true;
+            if (this.dashboard.consult.next_date) {
+              moment__WEBPACK_IMPORTED_MODULE_3___default()().isSameOrAfter(this.dashboard.consult.next_date) ? this.isConsultToday = true : this.isConsultToday = false;
+            } else {
+              this.isConsultToday = false;
+            }
+
+            if (this.dashboard.consult.consult_info.videocall_link) {
+              this.isLinkNull = false;
+            } else {
+              this.isLinkNull = true;
+            }
           }
         } else {
           this.haveConsult = false;
@@ -2742,13 +2752,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this4 = this;
 
       sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-        title: "Ingin berkonsultasi dengan <br /> " + data.full_name + "?",
-        text: "Anda dapat mengakhiri chat di menu chat.",
+        title: "Mulai konsultasi?",
+        html: "Anda akan berkonsultasi dengan<br>" + data.full_name,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
         cancelButtonColor: "#f46a6a",
-        confirmButtonText: "Ya, lanjutkan!"
+        confirmButtonText: "Ya, lanjutkan!",
+        cancelButtonText: "Batalkan"
       }).then(function (result) {
         if (result.value) {
           var relation = {
@@ -2757,7 +2768,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           };
           _api__WEBPACK_IMPORTED_MODULE_2__.createRelation(relation) // eslint-disable-next-line no-unused-vars
           .then(function (response) {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire("chat", "success"); // window.open("http://help-ptsd-chat.herokuapp.com/");
+            _this4.refreshData();
+
+            _this4.$bvModal.hide('profile'); // window.open("http://help-ptsd-chat.herokuapp.com/");
+
           })["catch"](function (error) {//
           });
         }
@@ -43669,7 +43683,7 @@ var render = function () {
         _vm._v(" "),
         !_vm.isLoading
           ? _c("div", { staticClass: "col-lg-8 pl-2 pr-2" }, [
-              _vm.haveConsult
+              _vm.isConsultLoaded
                 ? _c("div", [
                     _c(
                       "div",
@@ -43711,131 +43725,264 @@ var render = function () {
                                   },
                                 }),
                                 _vm._v(" "),
-                                _vm.isConsultToday
+                                _vm.haveConsult && !_vm.isConsultFinished
                                   ? _c("div", [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass: "row mt-4 mb-4",
-                                          staticStyle: {
-                                            display: "flex",
-                                            "justify-content": "center",
-                                          },
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            { staticStyle: { width: "50%" } },
-                                            [
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticClass: "mb-2",
-                                                  staticStyle: {
-                                                    color: "#005C9A",
-                                                    "font-weight": "bolder",
-                                                  },
+                                      _vm.isConsultToday
+                                        ? _c("div", [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "row mt-4 mb-4",
+                                                staticStyle: {
+                                                  display: "flex",
+                                                  "justify-content": "center",
                                                 },
-                                                [
-                                                  _vm._v(
-                                                    "\n                          Konsultasi ke-" +
-                                                      _vm._s(
-                                                        _vm.dashboard.consult
-                                                          .consult_index
-                                                      ) +
-                                                      "\n                        "
-                                                  ),
-                                                ]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticStyle: {
-                                                    "font-weight": "bold",
-                                                  },
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "\n                          " +
-                                                      _vm._s(
-                                                        _vm.formatDate(
-                                                          _vm.dashboard.consult
-                                                            .consult_info
-                                                            .videocall_date,
-                                                          "lengkap"
-                                                        )
-                                                      ) +
-                                                      "\n                        "
-                                                  ),
-                                                ]
-                                              ),
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            { staticStyle: { width: "50%" } },
-                                            [
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticStyle: {
-                                                    color: "#005C9A",
-                                                    "font-weight": "bolder",
-                                                  },
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "\n                          Tautan / Link\n                        "
-                                                  ),
-                                                ]
-                                              ),
-                                              _vm._v(" "),
-                                              _c("div", [
+                                              },
+                                              [
                                                 _c(
-                                                  "button",
+                                                  "div",
                                                   {
-                                                    staticClass:
-                                                      "btn btn-primary m-1 btn-sm mr-2",
                                                     staticStyle: {
-                                                      "background-color":
-                                                        "#005C9A",
-                                                      "min-width": "80%",
-                                                    },
-                                                    attrs: {
-                                                      type: "button",
-                                                      disabled:
-                                                        !_vm.isConsultToday ||
-                                                        _vm.isLinkNull,
-                                                    },
-                                                    on: {
-                                                      click: function ($event) {
-                                                        $event.stopPropagation()
-                                                        $event.preventDefault()
-                                                        return _vm.onGoToLinkButtonClick(
-                                                          _vm.dashboard.consult
-                                                            .consult_info
-                                                            .videocall_link
-                                                        )
-                                                      },
+                                                      width: "50%",
                                                     },
                                                   },
                                                   [
-                                                    _vm._v(
-                                                      "\n                            Video Call\n                          "
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass: "mb-2",
+                                                        staticStyle: {
+                                                          color: "#005C9A",
+                                                          "font-weight":
+                                                            "bolder",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            Konsultasi ke-" +
+                                                            _vm._s(
+                                                              _vm.dashboard
+                                                                .consult
+                                                                .consult_index
+                                                            ) +
+                                                            "\n                          "
+                                                        ),
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticStyle: {
+                                                          "font-weight": "bold",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            " +
+                                                            _vm._s(
+                                                              _vm.formatDate(
+                                                                _vm.dashboard
+                                                                  .consult
+                                                                  .consult_info
+                                                                  .videocall_date,
+                                                                "lengkap"
+                                                              )
+                                                            ) +
+                                                            "\n                          "
+                                                        ),
+                                                      ]
                                                     ),
                                                   ]
                                                 ),
-                                              ]),
-                                            ]
-                                          ),
-                                        ]
-                                      ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticStyle: {
+                                                      width: "50%",
+                                                    },
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticStyle: {
+                                                          color: "#005C9A",
+                                                          "font-weight":
+                                                            "bolder",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            Tautan / Link\n                          "
+                                                        ),
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c("div", [
+                                                      _c(
+                                                        "button",
+                                                        {
+                                                          staticClass:
+                                                            "btn btn-primary m-1 btn-sm mr-2",
+                                                          staticStyle: {
+                                                            "background-color":
+                                                              "#005C9A",
+                                                            "min-width": "80%",
+                                                          },
+                                                          attrs: {
+                                                            type: "button",
+                                                            disabled:
+                                                              !_vm.isConsultToday ||
+                                                              _vm.isLinkNull,
+                                                          },
+                                                          on: {
+                                                            click: function (
+                                                              $event
+                                                            ) {
+                                                              $event.stopPropagation()
+                                                              $event.preventDefault()
+                                                              return _vm.onGoToLinkButtonClick(
+                                                                _vm.dashboard
+                                                                  .consult
+                                                                  .consult_info
+                                                                  .videocall_link
+                                                              )
+                                                            },
+                                                          },
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                              Video Call\n                            "
+                                                          ),
+                                                        ]
+                                                      ),
+                                                    ]),
+                                                  ]
+                                                ),
+                                              ]
+                                            ),
+                                          ])
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      !_vm.isConsultToday
+                                        ? _c("div", [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "row mt-4 mb-4",
+                                                staticStyle: {
+                                                  display: "flex",
+                                                  "justify-content": "center",
+                                                },
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticStyle: {
+                                                      width: "50%",
+                                                    },
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass: "mb-2",
+                                                        staticStyle: {
+                                                          color: "#005C9A",
+                                                          "font-weight":
+                                                            "bolder",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            Konsultasi terakhir\n                          "
+                                                        ),
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c("div", [
+                                                      _vm._v(
+                                                        "\n                            " +
+                                                          _vm._s(
+                                                            _vm.formatDate(
+                                                              _vm.dashboard
+                                                                .consult
+                                                                .last_date,
+                                                              "tanggal"
+                                                            )
+                                                          ) +
+                                                          "\n                          "
+                                                      ),
+                                                    ]),
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticStyle: {
+                                                      width: "50%",
+                                                    },
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass: "mb-2",
+                                                        staticStyle: {
+                                                          color: "#005C9A",
+                                                          "font-weight":
+                                                            "bolder",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            Konsultasi ke-" +
+                                                            _vm._s(
+                                                              _vm.dashboard
+                                                                .consult
+                                                                .consult_index
+                                                            ) +
+                                                            "\n                          "
+                                                        ),
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticStyle: {
+                                                          "font-weight": "bold",
+                                                        },
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                            " +
+                                                            _vm._s(
+                                                              _vm.formatDate(
+                                                                _vm.dashboard
+                                                                  .consult
+                                                                  .next_date,
+                                                                "lengkap"
+                                                              )
+                                                            ) +
+                                                            "\n                          "
+                                                        ),
+                                                      ]
+                                                    ),
+                                                  ]
+                                                ),
+                                              ]
+                                            ),
+                                          ])
+                                        : _vm._e(),
                                     ])
                                   : _vm._e(),
                                 _vm._v(" "),
-                                !_vm.isConsultToday
+                                !_vm.haveConsult || _vm.isConsultFinished
                                   ? _c("div", [
                                       _c(
                                         "div",
@@ -43867,76 +44014,71 @@ var render = function () {
                                                 ]
                                               ),
                                               _vm._v(" "),
-                                              _c("div", [
-                                                _vm._v(
-                                                  "\n                          " +
-                                                    _vm._s(
-                                                      _vm.formatDate(
-                                                        _vm.dashboard.consult
-                                                          .last_date,
-                                                        "tanggal"
-                                                      )
-                                                    ) +
-                                                    "\n                        "
-                                                ),
-                                              ]),
+                                              _vm.isConsultFinished
+                                                ? _c("div", [
+                                                    _vm._v(
+                                                      "\n                          " +
+                                                        _vm._s(
+                                                          _vm.formatDate(
+                                                            _vm.dashboard
+                                                              .consult
+                                                              .next_date,
+                                                            "tanggal"
+                                                          )
+                                                        ) +
+                                                        "\n                        "
+                                                    ),
+                                                  ])
+                                                : _vm._e(),
+                                              _vm._v(" "),
+                                              !_vm.isConsultFinished
+                                                ? _c("div", [
+                                                    _vm._v(
+                                                      "\n                          -\n                        "
+                                                    ),
+                                                  ])
+                                                : _vm._e(),
                                             ]
                                           ),
                                           _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            { staticStyle: { width: "50%" } },
-                                            [
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticClass: "mb-2",
-                                                  staticStyle: {
-                                                    color: "#005C9A",
-                                                    "font-weight": "bolder",
-                                                  },
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "\n                          Konsultasi ke-" +
-                                                      _vm._s(
-                                                        _vm.dashboard.consult
-                                                          .consult_index
-                                                      ) +
-                                                      "\n                        "
-                                                  ),
-                                                ]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticStyle: {
-                                                    "font-weight": "bold",
-                                                  },
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "\n                          " +
-                                                      _vm._s(
-                                                        _vm.formatDate(
-                                                          _vm.dashboard.consult
-                                                            .next_date,
-                                                          "lengkap"
-                                                        )
-                                                      ) +
-                                                      "\n                        "
-                                                  ),
-                                                ]
-                                              ),
-                                            ]
-                                          ),
+                                          _vm._m(1),
                                         ]
                                       ),
                                     ])
                                   : _vm._e(),
                                 _vm._v(" "),
-                                _vm._m(1),
+                                _c("div", { staticClass: "mt-5" }, [
+                                  _c("hr", {
+                                    staticStyle: {
+                                      "margin-left": "-28px",
+                                      "margin-right": "-28px",
+                                      height: "2px",
+                                      "background-color": "#eee",
+                                      border: "0 none",
+                                      color: "#eee",
+                                    },
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "font-size-12",
+                                      staticStyle: { color: "grey" },
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                      " +
+                                          _vm._s(
+                                            !_vm.haveConsult ||
+                                              _vm.isConsultFinished
+                                              ? "Perlu video call?"
+                                              : "Ubah jadwal?"
+                                          ) +
+                                          " Silahkan kirim pesan ke psikolog!\n                    "
+                                      ),
+                                    ]
+                                  ),
+                                ]),
                               ]),
                             ]
                           ),
@@ -44925,6 +45067,27 @@ var render = function () {
                   ]),
                 ]
               ),
+              _vm._v(" "),
+              _c(
+                "div",
+                [
+                  _c(
+                    "b-button",
+                    {
+                      staticClass: "mt-2",
+                      staticStyle: { width: "100%" },
+                      attrs: { variant: "success", size: "md" },
+                      on: {
+                        click: function ($event) {
+                          return _vm.onPilihButtonClick(_vm.dataProfile)
+                        },
+                      },
+                    },
+                    [_vm._v("\n            Pilih untuk Konsultasi\n          ")]
+                  ),
+                ],
+                1
+              ),
             ],
           ],
           2
@@ -45009,27 +45172,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "mt-5" }, [
-      _c("hr", {
-        staticStyle: {
-          "margin-left": "-28px",
-          "margin-right": "-28px",
-          height: "2px",
-          "background-color": "#eee",
-          border: "0 none",
-          color: "#eee",
-        },
-      }),
-      _vm._v(" "),
+    return _c("div", { staticStyle: { width: "50%" } }, [
       _c(
         "div",
-        { staticClass: "font-size-12", staticStyle: { color: "grey" } },
+        {
+          staticClass: "mb-2",
+          staticStyle: { color: "#005C9A", "font-weight": "bolder" },
+        },
         [
           _vm._v(
-            "\n                      Ubah jadwal? Silahkan kirim pesan ke psikolog!\n                    "
+            "\n                          Konsultasi selanjutnya\n                        "
           ),
         ]
       ),
+      _vm._v(" "),
+      _c("div", { staticStyle: { "font-weight": "bold" } }, [
+        _vm._v(
+          "\n                          Hubungi Psikolog Anda\n                        "
+        ),
+      ]),
     ])
   },
   function () {
@@ -45636,7 +45797,7 @@ var render = function () {
                                   },
                                 }),
                                 _vm._v(" "),
-                                _c("div", { staticClass: "row" }, [
+                                _c("div", { staticClass: "row mb-2" }, [
                                   _c(
                                     "div",
                                     { staticClass: "col-lg-6 mt-4 mb-0 pb-0" },
@@ -45669,11 +45830,15 @@ var render = function () {
                                           ),
                                           _vm._v(" "),
                                           _vm.isTestNull[index]
-                                            ? _c("div", [
-                                                _vm._v(
-                                                  "\n                          -\n                        "
-                                                ),
-                                              ])
+                                            ? _c(
+                                                "div",
+                                                { staticClass: "mt-2" },
+                                                [
+                                                  _vm._v(
+                                                    "\n                          -\n                        "
+                                                  ),
+                                                ]
+                                              )
                                             : _vm._e(),
                                           _vm._v(" "),
                                           !_vm.isTestNull[index]
@@ -45841,7 +46006,7 @@ var render = function () {
                                         ),
                                         _vm._v(" "),
                                         _vm.isTestNull[index]
-                                          ? _c("div", [
+                                          ? _c("div", { staticClass: "mt-2" }, [
                                               _vm._v(
                                                 "\n                          -\n                        "
                                               ),

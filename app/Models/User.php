@@ -69,4 +69,16 @@ class User extends Authenticatable
     public function messages() {
         return $this->hasMany(Message::class);
     }
+
+    public function isAdmin() {
+        return ($this->role == 'admin');
+    }
+
+    public function isPsychologist() {
+        return ($this->role == 'psychologist');
+    }
+
+    public function isPatient() {
+        return ($this->role == 'patient');
+    }
 }

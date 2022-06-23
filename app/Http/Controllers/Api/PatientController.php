@@ -48,7 +48,7 @@ class PatientController extends BaseController
             if (User::find($request->user_id)->email_verified_at != null) {
                 if($request->hasFile('avatar')){
                     $image = $request->file('avatar');
-                    $imageName = $request->image_name;
+                    $imageName = $request->user_id;
                     $imageName = time().'_'.$imageName;
                     $image->move(public_path('/avatars'), $imageName);
                     $request['image'] = 'avatars/'.$imageName;
@@ -85,7 +85,7 @@ class PatientController extends BaseController
                     ]);
                 }
                 $image = $request->file('avatar');
-                $imageName = $request->image_name;
+                $imageName = $request->user_id;
                 $imageName = time().'_'.$imageName;
                 $image->move(public_path('/avatars'), $imageName);
                 $request['image'] = 'avatars/'.$imageName;
