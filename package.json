@@ -1,5 +1,11 @@
 {
     "private": true,
+    "name": "help-ptsd",
+    "description": "helpPTSD",
+    "version": "1.0.0",
+    "engines": {
+        "node": "16.x"
+    },
     "scripts": {
         "dev": "npm run development",
         "development": "mix",
@@ -8,7 +14,8 @@
         "hot": "mix watch --hot",
         "prod": "npm run production",
         "production": "mix --production",
-        "heroku-postbuild": "npm run prod"
+        "heroku-postbuild": "npm run prod",
+        "postinstall": "npm run prod"
     },
     "devDependencies": {
         "@fullcalendar/bootstrap": "^5.4.0",
@@ -71,10 +78,6 @@
         "vuex": "^3.5.1"
     },
     "dependencies": {
-        "@vue/cli-plugin-babel": "^5.0.6",
-        "@vue/cli-plugin-eslint": "^5.0.6",
-        "@vue/cli-service": "^5.0.6",
-        "@vue/runtime-dom": "latest",
         "autoprefixer": "^10.4.5",
         "babel-eslint": "^10.1.0",
         "eslint": "^6.7.2",
