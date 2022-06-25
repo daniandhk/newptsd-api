@@ -18,7 +18,11 @@ export default {
   data() {
     return {
       user: store.getters.getLoggedUser,
+      tabIndex: 0,
     };
+  },
+  mounted() {
+    this.refreshData(0);
   },
   computed: {
     notification() {
@@ -43,6 +47,10 @@ export default {
           break
       }
     },
+
+    changePage(value) {
+      this.tabIndex = value
+    }
   },
 };
 
@@ -80,6 +88,7 @@ function loading() {
         style="align-items: center; justify-content: center;"
         :active-nav-item-class="'tab-active-class'"
         @input="refreshData"
+        v-model="tabIndex"
       >
         <b-tab
           title-link-class="p-3"
@@ -98,7 +107,10 @@ function loading() {
               </p>
             </div>
           </template>
-          <Test ref="Test" />
+          <Test 
+            ref="Test"
+            @changePage="changePage"
+          />
         </b-tab>
         <b-tab
           title-link-class="p-3"

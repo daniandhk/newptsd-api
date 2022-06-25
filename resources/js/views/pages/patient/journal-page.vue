@@ -301,7 +301,7 @@ function loading() {
                   <p
                     style="color:#005C9A; font-size:14px; text-align:center;"
                   >
-                    Membuat jurnal pribadi dan mendapatkan catatan rekomendasi kegiatan dari psikolog selama jeda konsultasi.
+                    Membuat jurnal harian dan mendapatkan catatan rekomendasi kegiatan dari psikolog selama jeda konsultasi.
                   </p>
                 </div>
               </div>

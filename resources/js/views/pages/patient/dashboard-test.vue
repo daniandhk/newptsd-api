@@ -18,6 +18,12 @@ export default {
           psychologist: "",
       },
 
+      dataTestType: {
+        name: "",
+        description: "",
+        delay_days: 0
+      },
+
       isTestSubmitted: [],
       isTestNull: [],
       isScheduleNull: [],
@@ -143,9 +149,56 @@ export default {
         return moment(date).locale('id').format('dddd')
       }
         
-    }
+    },
 
-    //
+    showDescPopup(test_type){
+      this.dataTestType = test_type;
+      this.$bvModal.show('modal-testtype');
+    },
+
+    showCallPopup(){
+      this.$bvModal.show('modal-call');
+    },
+
+    goToCard(index){
+      let id = 'card-' + index.toString();
+      if(!this.isLoading){
+        document.getElementById(id).scrollIntoView();
+      }
+    },
+
+    goToMenu(index){
+      this.$emit('changePage', index);
+      this.$bvModal.hide('modal-call');
+    },
+
+    copyPhone(number){
+      navigator.clipboard.writeText(number).then(
+        function(){
+            alert("Nomor tersalin!"); // success 
+        })
+      .catch(
+         function() {
+            alert("Error!"); // error
+      });
+    },
+
+    goToWhatsapp(number){
+      number = number.replace(/\s+/g, '');
+      if(number.charAt(0) == '+'){
+        number = number.substring(1);
+      }
+      if(number.charAt(0) == '0'){
+        number = number.substring(1);
+        number = "62" + number.substring(0, number.length-1);
+      }
+      let url = "https://wa.me/" + number;
+      window.open(url);
+    },
+
+    goToSettingsMenu(){
+      //this.$router.push({name: 'settings'});
+    },
   },
 };
 
@@ -204,10 +257,16 @@ function loading() {
                   <div
                     v-for="(test_type, index) in dashboard.test_types"
                     :key="index"
-                    style="color:#005C9A; font-size:14px; text-align:center;"
+                    style="font-size:14px; text-align:center;"
                     class="mt-1"
                   >
-                    - {{ test_type.name }}
+                    <div class="hover-effect">
+                      - <a
+                          href="#"
+                          style="color:#005C9A;"
+                          @click="goToCard(index)"
+                        >{{ test_type.name }}</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -224,16 +283,20 @@ function loading() {
             class="mb-4"
           >
             <div
+              :id="'card-' + index"
               class="card"
               style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
             >
               <div class="card-body mt-2 ml-2 mr-2 pb-2">
                 <div class="text-center form-group mb-0">
-                  <h5
-                    class="text-center font-size-15 text-uppercase"
-                    style="color:#005C9A;"
-                  >
-                    Tes {{ test_type.name }}
+                  <h5 class="text-center font-size-15 text-uppercase">
+                    <div class="hover-effect" style="display:inline-block">
+                      <a
+                        href="#"
+                        style="color:#005C9A;"
+                        @click="showDescPopup(test_type)"
+                      >Tes {{ test_type.name }}</a>
+                    </div>
                   </h5>
                   <hr
                     style="margin-left: -28px; 
@@ -254,7 +317,7 @@ function loading() {
                         </div>
                         <div v-if="isScheduleNull[index]">
                           <div style="font-weight:bold;">
-                            Harap tunggu informasi Jadwal dan tautan / link Video Call untuk verifikasi jawaban tes dengan psikolog.
+                            Harap tunggu informasi jadwal dan tautan / link Video Call untuk verifikasi jawaban tes dengan psikolog.
                           </div>
                         </div>
                         <div v-if="!isScheduleNull[index]">
@@ -310,18 +373,9 @@ function loading() {
                                 >
                                   Ubah jadwal? Silahkan kirim pesan ke psikolog!
                                 </div>
-                                <!-- <hr
-                              style="margin-left: -28px; 
-                            margin-right: -28px; 
-                            height: 2px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;"
-                            > -->
                               </div>
                             </div>
                           </div>
-                          <!-- Card psikolog -->
                         </div>
                       </div>
                       <div
@@ -365,8 +419,8 @@ function loading() {
                             color: #eee;"
                     >
                     <div class="row mb-2">
-                      <div class="col-lg-6 mt-4 mb-0 pb-0">
-                        <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height:85%;">
+                      <div class="col-xl-6 mt-3">
+                        <div style="display: flex; align-items: center; flex-direction: column; height:85%;">
                           <div style="color:#005C9A; font-weight: bolder;">
                             Tes terakhir dilakukan
                           </div>
@@ -421,8 +475,9 @@ function loading() {
                                   style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
                                 >
                                   <div
-                                    class="card logo-card h-100"
+                                    class="card hover-effect h-100"
                                     style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 50%; background-color:#005C9A"
+                                    @click="showCallPopup()"
                                   >
                                     <div
                                       class="card-body"
@@ -452,8 +507,8 @@ function loading() {
                           </div>
                         </div>
                       </div>
-                      <div class="col-lg-6 mt-4">
-                        <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height:85%;">
+                      <div class="col-xl-6 mt-3">
+                        <div style="display: flex; align-items: center; flex-direction: column; height:85%;">
                           <div style="color:#005C9A; font-weight: bolder;">
                             Hasil tes
                           </div>
@@ -465,7 +520,7 @@ function loading() {
                           </div>
                           <div
                             v-if="!isTestNull[index]"
-                            style="width: 100%; height: 100%"
+                            style="width: 80%; height: 100%"
                           >
                             <div
                               class="card h-100 mt-2 mb-1"
@@ -475,7 +530,7 @@ function loading() {
                                 class="card-body"
                                 style="display: flex; align-items: center; justify-content: center;"
                               >
-                                <div style="width: 80%; height: 100%;">
+                                <div style="width: 100%; height: 100%;">
                                   <p
                                     style="font-size:16px; text-align:center; font-weight: bold;"
                                   >
@@ -512,6 +567,122 @@ function loading() {
         </div>
       </div>
     </div>
+
+    <div name="modalTestType">
+      <b-modal 
+        id="modal-testtype" 
+        size="md" 
+        :title="'Tes ' + dataTestType.name" 
+        hide-footer 
+        title-class="font-18"
+      >
+        <template v-slot:title>
+          <a class="font-weight-bold active">Jenis Tes</a>
+        </template>
+        <template>
+          <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <label class="mb-0">Deskripsi tes:</label>
+            <p>{{dataTestType.description}}</p>
+            <p><b>Jeda tiap tes: </b>{{ dataTestType.delay_days }} hari</p>
+          </div>
+        </template>
+      </b-modal>
+    </div>
+
+    <div name="modalCall">
+      <b-modal 
+        id="modal-call" 
+        size="md" 
+        title="Hubungi" 
+        hide-footer 
+        title-class="font-18"
+      >
+        <template v-slot:title>
+          <a class="font-weight-bold active">Hubungi</a>
+        </template>
+        <template>
+          <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <label 
+              class="mb-0"
+              style="color:#005C9A;"
+            >Psikolog</label>
+            <div class="col-6 mt-1">
+              <b-button
+                variant="outline-secondary"
+                size="sm"
+                style="width: 100%;"
+                @click="goToMenu(1)"
+              >
+                Ke Halaman Konsultasi
+              </b-button>
+            </div>
+            <label 
+              class="mb-0 mt-4"
+              style="color:#005C9A;"
+            >Wali Anda</label>
+            <div v-if="user.profile.guardian" style="width: 100%;display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-light"
+                  size="sm"
+                  style="width: 100%;"
+                >
+                  <p class="mb-0">
+                    <b class="font-size-18">{{ user.profile.guardian.full_name }}</b>
+                  </p>
+                  <p class="mb-0 font-size-14">
+                    {{ user.profile.guardian.status }}
+                  </p>
+                </b-button>
+              </div>
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-dark"
+                  size="sm"
+                  style="width: 100%;"
+                  @click="copyPhone(user.profile.guardian.phone.toString())"
+                >
+                  <b-icon 
+                    icon="files"
+                    style=""
+                  /><b> {{ user.profile.guardian.phone.toString() }}</b>
+                </b-button>
+              </div>
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-success"
+                  size="sm"
+                  style="width: 100%;"
+                  @click="goToWhatsapp(user.profile.guardian.phone.toString())"
+                >
+                  <b-icon 
+                    icon="whatsapp"
+                  /> WhatsApp
+                </b-button>
+              </div>
+              <div 
+                v-if="user.profile.guardian.is_available"
+                class="mt-3"
+                style="font-size: 12px;"
+              >
+              <p>*psikolog mengetahui informasi wali Anda, ubah izin di <a
+                                                                          href="javascript:void(0);"
+                                                                          style="color:#505d69;"
+                                                                          @click="goToSettingsMenu()"
+                                                                        ><b>Pengaturan Akun</b></a></p>
+              </div>
+            </div>
+            <div v-if="!user.profile.guardian">
+              <p class="mt-1">Submit data wali Anda di <a
+                                                          href="javascript:void(0);"
+                                                          style="color:#505d69;"
+                                                          @click="goToSettingsMenu()"
+                                                        ><b>Pengaturan Akun</b></a>.</p>
+            </div>
+          </div>
+        </template>
+      </b-modal>
+    </div>
   </div>
 </template>
 
@@ -533,14 +704,13 @@ function loading() {
   font-size: 24px;
 }
 
-.logo-card {
+.hover-effect {
     transition: all 0.2s ease;
-    cursor: pointer
+    cursor: pointer;
 }
 
-.logo-card:hover {
-    box-shadow: 5px 6px 6px 2px #e9ecef;
-    transform: scale(1.1)
+.hover-effect:hover {
+    transform: scale(1.1);
 }
 
 </style>

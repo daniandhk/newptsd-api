@@ -733,7 +733,6 @@ function loading() {
     </div>
     <div
       id="main-page"
-      class="row"
       style="max-width:820px; min-height: 100vh; display: flex; flex-direction: column; background-color: #005C9A;"
     >
       <div v-if="!isLoading">
@@ -840,7 +839,7 @@ function loading() {
                             href="javascript:void(0);"
                             style="color:#505d69;"
                             @click="showHistory()"
-                          >Cek riwayat tes</a>
+                          ><b>Lihat riwayat tes</b></a>
                         </div>
                       </div>
                     </div>
@@ -871,6 +870,7 @@ function loading() {
                                 :first-day-of-week="1" 
                                 lang="en"
                                 type="datetime"
+                                placeholder="YYYY-MM-DD HH:mm:ss"
                                 :clearable="false"
                                 :show-time-panel="showTimePanel"
                                 :disabled="isReview && (!isPsychologist || !isRelated)"
@@ -1004,6 +1004,7 @@ function loading() {
                                     :first-day-of-week="1" 
                                     lang="en"
                                     type="datetime"
+                                    placeholder="YYYY-MM-DD HH:mm:ss"
                                     :clearable="false"
                                     :show-time-panel="showTimePanel"
                                     :disabled="isReview && (!isPsychologist || !isRelated)"

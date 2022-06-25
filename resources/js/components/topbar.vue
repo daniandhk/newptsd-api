@@ -125,7 +125,7 @@ export default {
             href="/settings/change-password"
           >
             <i class="ri-settings-2-line align-middle mr-1" />
-            Pengaturan
+            Pengaturan Akun
           </a>
           <div class="dropdown-divider" />
           <a

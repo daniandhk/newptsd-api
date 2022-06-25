@@ -47,7 +47,7 @@ class PsychologistController extends BaseController
                     $imageName = $request->user_id;
                     $imageName = time().'_'.$imageName.'.'.$extension;
                     $imagePath = 'avatars/'.$imageName;
-                    Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                    Storage::putFileAs('', $image, $imagePath);
                     $request['image'] = $imagePath;
                 }
 
@@ -79,14 +79,14 @@ class PsychologistController extends BaseController
 
             if($request->hasFile('avatar')){
                 if($psychologist->image){
-                    Storage::disk(env('STORAGE_DRIVER', 'public'))->delete($psychologist->image);
+                    Storage::delete($psychologist->image);
                 }
                 $image = $request->file('avatar');
                 $extension = $request->file('avatar')->extension();
                 $imageName = $request->user_id;
                 $imageName = time().'_'.$imageName.'.'.$extension;
                 $imagePath = 'avatars/'.$imageName;
-                Storage::disk(env('STORAGE_DRIVER', 'public'))->put($imagePath, file_get_contents($image));
+                Storage::putFileAs('', $image, $imagePath);
                 $request['image'] = $imagePath;
             }
 

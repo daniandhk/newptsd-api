@@ -465,10 +465,10 @@ function loading() {
                             class="mb-2"
                             style="color:#005C9A; font-weight: bolder;"
                           >
-                            Konsultasi selanjutnya
+                            Konsultasi berikutnya
                           </div>
                           <div style="font-weight:bold;">
-                            Hubungi Psikolog Anda
+                            Harap hubungi psikolog
                           </div>
                         </div>
                       </div>

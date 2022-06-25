@@ -76,7 +76,7 @@ export default {
             // eslint-disable-next-line no-unused-vars
             .then(response => {
               loading();
-              window.location.reload();
+              this.$emit('openGuardian', true);
             })
             .catch(error => {
               loading();
@@ -140,16 +140,19 @@ function loading() {
         role="status"
       />
     </div>
-    <div style="min-height: 100%; display: flex;">
+    <div
+      id="main-page"
+      style="max-width:720px; min-height: 100vh; display: flex; flex-direction: column;"
+    >
       <div
         class="card h-100 m-5"
         style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 18px; display: flex; justify-content: center; align-items: center;"
       >
-        <div
-          class="card-body"
-          style="max-width:548px"
-        >
-          <div class="text-center form-group mb-0">
+        <div class="card-body">
+          <div 
+            id="card-body" 
+            class="text-center form-group mb-0"
+          >
             <div
               class="mr-5 ml-5 mt-2 mb-2"
               style="flex-direction: column;"
@@ -204,16 +207,32 @@ function loading() {
                     style="min-width:260px;"
                     @submit.prevent="tryToRegister"
                   >
-                    <div
-                      class="col-md-12"
-                      style="padding:0!important; margin:0!important"
-                    >
                       <div
-                        class="form-group text-center col-md-12"
+                        class="col-md-12"
+                        style="padding:0!important; margin:0!important"
+                      >
+                        <div
+                        class="col-md-12"
+                        style="padding:0!important; margin:0!important"
+                      >
+                        <hr
+                          class="mb-2"
+                          style="margin-left: -76px;margin-right: -76px;"
+                        >
+                        <label
+                          class="mb-0"
+                          style="color:#005C9A;"
+                        >Foto Profil</label>
+                        <hr
+                          class="mt-2"
+                          style="margin-left: -76px;margin-right: -76px;"
+                        >
+                      </div>
+                      <div
+                        class="form-group text-center col-md-12 mb-4"
                         style="padding:0!important; padding-left:2px!important; padding-right:2px!important;"
                       >
                         <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                          <label for="image">Foto Profil</label>
                           <div style="justify-content: center;">
                             <croppa v-model="croppa" />
                           </div>
@@ -284,11 +303,24 @@ function loading() {
                             </div>
                           </div>
                         </div>
-                        <hr
-                          class="mb-4 mt-4"
-                          style="margin-left: -76px;margin-right: -76px;"
-                        >
                       </div>
+                    </div>
+                    <div
+                      class="col-md-12"
+                      style="padding:0!important; margin:0!important"
+                    >
+                      <hr
+                        class="mb-2"
+                        style="margin-left: -76px;margin-right: -76px;"
+                      >
+                      <label
+                        class="mb-0"
+                        style="color:#005C9A;"
+                      >Data Diri</label>
+                      <hr
+                        class="mt-2"
+                        style="margin-left: -76px;margin-right: -76px;"
+                      >
                     </div>
                     <div
                       class="row col-md-12"
@@ -345,6 +377,7 @@ function loading() {
                         :first-day-of-week="1" 
                         lang="en"
                         value-type="format"
+                        placeholder="YYYY-MM-DD"
                         :class="{ 'is-invalid': submitted && $v.profileData.datebirth.$error }"
                       />
                       <div
@@ -356,7 +389,7 @@ function loading() {
                     </div>
 
                     <div
-                      class="form-group mb-3 text-left"
+                      class="form-group text-left"
                       style="padding:0!important; padding-left:2px!important; padding-right:2px!important;"
                     >
                       <label for="phone">No. Telepon</label>
@@ -374,7 +407,23 @@ function loading() {
                         No. Telepon harus diisi!
                       </div>
                     </div>
-
+                    <div
+                      class="col-md-12"
+                      style="padding:0!important; margin:0!important; padding-top:2px!important;"
+                    >
+                      <hr
+                        class="mb-2 mt-4"
+                        style="margin-left: -76px;margin-right: -76px;"
+                      >
+                      <label
+                        class="mb-0"
+                        style="color:#005C9A;"
+                      >Tempat Tinggal</label>
+                      <hr
+                        class="mt-2"
+                        style="margin-left: -76px;margin-right: -76px;"
+                      >
+                    </div>
                     <div
                       class="row col-md-12"
                       style="padding:0!important; margin:0!important"
@@ -446,5 +495,15 @@ function loading() {
 <style scoped>
   .datepicker-div >>> input {
     height:38.64px;
+  }
+
+  @media only screen and (min-width: 720px) { 
+    #main-page { 
+      width: 720px; 
+    }
+
+    #card-body { 
+      width: 584px; 
+    }
   }
 </style>

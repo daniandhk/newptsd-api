@@ -146,16 +146,19 @@ function loading() {
         role="status"
       />
     </div>
-    <div style="min-height: 100%; display: flex;">
+    <div
+      id="main-page"
+      style="max-width:720px; min-height: 100vh; display: flex; flex-direction: column;"
+    >
       <div
         class="card h-100 m-5"
         style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 18px; display: flex; justify-content: center; align-items: center;"
       >
-        <div
-          class="card-body"
-          style="max-width:638px"
-        >
-          <div class="text-center form-group mb-0">
+        <div class="card-body">
+          <div
+            id="card-body" 
+            class="text-center form-group mb-0"
+          >
             <div
               class="mr-5 ml-5 mt-2 mb-2"
               style="flex-direction: column;"
@@ -220,7 +223,7 @@ function loading() {
                       >
                       <label
                         class="mb-0"
-                        style="color:black;"
+                        style="color:#005C9A;"
                       >Foto Profil</label>
                       <hr
                         class="mt-2"
@@ -315,7 +318,7 @@ function loading() {
                       >
                       <label
                         class="mb-0"
-                        style="color:black;"
+                        style="color:#005C9A;"
                       >Data Diri</label>
                       <hr
                         class="mt-2"
@@ -353,6 +356,7 @@ function loading() {
                         :first-day-of-week="1" 
                         lang="en"
                         value-type="format"
+                        placeholder="YYYY-MM-DD"
                         :class="{ 'is-invalid': submitted && $v.profileData.datebirth.$error }"
                       />
                       <div
@@ -397,6 +401,7 @@ function loading() {
                           type="year"
                           value-type="format"
                           format="YYYY"
+                          placeholder="YYYY"
                           :class="{ 'is-invalid': submitted && $v.profileData.graduation_year.$error }"
                         />
                         <div 
@@ -418,7 +423,7 @@ function loading() {
                       >
                       <label
                         class="mb-0"
-                        style="color:black;"
+                        style="color:#005C9A;"
                       >Tempat Kerja</label>
                       <hr
                         class="mt-2"
@@ -549,5 +554,15 @@ function loading() {
 <style scoped>
   .datepicker-div >>> input {
     height:38.64px;
+  }
+
+  @media only screen and (min-width: 720px) { 
+    #main-page { 
+      width: 720px; 
+    }
+
+    #card-body { 
+      width: 584px; 
+    }
   }
 </style>

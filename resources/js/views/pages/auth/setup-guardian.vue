@@ -84,6 +84,10 @@ export default {
             this.is_other = false
         }
     },
+
+    openGuardian(boolean){
+      this.$emit('openGuardian', boolean);
+    }
   }
 };
 function loading() {
@@ -263,40 +267,31 @@ function loading() {
                       <span class="text-muted">Izin dapat diubah kapan saja.</span>
                     </div>
 
-                    <div class="mt-4 text-center">
-                      <button
-                        class="btn btn-primary w-md waves-effect waves-light"
-                        style="width:100%; background-color:#005C9A;"
-                        type="submit"
-                      >
-                        Simpan
-                      </button>
+                    <div 
+                      class="row mt-4 text-center"
+                      style="padding-left: 1px; padding-right: 1px;"
+                    >
+                      <div class="col-md-6">
+                        <button
+                          class="btn btn-secondary w-md waves-effect waves-light"
+                          style="width:100%;"
+                          @click="openGuardian(false)"
+                        >
+                          Lewati
+                        </button>
+                      </div>
+                      <div class="col-md-6">
+                        <button
+                          class="btn btn-primary w-md waves-effect waves-light"
+                          style="width:100%; background-color:#005C9A;"
+                          type="submit"
+                        >
+                          Simpan
+                        </button>
+                      </div>
                     </div>
                   </form>
-                  <!-- <div class="m-3 text-center">
-                    <p>Atau</p>
-                  </div>
-                  <div class="mb-4 text-center">
-                    <button
-                      class="btn btn-danger w-md waves-effect waves-light"
-                      style="width:100%;"
-                      @click="onOrButtonClick()"
-                    >
-                      Log Out
-                    </button>
-                  </div> -->
                 </div>
-
-                <!-- <div class="mt-5 text-center">
-                        <a
-                          href="/about-us"
-                          style="text-decoration: none; color: inherit;"
-                        >
-                          <p>
-                            © 2021 Informatics Lab.
-                          </p>
-                        </a>
-                      </div> -->
               </div>
             </div>
           </div>

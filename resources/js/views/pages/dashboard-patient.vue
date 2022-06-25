@@ -45,25 +45,22 @@ export default {
         if(this.user.email_verified_at == null){
           this.viewEmail = true
           this.viewProfile = false
-          this.viewGuardian = false
         }
         else if(this.user.profile == null){
           this.viewEmail = false
           this.viewProfile = true
-          this.viewGuardian = false
-        }
-        else if(this.user.profile.guardian == null){
-          this.viewEmail = false
-          this.viewProfile = false
-          this.viewGuardian = true
         }
         else{
           this.viewEmail = false
           this.viewProfile = false
-          this.viewGuardian = false
         }
       }
     },
+
+    openGuardian(boolean) {
+      this.viewProfile = false
+      this.viewGuardian = boolean
+    }
   },
 };
 </script>
@@ -76,8 +73,14 @@ export default {
       class="popup-body"
     >
       <ConfirmEmail v-if="viewEmail" />
-      <SetupProfile v-if="viewProfile" />
-      <SetupGuardian v-if="viewGuardian" />
+      <SetupProfile 
+        v-if="viewProfile"
+        @openGuardian="openGuardian"
+      />
+      <SetupGuardian 
+        v-if="viewGuardian"
+        @openGuardian="openGuardian"
+      />
     </div>
     <MainPage v-if="!viewEmail && !viewProfile && !viewGuardian" />
   </div>
