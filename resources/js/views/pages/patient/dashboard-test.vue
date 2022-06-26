@@ -184,16 +184,18 @@ export default {
     },
 
     goToWhatsapp(number){
+      loading();
       number = number.replace(/\s+/g, '');
       if(number.charAt(0) == '+'){
         number = number.substring(1);
       }
       if(number.charAt(0) == '0'){
         number = number.substring(1);
-        number = "62" + number.substring(0, number.length-1);
+        number = "62" + number.substring(0, number.length);
       }
       let url = "https://wa.me/" + number;
       window.open(url);
+      loading();
     },
 
     goToSettingsMenu(){

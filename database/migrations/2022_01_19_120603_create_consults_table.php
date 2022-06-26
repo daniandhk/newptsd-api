@@ -19,7 +19,7 @@ class CreateConsultsTable extends Migration
             $table->string('consult_index');
             $table->datetime('last_date')->nullable();
             $table->datetime('next_date')->nullable();
-            $table->boolean('is_finished');
+            $table->boolean('is_finished')->default(0)->change();
             $table->timestamps();
 
             $table->foreign('relation_id')

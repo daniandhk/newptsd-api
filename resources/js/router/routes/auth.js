@@ -64,14 +64,37 @@ export default [
             },
         },
     },
-    // {
-    //     path: '/forgot-password',
-    //     name: 'forgot-password',
-    //     component: () => import('../../views/pages/auth/forgot-password'),
-    //     meta: {
-    //         //cek login
-    //     },
-    // },
+    {
+        path: '/forgot-password',
+        name: 'forgot-password',
+        component: () => import('../../views/pages/auth/forgot-password'),
+        meta: {
+            beforeResolve(routeTo, routeFrom, next) {
+                // If the user is already logged in
+                if (store.getters.getLoggedUser) {
+                    // Redirect to the home page instead
+                    return api.validateUser().then(response => {
+                        response.data.data.access_token = store.getters.getLoggedUser.access_token
+                        store.commit('LOGGED_USER', response.data.data)
+
+                        let role = store.getters.getRoleUser
+                        if (!role) {
+                            store.commit('ROLE_USER', response.data.data.role)
+                        }
+                        next({ name: 'home' })
+                    })
+                    .catch(error => {
+                        store.dispatch('logOut')
+                        next({params: { tokenExpired: true }})
+                    })
+                    
+                } else {
+                    // Continue to the register page
+                    next()
+                }
+            },
+        },
+    },
     {
         path: '/logout',
         name: 'logout',

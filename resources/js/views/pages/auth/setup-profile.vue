@@ -76,6 +76,7 @@ export default {
             // eslint-disable-next-line no-unused-vars
             .then(response => {
               loading();
+              this.user.profile = response.data.data;
               this.$emit('openGuardian', true);
             })
             .catch(error => {

@@ -13,15 +13,7 @@ class Consult extends BaseModel
         'consult_index',
         'last_date',
         'next_date',
-        'is_finished'
     ];
-
-    public static function boot() {
-        parent::boot();
-        static::creating(function($consult) {
-            $consult->is_finished = false;
-        });
-    }
 
     public function relation() {
         return $this->belongsTo(Relation::class);

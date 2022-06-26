@@ -23,13 +23,20 @@ export function validateUser(){
 }
 export function register(data){
     return httpAxios({
-        url: '/auth/register',
+        url: '/auth/signup',
         method: 'POST',
         data: data
     })
 }
 export function checkTokenRegister(token){
     return httpAxios.get(`/register/show/${token}`);
+}
+export function sendResetEmail(data){
+    return httpAxios({
+        url: '/auth/password/email',
+        method: 'POST',
+        data: data
+    })
 }
 
 // export function changePassword(data){

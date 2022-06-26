@@ -21,7 +21,7 @@ class CreateTestsTable extends Migration
             $table->integer('score');
             $table->string('videocall_link')->nullable();
             $table->string('videocall_date')->nullable();
-            $table->boolean('is_finished');
+            $table->boolean('is_finished')->default(0)->change();
             $table->integer('index');
             $table->timestamps();
 

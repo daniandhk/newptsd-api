@@ -21,7 +21,6 @@ class Test extends BaseModel
             $test->score = 0;
             $test_type = TestType::find($test->test_type_id);
             $test->next_date = Carbon::now('Asia/Jakarta')->addDays($test_type->delay_days);
-            $test->is_finished = false;
         });
     }
 

@@ -33,18 +33,18 @@ class PDS5Seeder extends Seeder
             'description' => null,
         ]);
 
-        $test_question = TestQuestion::create([
-            'test_page_id' => $test_page['id'],
-            'text'=> 'Testing essay',
-            'answer_type' => 'essay',
-        ]);
+        // $test_question = TestQuestion::create([
+        //     'test_page_id' => $test_page['id'],
+        //     'text'=> 'Testing essay',
+        //     'answer_type' => 'essay',
+        // ]);
 
-        $test_answer = TestAnswer::create([
-            'test_question_id' => $test_question['id'],
-            'text'=> null,
-            'weight' => 0,
-            'is_essay' => true,
-        ]);
+        // $test_answer = TestAnswer::create([
+        //     'test_question_id' => $test_question['id'],
+        //     'text'=> null,
+        //     'weight' => 0,
+        //     'is_essay' => true,
+        // ]);
 
         $test_question = TestQuestion::create([
             'test_page_id' => $test_page['id'],

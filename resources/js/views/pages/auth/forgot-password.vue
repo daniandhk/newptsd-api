@@ -2,6 +2,7 @@
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
 import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
+import store from '../../../store';
 
 export default {
   components: {
@@ -9,6 +10,8 @@ export default {
   },
   data() {
     return {
+      user: store.getters.getLoggedUser,
+
       resetData: {
 				email: "",
 			},
@@ -17,20 +20,6 @@ export default {
       tryingToLogIn: false,
       isAuthError: false,
       loginSuccess: false,
-      tokenExpired: this.$route.params.tokenExpired,
-
-      isRegister: false,
-      submitted_reg: false,
-      registerError: null,
-      isRegisterError: false,
-      registerData: {
-        institute: "",
-				email: "",
-        password: "",
-        password_confirmation: "",
-			},
-
-      dropdownInstitute: ["Universitas Telkom", "Lainnya"]
     };
   },
   computed: {
@@ -45,12 +34,6 @@ export default {
     resetData: {
       email: { required },
     },
-    registerData: {
-      institute: { required },
-      email: { required },
-      password: { required, minLength: minLength(6) },
-      password_confirmation: { required, sameAsPassword: sameAs("new_password") },
-    }
   },
   methods: {
     ...notificationMethods,
@@ -70,19 +53,13 @@ export default {
         // Reset the authError if it existed.
         this.authError = null;
         return (
-          api.login(this.resetData)
+          api.sendResetEmail(this.resetData)
             // eslint-disable-next-line no-unused-vars
             .then(response => {
               this.tryingToLogIn = false;
               this.isAuthError = false;
               this.loginSuccess = true;
-
-              this.$store.commit('LOGGED_USER', response.data.data);
               loading();
-              // Redirect to the originally requested page, or to the home page
-              this.$router.push(
-                this.$route.query.redirectFrom || { name: "home" }
-              );
             })
             .catch(error => {
               loading();
@@ -95,45 +72,10 @@ export default {
     },
 
     onOrButtonClick() {
-      this.$router.push({
-          name: 'register'
-      });
-    },
-
-    tryToRegister() {
-      loading();
-      this.submitted_reg = true;
-      // stop here if form is invalid
-      this.$v.registerData.$touch();
-
-      if (this.$v.registerData.$invalid) {
-        loading();
-        return;
-      } else {
-        this.registerError = null;
-        // return (
-        //   api.login(this.resetData)
-        //     // eslint-disable-next-line no-unused-vars
-        //     .then(response => {
-        //       this.tryingToLogIn = false;
-        //       this.isAuthError = false;
-        //       this.loginSuccess = true;
-
-        //       this.$store.commit('LOGGED_USER', response.data.data);
-        //       loading();
-        //       // Redirect to the originally requested page, or to the home page
-        //       this.$router.push(
-        //         this.$route.query.redirectFrom || { name: "home" }
-        //       );
-        //     })
-        //     .catch(error => {
-        //       loading();
-        //       this.tryingToLogIn = false;
-        //       this.authError = error.response ? error.response.data.message : error;
-        //       this.isAuthError = true;
-        //     })
-        // );
-      }
+      // Redirect to the originally requested page, or to the home page
+      this.$router.push(
+        this.$route.query.redirectFrom || { name: "login" }
+      );
     },
   }
 };
@@ -196,12 +138,12 @@ function loading() {
 
                       <div class="p-2 mt-5">
                         <b-alert
-                          v-model="tokenExpired"
+                          v-model="loginSuccess"
                           class="mt-3"
-                          variant="danger"
+                          variant="success"
                           dismissible
                         >
-                          Sesi login anda telah berakhir.
+                          Berhasil mengirim email!<br>Silahkan cek email Anda untuk melanjutkan.
                         </b-alert>
 
                         <b-alert
@@ -249,40 +191,29 @@ function loading() {
                             </div>
                           </div>
 
-                          <div class="mt-4 text-center">
+                          <div class="mt-4 mb-4 text-center">
                             <button
                               class="btn btn-primary w-md waves-effect waves-light"
                               type="submit"
                               style="width:100%; background-color:#005C9A"
                             >
-                              Atur Ulang
+                              Kirim Email
                             </button>
                           </div>
                         </form>
                         <div class="m-3 text-center">
                           <p>Atau</p>
                         </div>
-                        <div class="mb-4 text-center">
+                        <div class="mb-2 text-center">
                           <button
                             class="btn btn-warning w-md waves-effect waves-light"
                             style="width:100%; background-color:#EEC73F;"
                             @click="onOrButtonClick()"
                           >
-                            Registrasi
+                            {{ user ? "Kembali" : "Log In" }}
                           </button>
                         </div>
                       </div>
-
-                      <!-- <div class="mt-5 text-center">
-                        <a
-                          href="/about-us"
-                          style="text-decoration: none; color: inherit;"
-                        >
-                          <p>
-                            © 2021 Informatics Lab.
-                          </p>
-                        </a>
-                      </div> -->
                     </div>
                   </div>
                 </div>

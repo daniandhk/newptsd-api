@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
 
         //patient 1
         $user_patient = User::create([
-            'email' => 'daniandhika01@gmail.com',
+            'email' => 'patient1@patient.com',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -40,14 +40,15 @@ class UserSeeder extends Seeder
             'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'phone' => '0812345678'
+            'phone' => '0812345678',
+            'is_dummy' => true,
         ]);
 
         $user_patient->assignRole('patient');
 
         //patient 2
         $user_patient = User::create([
-            'email' => 'daniandhika02@gmail.com',
+            'email' => 'patient2@patient.com',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -59,14 +60,15 @@ class UserSeeder extends Seeder
             'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'phone' => '0812345678'
+            'phone' => '0812345678',
+            'is_dummy' => true,
         ]);
 
         $user_patient->assignRole('patient');
 
         //patient 3
         $user_patient = User::create([
-            'email' => 'daniandhika03@gmail.com',
+            'email' => 'patient3@patient.com',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -85,7 +87,7 @@ class UserSeeder extends Seeder
 
         //patient 4
         $user_patient = User::create([
-            'email' => 'daniandhika04@gmail.com',
+            'email' => 'patient4@patient.com',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -97,7 +99,8 @@ class UserSeeder extends Seeder
             'datebirth' => "1999-04-07",
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'phone' => '0812345678'
+            'phone' => '0812345678',
+            'is_dummy' => true,
         ]);
 
         $user_patient->assignRole('patient');
@@ -139,7 +142,8 @@ class UserSeeder extends Seeder
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'str_number' => '12345'
+            'str_number' => '12345',
+            'is_dummy' => true,
         ]);
 
         $user_psychologist->assignRole('psychologist');
@@ -173,7 +177,8 @@ class UserSeeder extends Seeder
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'str_number' => '12345'
+            'str_number' => '12345',
+            'is_dummy' => true,
         ]);
 
         $user_psychologist->assignRole('psychologist');
@@ -207,7 +212,8 @@ class UserSeeder extends Seeder
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'str_number' => '12345'
+            'str_number' => '12345',
+            'is_dummy' => true,
         ]);
 
         $user_psychologist->assignRole('psychologist');
@@ -241,7 +247,8 @@ class UserSeeder extends Seeder
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'str_number' => '12345'
+            'str_number' => '12345',
+            'is_dummy' => true,
         ]);
 
         $user_psychologist->assignRole('psychologist');

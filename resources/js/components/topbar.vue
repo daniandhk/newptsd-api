@@ -121,6 +121,7 @@ export default {
             {{ user.email }}
           </a> -->
           <a
+            v-if="user.profile"
             class="dropdown-item d-block"
             href="/settings/change-password"
           >

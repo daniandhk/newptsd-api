@@ -25,9 +25,7 @@ export default {
       registerSuccess: this.$route.params.registerSuccess,
 
       email:"mailto:daniandhika03@gmail.com",
-      forgot_password:"",
-
-      dropdownInstitute: ["Universitas Telkom", "Lainnya"]
+      forgot_password:"/forgot-password",
     };
   },
   computed: {

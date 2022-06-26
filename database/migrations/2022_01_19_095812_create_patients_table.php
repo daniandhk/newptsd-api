@@ -23,6 +23,7 @@ class CreatePatientsTable extends Migration
             $table->string('province');
             $table->string('phone');
             $table->string('image')->nullable();
+            $table->boolean('is_dummy')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')

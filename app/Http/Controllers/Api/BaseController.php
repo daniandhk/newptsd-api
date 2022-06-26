@@ -29,7 +29,7 @@ class BaseController extends Controller
     public function validationError() {
         $result = array(
             'status'    => 'error',
-            'message'   => 'input validation error',
+            'message'   => 'Harap masukkan semua data yang dibutuhkan!',
         );
         return Response::json($result, 300);
     }

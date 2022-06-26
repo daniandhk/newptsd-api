@@ -20,7 +20,7 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }
     
-        $frontEndUrl = env('FRONTEND_URL');
+        $frontEndUrl = env('APP_URL');
         return Redirect::to($frontEndUrl);
     }
     

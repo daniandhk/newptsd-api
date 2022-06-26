@@ -73,19 +73,21 @@ export default {
                 this.role_data = {name: "Psikolog", role: "psychologist"}
               }
               else{
-                this.is_patient = true
-                this.registerData.role = "patient"
-                this.role_data = {name: "Pasien", role: "patient"}
+                this.$router.push({
+                    name: 'register'
+                });
               }
             }
             else{
-              this.is_patient = true
-              this.registerData.role = "patient"
-              this.role_data = {name: "Pasien", role: "patient"}
+              this.$router.push({
+                  name: 'register'
+              });
             }
           })
           .catch(error => {
-            //
+            this.$router.push({
+                name: 'register'
+            });
           })
       }
       else{
@@ -106,7 +108,6 @@ export default {
         return;
       } else {
         this.registerError = null;
-        delete this.registerData.password_confirmation;
         return (
           api.register(this.registerData)
             // eslint-disable-next-line no-unused-vars
@@ -294,7 +295,7 @@ function loading() {
                             </div>
                           </div>
 
-                          <div class="mt-4 text-center">
+                          <div class="mt-4 mb-4 text-center">
                             <button
                               class="btn btn-warning w-md waves-effect waves-light"
                               type="submit"

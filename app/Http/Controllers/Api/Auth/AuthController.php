@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
 {
@@ -20,15 +21,30 @@ class AuthController extends BaseController
 	 * Register new user
 	*/
 	public function signup(Request $request) {
-		$validatedData = $request->validate([
-			'email' => 'required|email|unique:users,email',
-			'password' => 'required|min:6|confirmed',
+		
+		$validation = Validator::make($request->all(), [
+			'email' => 'required',
+			'password' => 'required',
+			'password_confirmation' => 'required',
 			'role' => 'required'
 		]);
+		if($validation->fails()) {
+            return $this->validationError();
+        }
 
-		$validatedData['password'] = Hash::make($validatedData['password']);
+		$user = User::where('email', $request->email)->first();
+		if($user){
+			return $this->errorForbidden('Email yang digunakan sudah terdaftar!');
+		}
 
-		$created = User::create($validatedData);
+		if($request->password != $request->password_confirmation){
+			return $this->errorForbidden('Masukkan password kembali dengan benar!');
+		}
+
+		$data = $request->all();
+		$data['password'] = Hash::make($data['password']);
+
+		$created = User::create($data);
 		if($created) {
 			$created->sendEmailVerificationNotification();
 
@@ -38,11 +54,11 @@ class AuthController extends BaseController
 			$user->assignRole($request->role);
 			
 			// original
-			// return response()->json(null, 201);
+			return response()->json(null, 201);
 
 			// login
-			$user['access_token'] = $user->createToken($request->email)->plainTextToken;
-			return $this->respond($user);
+			// $user['access_token'] = $user->createToken($request->email)->plainTextToken;
+			// return $this->respond($user);
 		}
 
 		return $this->respondNotFound(null);
@@ -95,7 +111,17 @@ class AuthController extends BaseController
 
 
 	public function sendPasswordResetLinkEmail(Request $request) {
-		$request->validate(['email' => 'required|email']);
+		$validation = Validator::make($request->all(), [
+			'email' => 'required',
+		]);
+		if($validation->fails()) {
+            return $this->validationError();
+        }
+
+		$user = User::where('email', $request->email)->first();
+		if(!$user){
+			return $this->errorForbidden('Email yang dimasukkan belum terdaftar!');
+		}
 
 		$status = Password::sendResetLink(
 			$request->only('email')

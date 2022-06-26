@@ -148,7 +148,7 @@ class PatientController extends BaseController
             $data->consult = Consult::with(['consult_info','note_questions'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
-            $psychologists = Psychologist::query()->with('chat_schedules');
+            $psychologists = Psychologist::where('is_dummy', $patient->is_dummy)->with('chat_schedules');
             $per_page = 3;
             $request->whenHas('per_page', function($size) use (&$per_page) {
                 $per_page = $size;
