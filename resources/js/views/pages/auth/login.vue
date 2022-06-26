@@ -23,9 +23,9 @@ export default {
       loginSuccess: false,
       tokenExpired: this.$route.params.tokenExpired,
       registerSuccess: this.$route.params.registerSuccess,
+      resetSuccess: this.$route.params.resetSuccess,
 
-      email:"mailto:daniandhika03@gmail.com",
-      forgot_password:"/forgot-password",
+      mail: 'mailto:daniandhika03@gmail.com?subject=Bantuan%20helpPTSD',
     };
   },
   computed: {
@@ -87,6 +87,12 @@ export default {
     onOrButtonClick() {
       this.$router.push({
           name: 'register'
+      });
+    },
+
+    onForgotButtonClick() {
+      this.$router.push({
+          name: 'forgot-password'
       });
     },
   }
@@ -165,6 +171,15 @@ function loading() {
                           dismissible
                         >
                           Sesi login anda telah berakhir.
+                        </b-alert>
+
+                        <b-alert
+                          v-model="resetSuccess"
+                          class="mt-3"
+                          variant="success"
+                          dismissible
+                        >
+                          Atur ulang password Anda berhasil!<br>Silahkan Login untuk melanjutkan.
                         </b-alert>
 
                         <b-alert
@@ -276,24 +291,30 @@ function loading() {
                       </div>
 
                       <div
-                        class="mt-5 text-center"
-                        style="margin-top:0!important"
+                        class="mt-5 row px-2"
+                        style="margin-top:0!important;"
                       >
-                        <p>
-                          <a
-                            :href="forgot_password"
-                            class="font-weight-medium text-primary"
-                          >
-                            Lupa Password
-                          </a>
-                          |
-                          <a
-                            :href="email"
-                            class="font-weight-medium text-primary"
-                          >
-                            Butuh Bantuan?
-                          </a>
-                        </p>
+                        <div class="col-6 text-left">
+                        <b-button
+                          variant="outline-light"
+                          size="sm"
+                          style="width: 80%;"
+                          @click="onForgotButtonClick()"
+                        >
+                          <b>Lupa Password</b>
+                        </b-button>
+                        </div>
+                        
+                        <div class="col-6 text-right">
+                        <b-button
+                          variant="outline-light"
+                          size="sm"
+                          style="width: 80%;"
+                          :href="mail"
+                        >
+                          <b>Butuh Bantuan?</b>
+                        </b-button>
+                        </div>
                       </div>
                     </div>
                   </div>

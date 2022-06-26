@@ -25,8 +25,9 @@ Route::prefix('auth')->group(function () {
 	Route::post('logout', 'Api\Auth\AuthController@logout')->middleware('auth:sanctum')->name('auth.logout');
 	Route::get('user', 'Api\Auth\AuthController@getAuthenticatedUser')->middleware('auth:sanctum')->name('auth.user');
 
-	Route::post('/password/email', 'Api\Auth\AuthController@sendPasswordResetLinkEmail')->name('password.email');
-	Route::post('/password/reset', 'Api\Auth\AuthController@resetPassword')->name('password.reset');
+    Route::get('password/verify/{token}', 'Api\Auth\AuthController@validateTokenPasswordReset')->name('password.verify');
+	Route::post('password/email', 'Api\Auth\AuthController@sendPasswordResetLinkEmail')->middleware('throttle:5,1')->name('password.email');
+	Route::post('password/reset', 'Api\Auth\AuthController@resetPassword')->name('password.reset');
 	
 	Route::get('email/verify/{id}', 'Api\VerificationController@verify')->name('verification.verify');
     Route::get('email/resend', 'Api\VerificationController@resend')->middleware('auth:sanctum')->name('verification.resend');
@@ -120,7 +121,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'register',
+    'prefix' => 'tokenreg',
     'namespace' => 'Api',
 ], function ($router) {
     Route::get('/', 'RegisterTokenController@index');

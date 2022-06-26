@@ -5,22 +5,27 @@ import * as api from '../../../api';
 import store from '../../../store';
 
 export default {
+  page: {
+    title: "Register",
+  },
   components: {
-    //
+      //
   },
   data() {
     return {
       user: store.getters.getLoggedUser,
+      token: this.$route.params.token,
+      email: this.$route.query.email,
 
-      resetData: {
-				email: "",
-			},
-      submitted: false,
-      authError: null,
-      tryingToLogIn: false,
-      isAuthError: false,
-      loginSuccess: false,
-      invalidToken: this.$route.params.invalidToken,
+      submitted_reg: false,
+      registerError: null,
+      isRegisterError: false,
+      registerData: {
+          token: "",
+          email: "",
+          password: "",
+          password_confirmation: "",
+      },
     };
   },
   computed: {
@@ -28,56 +33,88 @@ export default {
       return this.$store ? this.$store.state.notification : null;
     }
   },
+  beforeMount() {
+    this.checkToken();
+  },
   created() {
     document.body.classList.add("auth-body-bg");
   },
   validations: {
-    resetData: {
+    registerData: {
+      token: { required },
       email: { required },
-    },
+      password: { required, minLength: minLength(6) },
+      password_confirmation: { required, sameAsPassword: sameAs("password") },
+    }
   },
   methods: {
     ...notificationMethods,
-    // Try to log the user in with the email
-    // and password they provided.
-    tryToReset() {
-      loading();
-      this.submitted = true;
-      // stop here if form is invalid
-      this.$v.resetData.$touch();
 
-      if (this.$v.resetData.$invalid) {
-        loading();
-        return;
-      } else {
-        this.tryingToLogIn = true;
-        // Reset the authError if it existed.
-        this.authError = null;
-        return (
-          api.sendResetPasswordEmail(this.resetData)
-            // eslint-disable-next-line no-unused-vars
-            .then(response => {
-              this.tryingToLogIn = false;
-              this.isAuthError = false;
-              this.loginSuccess = true;
-              loading();
-            })
-            .catch(error => {
-              loading();
-              this.tryingToLogIn = false;
-              this.authError = error.response ? error.response.data.message : error;
-              this.isAuthError = true;
-            })
+    getRequestParams(email) {
+      let params = {};
+
+      if (email) {
+        params["email"] = email;
+      }
+
+      return params;
+    },
+
+    checkToken(){
+      if(this.token && this.email){
+        const params = this.getRequestParams(
+          this.email
         );
+        api.validateTokenResetPassword(this.token, params)
+          .then(response => {
+            this.registerData.email = response.data.data.email
+            this.registerData.token = this.token
+          })
+          .catch(error => {
+            this.$router.push({
+                name: 'forgot-password', 
+                params: { invalidToken: true }
+            });
+          })
+      }
+      else{
+        this.$router.push({
+            name: 'forgot-password',
+            params: { invalidToken: true }
+        });
       }
     },
 
-    onOrButtonClick() {
-      if(this.user){
-        this.$router.push(this.$route.query.redirectFrom || { name: 'change-password' });
-      }
-      else{
-        this.$router.push({ name: "login" });
+    tryToRegister() {
+      loading();
+      this.submitted_reg = true;
+      // stop here if form is invalid
+      this.$v.registerData.$touch();
+
+      if (this.$v.registerData.$invalid) {
+        loading();
+        return;
+      } else {
+        this.registerError = null;
+        console.log(this.registerData)
+        return (
+          api.passwordReset(this.registerData)
+            // eslint-disable-next-line no-unused-vars
+            .then(response => {
+              loading();
+              if(this.user){
+                this.$router.push({ name: 'change-password', params: { resetSuccess: true } });
+              }
+              else{
+                this.$router.push({ name: 'login', params: { resetSuccess: true } });
+              }
+            })
+            .catch(error => {
+              loading();
+              this.registerError = error.response ? error.response.data.message : error;
+              this.isRegisterError = true;
+            })
+        );
       }
     },
   }
@@ -135,36 +172,18 @@ function loading() {
                           Atur Ulang Password
                         </h4>
                         <p class="text-muted">
-                          Atur ulang password Anda melalui email
+                          Harap masukkan password baru Anda
                         </p>
                       </div>
 
-                      <div class="p-2 mt-5">
+                      <div class="p-2 mt-3">
                         <b-alert
-                          v-model="loginSuccess"
-                          class="mt-3"
-                          variant="success"
-                          dismissible
-                        >
-                          Berhasil mengirim email!<br>Silahkan cek email Anda untuk melanjutkan.
-                        </b-alert>
-
-                        <b-alert
-                          v-model="invalidToken"
+                          v-model="isRegisterError"
                           class="mt-3"
                           variant="danger"
                           dismissible
                         >
-                          Token tidak valid atau kadaluarsa!<br>Harap coba kirim email kembali.
-                        </b-alert>
-
-                        <b-alert
-                          v-model="isAuthError"
-                          class="mt-3"
-                          variant="danger"
-                          dismissible
-                        >
-                          {{ authError }}
+                          {{ registerError }}
                         </b-alert>
 
                         <b-alert
@@ -179,52 +198,58 @@ function loading() {
 
                         <form
                           class="form-horizontal"
-                          @submit.prevent="tryToReset"
+                          @submit.prevent="tryToRegister"
                         >
-                          <div class="form-group auth-form-group-custom mb-4">
-                            <i
-                              class="ri-mail-line auti-custom-input-icon"
-                              style="color:#005C9A;"
-                            />
-                            <label for="email">Email</label>
+                          <div class="form-group mb-4">
+                            <label for="password">Password Baru</label>
                             <input
-                              id="email"
-                              v-model="resetData.email"
-                              type="email"
+                              id="password"
+                              v-model="registerData.password"
+                              type="password"
                               class="form-control"
-                              placeholder="Masukkan Email"
-                              :class="{ 'is-invalid': submitted && $v.resetData.email.$error }"
+                              :class="{ 'is-invalid': submitted_reg && $v.registerData.password.$error }"
                             >
-                            <div 
-                              v-if="submitted && !$v.resetData.email.required" 
+                            <div
+                              v-if="submitted_reg && !$v.registerData.password.required"
                               class="invalid-feedback"
                             >
-                              Email harus diisi!
+                              Password harus diisi!
+                            </div>
+                            <div
+                              v-if="submitted_reg && !$v.registerData.password.minLength"
+                              class="invalid-feedback"
+                            >
+                              Password harus minimal 6 karakter!
+                            </div>
+                          </div>
+
+                          <div class="form-group mb-4">
+                            <label for="password_confirmation">Konfirmasi Password Baru</label>
+                            <input
+                              id="password_confirmation"
+                              v-model="registerData.password_confirmation"
+                              type="password"
+                              class="form-control"
+                              :class="{ 'is-invalid': submitted_reg && $v.registerData.password_confirmation.$error }"
+                            >
+                            <div
+                              v-if="!$v.registerData.password_confirmation.sameAsPassword"
+                              class="invalid-feedback"
+                            >
+                              Masukkan kembali Password dengan benar!
                             </div>
                           </div>
 
                           <div class="mt-4 mb-4 text-center">
                             <button
-                              class="btn btn-warning w-md waves-effect waves-light"
+                              class="btn btn-primary w-md waves-effect waves-light"
                               type="submit"
-                              style="width:100%; background-color:#EEC73F;"
+                              style="width:100%; background-color:#005C9A"
                             >
-                              Kirim Email
+                              Simpan Password
                             </button>
                           </div>
                         </form>
-                        <div class="m-3 text-center">
-                          <p>Atau</p>
-                        </div>
-                        <div class="mb-2 text-center">
-                          <button
-                            class="btn btn-primary w-md waves-effect waves-light"
-                            style="width:100%; background-color:#005C9A;"
-                            @click="onOrButtonClick()"
-                          >
-                            {{ user ? "Kembali" : "Log In" }}
-                          </button>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -318,7 +343,7 @@ function loading() {
                         <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
                           <i
                             style="font-size:80px;color:#005C9A;"
-                            class=" mdi mdi-calendar-heart"
+                            class="mdi mdi-calendar-heart"
                           />
                           <p
                             style="color:#005C9A; font-size:18px; text-align:center; font-weight: bold;"

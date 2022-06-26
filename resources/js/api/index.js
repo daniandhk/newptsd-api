@@ -12,6 +12,7 @@ export function login(data){
         data: data
     })
 }
+
 export function validateUser(){
     return httpAxios({
         url: '/auth/user',
@@ -21,6 +22,7 @@ export function validateUser(){
         // },
     })
 }
+
 export function register(data){
     return httpAxios({
         url: '/auth/signup',
@@ -28,12 +30,22 @@ export function register(data){
         data: data
     })
 }
-export function checkTokenRegister(token){
-    return httpAxios.get(`/register/show/${token}`);
-}
-export function sendResetEmail(data){
+
+export function sendResetPasswordEmail(data){
     return httpAxios({
         url: '/auth/password/email',
+        method: 'POST',
+        data: data
+    })
+}
+
+export function validateTokenResetPassword(token, params){
+    return httpAxios.get(`/auth/password/verify/${token}`, { params });
+}
+
+export function passwordReset(data){
+    return httpAxios({
+        url: '/auth/password/reset',
         method: 'POST',
         data: data
     })
@@ -61,12 +73,24 @@ export function resend(){
     })
 }
 
+export function checkTokenRegister(token){
+    return httpAxios.get(`/tokenreg/show/${token}`);
+}
+
+export function getRelations(params){
+    return httpAxios.get(`/relation`, { params });
+}
+
 export function createRelation(data){
     return httpAxios({
         url: '/relation/create',
         method: 'POST',
         data: data
     })
+}
+
+export function getTests(params){
+    return httpAxios.get(`/test`, { params });
 }
 
 export function showTest(test_id){
@@ -79,12 +103,4 @@ export function getTestTypes(params){
 
 export function getTestTypeQuestions(params){
     return httpAxios.get(`/testtype/questions`, { params });
-}
-
-export function getRelations(params){
-    return httpAxios.get(`/relation`, { params });
-}
-
-export function getTests(params){
-    return httpAxios.get(`/test`, { params });
 }

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
+use DB;
+use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
@@ -54,7 +56,7 @@ class AuthController extends BaseController
 			$user->assignRole($request->role);
 			
 			// original
-			return response()->json(null, 201);
+			return $this->respond(null);
 
 			// login
 			// $user['access_token'] = $user->createToken($request->email)->plainTextToken;
@@ -123,6 +125,11 @@ class AuthController extends BaseController
 			return $this->errorForbidden('Email yang dimasukkan belum terdaftar!');
 		}
 
+		$tokenData = DB::table('password_resets')->where('email', $request->email)->first();
+		if($tokenData){
+			DB::table('password_resets')->where('email', $request->email)->delete();
+		}
+
 		$status = Password::sendResetLink(
 			$request->only('email')
 		);
@@ -136,12 +143,44 @@ class AuthController extends BaseController
 		}
 	}
 
-	public function resetPassword(Request $request) {
-		$request->validate([
-			'token' => 'required',
-			'email' => 'required|email',
-			'password' => 'required|min:8|confirmed',
+	public function validateTokenPasswordReset($token, Request $request) {
+		$validation = Validator::make($request->all(), [
+			'email' => 'required',
 		]);
+		if($validation->fails()) {
+            return $this->validationError();
+        }
+
+		$user = User::where('email', $request->email)->first();
+		if(!$user){
+			return $this->errorForbidden('Email belum terdaftar!');
+		}
+
+		$tokenData = DB::table('password_resets')->where('email', $request->email)->first();
+		if(!$tokenData){
+			return $this->errorForbidden('Email tidak valid!');
+		}
+		if (! Hash::check($token, $tokenData->token)) {
+			return $this->errorForbidden('Token tidak valid!');
+		}
+		$now = \Carbon\Carbon::now()->toDateTimeString();
+		if(\Carbon\Carbon::parse($tokenData->created_at)->addMinutes(60) < $now){
+			return $this->errorForbidden('Token expired!');
+		}
+
+		return $this->respond($tokenData);
+	}
+
+	public function resetPassword(Request $request) {
+		$validation = Validator::make($request->all(), [
+			'token' => 'required',
+			'email' => 'required',
+			'password' => 'required',
+			'password_confirmation' => 'required',
+		]);
+		if($validation->fails()) {
+            return $this->validationError();
+        }
 
 		$status = Password::reset(
 			$request->only('email', 'password', 'password_confirmation', 'token'),
@@ -157,6 +196,9 @@ class AuthController extends BaseController
 		);
 
 		if($status == Password::PASSWORD_RESET) {
+			// If the user shouldn't reuse the token later, delete the token 
+			// DB::table('password_resets')->where('email', $request->email)->delete();
+
 			return response()->json(['message' => __($status)], 200);
 		} else {
 			throw ValidationException::withMessages([
