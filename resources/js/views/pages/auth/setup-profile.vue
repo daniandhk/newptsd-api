@@ -372,7 +372,7 @@ function loading() {
                       class="form-group text-left datepicker-div"
                       style="padding:0!important; padding-left:2px!important; padding-right:2px!important;"
                     >
-                      <label for="phone">Tanggal Lahir</label>
+                      <label>Tanggal Lahir</label>
                       <date-picker
                         v-model="profileData.datebirth"
                         :first-day-of-week="1" 
@@ -397,7 +397,7 @@ function loading() {
                       <input
                         id="phone"
                         v-model="profileData.phone"
-                        type="number"
+                        type="tel"
                         class="form-control"
                         :class="{ 'is-invalid': submitted && $v.profileData.phone.$error }"
                       >

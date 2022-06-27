@@ -112,7 +112,7 @@ export default {
             <span
               class="d-none d-xl-inline-block ml-2 mr-2"
               style="font-size:16px"
-            >halo, {{ user.profile ? (user.profile.first_name ? user.profile.first_name : user.profile.full_name) : user.email }}</span>
+            >halo, {{ user.profile ? (user.profile.first_name ? user.profile.first_name : user.profile.full_name) : user.username }}</span>
             <i class="mdi mdi-chevron-down d-none d-xl-inline-block" />
           </template>
           <!-- item-->

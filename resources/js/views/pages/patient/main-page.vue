@@ -156,33 +156,33 @@ function loading() {
 </template>
 
 <style>
-.card-header-tabs {
-  margin-right: -21px !important;
-  margin-left: -21px !important;
-}
-
-.full-width .nav-tabs .nav-item {
-  margin-bottom: 2px;
-  flex: 1;
-  text-align: center !important;
-  background-color: white;
-}
-
-.nav-link.active.tab-active-class {
-  background-color: #F1F5F7;
-  font-size: 24px;
-}
-
-@media (min-width:576px) {
-  .card-psikolog {
-    width: 420px;
+  .card-header-tabs {
+    margin-right: -21px !important;
+    margin-left: -21px !important;
   }
-}
 
-@media (min-width:1200px) {
-  .main-card {
-    width: 85%;
+  .full-width .nav-tabs .nav-item {
+    margin-bottom: 2px;
+    flex: 1;
+    text-align: center !important;
+    background-color: white;
   }
-}
+
+  .nav-link.active.tab-active-class {
+    background-color: #F1F5F7;
+    font-size: 24px;
+  }
+
+  @media (min-width:576px) {
+    .card-psikolog {
+      width: 420px;
+    }
+  }
+
+  @media (min-width:1200px) {
+    .main-card {
+      width: 85%;
+    }
+  }
 
 </style>

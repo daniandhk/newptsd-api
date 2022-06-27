@@ -26,6 +26,8 @@ export default {
       haveConsult: false,
       isConsultToday: false,
       isLinkNull: true,
+      isConsultFinished: false,
+      isConsultLoaded: false,
 
       dataProfile: null,
 
@@ -122,20 +124,30 @@ export default {
               this.totalRows = this.dashboard.psychologists.total;
             }
 
+            this.isConsultLoaded = true;
             if(this.dashboard.consult){
               this.haveConsult = true;
-              if(moment().isSameOrAfter(this.dashboard.consult.next_date)){
-                this.isConsultToday = true;
+              if(this.dashboard.consult.is_finished){
+                this.isConsultFinished = true;
               }
               else{
-                this.isConsultToday = false;
-              }
+                this.isConsultFinished = false;
+                
+                if(this.dashboard.consult.next_date){
+                  moment()
+                    .isSameOrAfter(this.dashboard.consult.next_date) 
+                    ? this.isConsultToday = true : this.isConsultToday = false
+                }
+                else{
+                  this.isConsultToday = false;
+                }
 
-              if(this.dashboard.consult.consult_info.videocall_link){
-                this.isLinkNull = false;
-              }
-              else{
-                this.isLinkNull = true;
+                if(this.dashboard.consult.consult_info.videocall_link){
+                  this.isLinkNull = false;
+                }
+                else{
+                  this.isLinkNull = true;
+                }
               }
             }
             else{
@@ -166,13 +178,14 @@ export default {
 
     onPilihButtonClick(data){
       Swal.fire({
-          title: "Ingin berkonsultasi dengan <br /> " + data.full_name + "?",
-          text: "Anda dapat mengakhiri chat di menu chat.",
+          title: "Mulai konsultasi?",
+          html: "Anda akan berkonsultasi dengan<br>" + data.full_name,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#005C9A",
           cancelButtonColor: "#f46a6a",
-          confirmButtonText: "Ya, lanjutkan!"
+          confirmButtonText: "Ya, lanjutkan!",
+          cancelButtonText: "Batalkan"
       }).then(result => {
           if (result.value) {
               let relation = {
@@ -182,7 +195,8 @@ export default {
               api.createRelation(relation)
               // eslint-disable-next-line no-unused-vars
               .then(response => {
-                  Swal.fire("chat", "success");
+                  this.refreshData();
+                  this.$bvModal.hide('profile');
                   // window.open("http://help-ptsd-chat.herokuapp.com/");
               })
               .catch(error => {
@@ -340,7 +354,7 @@ function loading() {
           v-if="!isLoading"
           class="col-lg-8 pl-2 pr-2"
         >
-          <div v-if="haveConsult">
+          <div v-if="isConsultLoaded">
             <div
               class="card"
               style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
@@ -362,41 +376,72 @@ function loading() {
                             border: 0 none; 
                             color: #eee;"
                     >
-                    <div v-if="isConsultToday">
-                      <div
-                        class="row mt-4 mb-4"
-                        style="display: flex; justify-content: center;"
-                      >
-                        <div style="width:50%;">
-                          <div
-                            class="mb-2"
-                            style="color:#005C9A; font-weight: bolder;"
-                          >
-                            Konsultasi ke-{{ dashboard.consult.consult_index }}
+                    <div v-if="haveConsult && !isConsultFinished">
+                      <div v-if="isConsultToday">
+                        <div
+                          class="row mt-4 mb-4"
+                          style="display: flex; justify-content: center;"
+                        >
+                          <div style="width:50%;">
+                            <div
+                              class="mb-2"
+                              style="color:#005C9A; font-weight: bolder;"
+                            >
+                              Konsultasi ke-{{ dashboard.consult.consult_index }}
+                            </div>
+                            <div style="font-weight:bold;">
+                              {{ formatDate(dashboard.consult.consult_info.videocall_date, 'lengkap') }}
+                            </div>
                           </div>
-                          <div style="font-weight:bold;">
-                            {{ formatDate(dashboard.consult.consult_info.videocall_date, 'lengkap') }}
+                          <div style="width:50%;">
+                            <div style="color:#005C9A; font-weight: bolder;">
+                              Tautan / Link
+                            </div>
+                            <div>
+                              <button 
+                                type="button"
+                                class="btn btn-primary m-1 btn-sm mr-2"
+                                style="background-color:#005C9A; min-width:80%;"
+                                :disabled="!isConsultToday || isLinkNull"
+                                @click.stop.prevent="onGoToLinkButtonClick(dashboard.consult.consult_info.videocall_link)"
+                              >
+                                Video Call
+                              </button>
+                            </div>
                           </div>
                         </div>
-                        <div style="width:50%;">
-                          <div style="color:#005C9A; font-weight: bolder;">
-                            Tautan / Link
-                          </div>
-                          <div>
-                            <button 
-                              type="button"
-                              class="btn btn-primary m-1 btn-sm mr-2"
-                              style="background-color:#005C9A; min-width:80%;"
-                              :disabled="!isConsultToday || isLinkNull"
-                              @click.stop.prevent="onGoToLinkButtonClick(dashboard.consult.consult_info.videocall_link)"
+                      </div>
+                      <div v-if="!isConsultToday">
+                        <div
+                          class="row mt-4 mb-4"
+                          style="display: flex; justify-content: center;"
+                        >
+                          <div style="width:50%;">
+                            <div
+                              class="mb-2"
+                              style="color:#005C9A; font-weight: bolder;"
                             >
-                              Video Call
-                            </button>
+                              Konsultasi terakhir
+                            </div>
+                            <div>
+                              {{ formatDate(dashboard.consult.last_date, 'tanggal') }}
+                            </div>
+                          </div>
+                          <div style="width:50%;">
+                            <div
+                              class="mb-2"
+                              style="color:#005C9A; font-weight: bolder;"
+                            >
+                              Konsultasi ke-{{ dashboard.consult.consult_index }}
+                            </div>
+                            <div style="font-weight:bold;">
+                              {{ formatDate(dashboard.consult.next_date, 'lengkap') }}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div v-if="!isConsultToday">
+                    <div v-if="!haveConsult || isConsultFinished">
                       <div
                         class="row mt-4 mb-4"
                         style="display: flex; justify-content: center;"
@@ -408,8 +453,11 @@ function loading() {
                           >
                             Konsultasi terakhir
                           </div>
-                          <div>
-                            {{ formatDate(dashboard.consult.last_date, 'tanggal') }}
+                          <div v-if="isConsultFinished">
+                            {{ formatDate(dashboard.consult.next_date, 'tanggal') }}
+                          </div>
+                          <div v-if="!isConsultFinished">
+                            -
                           </div>
                         </div>
                         <div style="width:50%;">
@@ -417,10 +465,10 @@ function loading() {
                             class="mb-2"
                             style="color:#005C9A; font-weight: bolder;"
                           >
-                            Konsultasi ke-{{ dashboard.consult.consult_index }}
+                            Konsultasi berikutnya
                           </div>
                           <div style="font-weight:bold;">
-                            {{ formatDate(dashboard.consult.next_date, 'lengkap') }}
+                            Harap hubungi psikolog
                           </div>
                         </div>
                       </div>
@@ -438,7 +486,7 @@ function loading() {
                         class="font-size-12"
                         style="color:grey;"
                       >
-                        Ubah jadwal? Silahkan kirim pesan ke psikolog!
+                        {{ !haveConsult || isConsultFinished ? "Perlu video call?" : "Ubah jadwal?" }} Silahkan kirim pesan ke psikolog!
                       </div>
                     </div>
                   </div>
@@ -821,6 +869,17 @@ function loading() {
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <b-button
+              class="mt-2"
+              variant="success"
+              size="md"
+              style="width:100%;"
+              @click="onPilihButtonClick(dataProfile)"
+            >
+              Pilih untuk Konsultasi
+            </b-button>
           </div>
         </template>
       </b-modal>

@@ -23,8 +23,8 @@ class Patient extends BaseModel
         return $this->hasMany(Test::class);
     }
 
-    public function relation() {
-        return $this->hasOne(Relation::class);
+    public function relations() {
+        return $this->hasMany(Relation::class);
     }
 
     public function guardian() {

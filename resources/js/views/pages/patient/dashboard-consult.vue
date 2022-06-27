@@ -4,10 +4,11 @@ import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import moment from 'moment';
 import Swal from "sweetalert2";
+import simplebar from "simplebar-vue";
 
 export default {
   components: {
-    //
+    simplebar
   },
   data() {
     return {
@@ -33,8 +34,8 @@ export default {
 
       totalRows: 1,
       currentPage: 1,
-      perPage: 6,
-      pageOptions: [6, 12, 30, 60, 120],
+      perPage: 5,
+      pageOptions: [5, 10, 20, 50, 100],
       filter: "",
       filterOn: [],
       isFetchingData: false,
@@ -92,7 +93,6 @@ export default {
     },
 
     async getDashboard(){
-        loading();
         const params = this.getRequestParams(
             this.filter,
             this.currentPage,
@@ -106,10 +106,9 @@ export default {
                     this.dashboard = response.data.data;
                     this.setDashboard();
                 }
-                loading();
             })
             .catch(error => {
-              loading();
+              //
             })
         );
     },
@@ -157,9 +156,11 @@ export default {
     },
 
     async refreshData(){
+      loading();
       this.isLoading = true;
       await this.getDashboard();
       this.isLoading = false;
+      loading();
     },
 
     onProfileButtonClick(data){
@@ -196,7 +197,7 @@ export default {
               // eslint-disable-next-line no-unused-vars
               .then(response => {
                   this.refreshData();
-                  this.$bvModal.hide('profile');
+                  this.$bvModal.hide('modal-profile');
                   // window.open("http://help-ptsd-chat.herokuapp.com/");
               })
               .catch(error => {
@@ -250,13 +251,12 @@ export default {
     },
 
     async onSearchButtonClick(){
-      loading();
       this.isFetchingData = true;
 
       await this.getDashboard();
 
+      await sleep(500);
       this.isFetchingData = false;
-      loading();
     },
 
     async handleSearch(value){
@@ -272,31 +272,35 @@ export default {
     },
 
     async handlePageChange(value) {
-      loading();
       this.isFetchingData = true;
 
       this.currentPage = value;
       await this.getDashboard();
 
+      await sleep(500);
       this.isFetchingData = false;
-      loading();
     },
 
     async handlePageSizeChange(value) {
-      loading();
       this.isFetchingData = true;
 
       this.perPage = value;
       this.currentPage = 1;
       await this.getDashboard();
 
+      await sleep(500);
       this.isFetchingData = false;
-      loading();
     },
 
     //
   },
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 function loading() {
   var x = document.getElementById("loading");
@@ -494,325 +498,461 @@ function loading() {
               </div>
             </div>
           </div>
-          <div
-            class="card"
-            style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
-          >
-            <div class="card-body mt-2 ml-2 mr-2">
-              <div class="text-center form-group mb-0">
-                <div style="color:black;">
-                  <div v-if="haveRelation">
-                    <h5
-                      class="text-center font-size-15 text-uppercase"
-                      style="color:#005C9A;"
-                    >
-                      Profil Psikolog
-                    </h5>
-                    <hr
-                      style="margin-left: -28px; 
-                            margin-right: -28px; 
-                            height: 4px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;"
-                    >
-                    <div
-                      class="row mt-4"
-                      style="display:flex; justify-content: center; align-items: center;"
-                    >
-                      <div class="col-xl-6 col-sm-12">
-                        <div
-                          class="card"
-                          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); cursor: pointer;"
-                          @click="onProfileButtonClick(dashboard.psychologist)"
-                        >
-                          <div class="card-body">
-                            <div class="text-center">
-                              <img
-                                :src="backendUrl + (dashboard.psychologist.image ? dashboard.psychologist.image : 'avatars/default_profile.jpg')"
-                                alt
-                                class="avatar-lg mt-2 mb-4 rounded-circle"
-                              >
-                              <div class="media-body">
-                                <h5 class="text-truncate">
-                                  <a
-                                    class="text-dark"
-                                  >{{ dashboard.psychologist.full_name }}</a>
-                                </h5>
-                                <p class="text-muted">
-                                  <i class="mdi mdi-account mr-1" /> {{ dashboard.psychologist.speciality }}
-                                </p>
-                                <!-- <div v-if="!isOnline(dashboard.psychologist)">
-                                  <div class="text-center mb-1">
-                                    <div
-                                      class="font-size-12"
-                                      style="color:gray; font-weight:bold;"
-                                    >
-                                      • Offline
-                                    </div>
-                                  </div>
-                                </div>
-                                <div v-if="isOnline(dashboard.psychologist)">
-                                  <div class="text-center mb-1">
-                                    <div
-                                      class="font-size-12"
-                                      style="color:#1cbb8c; font-weight:bold;"
-                                    >
-                                      • Online
-                                    </div>
-                                  </div>
-                                </div> -->
-                                <div>
-                                  <button 
-                                    type="button"
-                                    class="btn btn-success m-1 btn-sm"
-                                    style="min-width:100%;"
-                                    @click.stop.prevent="onGoToLinkButtonClick('chat')"
-                                  >
-                                    Chat
-                                  </button>
-                                </div>
-                              </div>
+          <div class="d-lg-flex mb-4">
+            <div class="chat-leftsidebar">
+              <div class="chat-leftsidebar-nav">
+                <b-tabs 
+                  nav-class="nav-tabs-custom" 
+                  pills 
+                  fill 
+                  content-class="py-2" 
+                  justified
+                >
+                  <b-tab>
+                    <template v-slot:title>
+                      <i class="ri-message-2-line font-size-20"></i>
+                      <span class="mt-2 d-none d-sm-block">Chat</span>
+                    </template>
+                    <b-card-text>
+                      <div v-if="!haveRelation">
+                        <div class="row px-3 mb-2 mt-1">
+                          <div class="col-6" style="display: flex; align-items: center; justify-content: left;">
+                            <h5 class="font-size-14">Pilih Psikolog</h5>
+                          </div>
+                          <div class="col-6" style="display: flex; align-items: center; justify-content: right;">
+                            <label class="d-inline-flex align-items-center text-muted">
+                              <b-form-select 
+                                v-model="perPage" 
+                                size="sm" 
+                                :options="pageOptions"
+                                @change="handlePageSizeChange"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                        <div class="card-body border-bottom border-top py-2">
+                          <div class="search-box chat-search-box">
+                            <div class="position-relative">
+                              <b-form-input 
+                                v-model="filter"
+                                type="search"
+                                class="form-control" 
+                                placeholder="ketik nama..."
+                                @input="onSearchButtonClick()"
+                              />
+                              <i class="ri-search-line search-icon"></i>
                             </div>
-                            <div v-if="!isOnline(dashboard.psychologist)">
-                              <hr class="mt-4 mb-3">
-                              <div class="text-center">
-                                <div class="font-size-12">
-                                  Online berikutnya: {{ getDate(dashboard.psychologist) ? getDate(dashboard.psychologist).day + ", " + formatDate(getDate(dashboard.psychologist).time_start, 'jam') + "-" + formatDate(getDate(dashboard.psychologist).time_end, 'jam') : "-" }}
-                                </div>
+                          </div>
+                        </div>
+                        <div 
+                          v-if="isFetchingData"
+                          style="display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
+                        >
+                          <b-spinner
+                            style="width: 1.2em; height: 1.2em;"
+                            class="mt-1"
+                            variant="warning"
+                            role="status"
+                          />
+                        </div>
+                        <div 
+                          v-if="!isFetchingData && dashboard.psychologists.total == 0"
+                          style="font-size: 14px; display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
+                        >
+                          data tidak ditemukan.
+                        </div>
+                        <div v-if="!isFetchingData && dashboard.psychologists.total > 0">
+                          <simplebar style="max-height: 345px" id="scrollElement">
+                            <ul class="list-unstyled chat-list">
+                              <li
+                                class
+                                v-for="(psychologist, index) in dashboard.psychologists.data"
+                                :key="index"
+                                @click="onProfileButtonClick(psychologist)"
+                              >
+                                <a style="cursor: pointer;">
+                                  <div class="media">
+                                    <div
+                                      class="user-img align-self-center mr-3"
+                                      :class="isOnline(psychologist) ? 'online' : null"
+                                    >
+                                      <img
+                                        :src="backendUrl + (psychologist.image ? psychologist.image : 'avatars/default_profile.jpg')"
+                                        class="rounded-circle avatar-xs"
+                                        alt
+                                      />
+                                      <span class="user-status"></span>
+                                    </div>
+                                    <div class="media-body overflow-hidden">
+                                      <h5 class="text-truncate font-size-14 mb-1">
+                                        {{ psychologist.full_name }}
+                                      </h5>
+                                      <p class="text-truncate mb-0">
+                                        {{ psychologist.speciality }}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </a>
+                              </li>
+                            </ul>
+                          </simplebar>
+                        </div>
+                        <div class="border-top">
+                          <div class="row px-3 mt-2">
+                            <div class="col">
+                              <div style="display: flex; align-items: center; justify-content: center;">
+                                <ul class="pagination pagination-rounded mb-0 font-size-12">
+                                  <!-- pagination -->
+                                  <b-pagination 
+                                    v-model="currentPage" 
+                                    :total-rows="rows" 
+                                    :per-page="perPage"
+                                    @input="handlePageChange"
+                                  />
+                                </ul>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div v-if="!haveConsult">
-                      <hr
-                        style="margin-left: -28px; 
-                            margin-right: -28px; 
-                            height: 2px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;"
-                      >
-                      <div
-                        class="font-size-12"
-                        style="color:grey;"
-                      >
-                        Butuh konsultasi video call? Silahkan kirim pesan ke psikolog!
-                      </div>
-                    </div>
-                  </div>
-                  <div v-if="!haveRelation">
-                    <h5
-                      class="text-center font-size-15 text-uppercase"
-                      style="color:#005C9A;"
-                    >
-                      Pilih Psikolog
-                    </h5>
-                    <hr
-                      style="margin-left: -28px; 
-                            margin-right: -28px; 
-                            height: 4px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;"
-                    >
-                    <div class="row mt-4 ml-1 mr-1">
-                      <div class="col-sm-12 col-md-6">
-                        <div class="dataTables_length text-md-left">
-                          <label class="d-inline-flex align-items-center text-muted">
-                            Tampilkan
-                            <b-form-select 
-                              v-model="perPage" 
-                              size="sm" 
-                              :options="pageOptions"
-                              @change="handlePageSizeChange"
-                            />data
-                          </label>
-                        </div>
-                      </div>
-                      <!-- Search -->
-                      <div class="col-sm-12 col-md-6">
-                        <div class="dataTables_filter text-md-right">
-                          <label class="d-inline-flex align-items-center">
-                            <b-form-input
-                              v-model="filter"
-                              type="search"
-                              placeholder="Ketik nama"
-                              class="form-control form-control-sm mr-2"
-                              @input="handleSearch"
-                            />
-                            <b-button
-                              type="submit" 
-                              variant="outline-secondary"
-                              size="sm"
-                              @click="onSearchButtonClick" 
+                      <div v-if="haveRelation">
+                        <h5 class="font-size-14 px-3 mb-3 mt-2">Psikolog Anda</h5>
+                        <simplebar style="max-height: 345px" id="scrollElement">
+                          <ul class="list-unstyled chat-list">
+                            <li
+                              class
+                              @click="onProfileButtonClick(dashboard.psychologist)"
                             >
-                              <div class="mr-1 ml-1">
-                                Cari
-                              </div>
-                            </b-button>
-                          </label>
-                        </div>
-                      </div>
-                      <!-- End search -->
-                    </div>
-                    <hr
-                      style="margin-left: -28px; 
-                            margin-right: -28px; 
-                            height: 2px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;"
-                    >
-                    <div
-                      v-if="dashboard.psychologists.total > 0 && !isFetchingData"
-                      class="row"
-                    >
-                      <div
-                        v-for="(psychologist, index) in dashboard.psychologists.data"
-                        :key="index"
-                        class="col-xl-4 col-sm-6"
-                      >
-                        <div
-                          class="card"
-                          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); cursor: pointer;"
-                          @click="onProfileButtonClick(psychologist)"
-                        >
-                          <div class="card-body">
-                            <div class="text-center">
-                              <img
-                                :src="backendUrl + (psychologist.image ? psychologist.image : 'avatars/default_profile.jpg')"
-                                alt
-                                class="avatar-lg mt-2 mb-4 rounded-circle"
-                              >
-                              <div class="media-body">
-                                <h5 class="text-truncate">
-                                  <a
-                                    class="text-dark"
-                                  >{{ psychologist.full_name }}</a>
-                                </h5>
-                                <p class="text-muted">
-                                  <i class="mdi mdi-account mr-1" /> {{ psychologist.speciality }}
-                                </p>
-                                <div v-if="isOnline(psychologist)">
-                                  <div class="text-center">
-                                    <div
-                                      class="font-size-12"
-                                      style="color:#1cbb8c; font-weight:bold;"
-                                    >
-                                      • Online
-                                    </div>
-                                  </div>
-                                  <hr class="mt-2 mb-3">
-                                  <button 
-                                    type="button"
-                                    class="btn btn-primary btn-sm"
-                                    style="min-width:100%;"
-                                    @click.stop.prevent="onPilihButtonClick(psychologist)"
-                                  >
-                                    Pilih
-                                  </button>
-                                </div>
-                                <div v-if="!isOnline(psychologist)">
-                                  <div class="text-center">
-                                    <div
-                                      class="font-size-12"
-                                      style="color:gray; font-weight:bold;"
-                                    >
-                                      • Offline
-                                    </div>
-                                  </div>
-                                  <hr class="mt-2 mb-3">
+                              <a style="cursor: pointer;">
+                                <div class="media">
                                   <div
-                                    class="text-center d-flex"
-                                    style="height:28.9px; align-items: center; justify-content: center;"
+                                    class="user-img align-self-center mr-3"
                                   >
-                                    <div
-                                      v-if="dashboard.psychologists.total_data > 6"
-                                      class="font-size-12"
-                                    >
-                                      Jadwal berikutnya: {{ getDate(psychologist) ? getDate(psychologist).day + ", " + formatDate(getDate(psychologist).time_start, 'jam') + "-" + formatDate(getDate(psychologist).time_end, 'jam') : "-" }}
-                                    </div>
-                                    <button
-                                      v-else
-                                      type="button"
-                                      class="btn btn-primary btn-sm"
-                                      style="min-width:100%;"
-                                      @click.stop.prevent="onPilihButtonClick(psychologist)"
-                                    >
-                                      Pilih
-                                    </button>
+                                    <img
+                                      :src="backendUrl + (dashboard.psychologist.image ? dashboard.psychologist.image : 'avatars/default_profile.jpg')"
+                                      class="rounded-circle avatar-xs"
+                                      alt
+                                    />
+                                    <span class="user-status"></span>
+                                  </div>
+                                  <div class="media-body overflow-hidden">
+                                    <h5 class="text-truncate font-size-14 mb-1">
+                                      {{ dashboard.psychologist.full_name }}
+                                    </h5>
+                                    <p class="text-truncate mb-0">
+                                      {{ dashboard.psychologist.speciality }}
+                                    </p>
                                   </div>
                                 </div>
+                              </a>
+                            </li>
+                          </ul>
+                        </simplebar>
+                      </div>
+                    </b-card-text>
+                  </b-tab>
+                  <b-tab>
+                    <template v-slot:title>
+                      <i class="ri-video-chat-line font-size-20"></i>
+                      <span class="mt-2 d-none d-sm-block">Video Call</span>
+                    </template>
+                    <b-card-text>
+                      <div v-if="!haveRelation">
+                        <div class="row px-3 mb-2 mt-1">
+                          <div class="col-6" style="display: flex; align-items: center; justify-content: left;">
+                            <h5 class="font-size-14">Pilih Psikolog</h5>
+                          </div>
+                          <div class="col-6" style="display: flex; align-items: center; justify-content: right;">
+                            <label class="d-inline-flex align-items-center text-muted">
+                              <b-form-select 
+                                v-model="perPage" 
+                                size="sm" 
+                                :options="pageOptions"
+                                @change="handlePageSizeChange"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                        <div class="card-body border-bottom border-top py-2">
+                          <div class="search-box chat-search-box">
+                            <div class="position-relative">
+                              <b-form-input 
+                                v-model="filter"
+                                type="search"
+                                class="form-control" 
+                                placeholder="ketik nama..."
+                                @input="onSearchButtonClick()"
+                              />
+                              <i class="ri-search-line search-icon"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div 
+                          v-if="isFetchingData"
+                          style="display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
+                        >
+                          <b-spinner
+                            style="width: 1.2em; height: 1.2em;"
+                            class="mt-1"
+                            variant="warning"
+                            role="status"
+                          />
+                        </div>
+                        <div 
+                          v-if="!isFetchingData && dashboard.psychologists.total == 0"
+                          style="font-size: 14px; display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
+                        >
+                          data tidak ditemukan.
+                        </div>
+                        <div v-if="!isFetchingData && dashboard.psychologists.total > 0">
+                          <simplebar style="max-height: 345px" id="scrollElement">
+                            <ul class="list-unstyled chat-list">
+                              <li
+                                class
+                                v-for="(psychologist, index) in dashboard.psychologists.data"
+                                :key="index"
+                                @click="onProfileButtonClick(psychologist)"
+                              >
+                                <a style="cursor: pointer;">
+                                  <div class="media">
+                                    <div
+                                      class="user-img align-self-center mr-3"
+                                    >
+                                      <img
+                                        :src="backendUrl + (psychologist.image ? psychologist.image : 'avatars/default_profile.jpg')"
+                                        class="rounded-circle avatar-xs"
+                                        alt
+                                      />
+                                      <span class="user-status"></span>
+                                    </div>
+                                    <div class="media-body overflow-hidden">
+                                      <h5 class="text-truncate font-size-14 mb-1">
+                                        {{ psychologist.full_name }}
+                                      </h5>
+                                      <p class="text-truncate mb-0">
+                                        {{ psychologist.speciality }}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </a>
+                              </li>
+                            </ul>
+                          </simplebar>
+                        </div>
+                        <div class="border-top">
+                          <div class="row px-3 mt-2">
+                            <div class="col">
+                              <div style="display: flex; align-items: center; justify-content: center;">
+                                <ul class="pagination pagination-rounded mb-0 font-size-12">
+                                  <!-- pagination -->
+                                  <b-pagination 
+                                    v-model="currentPage" 
+                                    :total-rows="rows" 
+                                    :per-page="perPage"
+                                    @input="handlePageChange"
+                                  />
+                                </ul>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      v-if="dashboard.psychologists.total == 0 && !isFetchingData"
-                      class="row row-no-gutters"
-                      style="display:flex; justify-content: center; align-items: center;"
-                    >
-                      <div
-                        style="display:flex; justify-content: center; align-items: center;"
-                        class="px-0 p-1"
-                      >
-                        <div
-                          class="card h-100 mt-2 card-psikolog"
-                          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
-                        >
-                          <div
-                            class="card-body"
-                          >
-                            data tidak ditemukan.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-if="isFetchingData"
-                      class="row row-no-gutters"
-                      style="display:flex; justify-content: center; align-items: center;"
-                    >
-                      <div
-                        style="display:flex; justify-content: center; align-items: center;"
-                        class="px-0 p-1"
-                      >
-                        <div
-                          class="card h-100 mt-2 card-psikolog"
-                          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
-                        >
-                          <div
-                            class="card-body"
-                          >
-                            tunggu sebentar...
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row mt-2 ml-1 mr-1">
-                      <div class="col">
-                        <div class="d-inline-flex align-items-center">
-                          <ul class="pagination pagination-rounded mb-0">
-                            <!-- pagination -->
-                            <b-pagination 
-                              v-model="currentPage" 
-                              :total-rows="rows" 
-                              :per-page="perPage"
-                              @input="handlePageChange"
-                            />
+                      <div v-if="haveRelation">
+                        <h5 class="font-size-14 px-3 mb-3 mt-2">Psikolog Anda</h5>
+                        <simplebar style="max-height: 345px" id="scrollElement">
+                          <ul class="list-unstyled chat-list">
+                            <li
+                              class
+                              @click="onProfileButtonClick(dashboard.psychologist)"
+                            >
+                              <a style="cursor: pointer;">
+                                <div class="media">
+                                  <div
+                                    class="user-img align-self-center mr-3"
+                                  >
+                                    <img
+                                      :src="backendUrl + (dashboard.psychologist.image ? dashboard.psychologist.image : 'avatars/default_profile.jpg')"
+                                      class="rounded-circle avatar-xs"
+                                      alt
+                                    />
+                                    <span class="user-status"></span>
+                                  </div>
+                                  <div class="media-body overflow-hidden">
+                                    <h5 class="text-truncate font-size-14 mb-1">
+                                      {{ dashboard.psychologist.full_name }}
+                                    </h5>
+                                    <p class="text-truncate mb-0">
+                                      {{ dashboard.psychologist.speciality }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </a>
+                            </li>
                           </ul>
-                        </div>
+                        </simplebar>
                       </div>
-                    </div>
+                    </b-card-text>
+                  </b-tab>
+                </b-tabs>
+              </div>
+            </div>
+            <!-- <div class="w-100 user-chat mt-4 mt-sm-0">
+              <div class="p-3 px-lg-4 user-chat-border">
+                <div class="row">
+                  <div class="col-md-4 col-6">
+                    <h5 class="font-size-15 mb-1 text-truncate">{{ username }}</h5>
+                    <p class="text-muted text-truncate mb-0">
+                      <i class="mdi mdi-circle text-success align-middle mr-1"></i>
+                      Active now
+                    </p>
+                  </div>
+                  <div class="col-md-8 col-3">
+                    <ul class="list-inline user-chat-nav text-right mb-0">
+                      <li class="list-inline-item d-inline-block d-sm-none">
+                        <div class="dropdown">
+                          <button
+                            class="btn nav-btn dropdown-toggle"
+                            type="button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <i class="mdi mdi-magnify"></i>
+                          </button>
+                          <div
+                            class="dropdown-menu dropdown-menu-right dropdown-menu-md"
+                          >
+                            <form class="p-2">
+                              <div class="search-box">
+                                <div class="position-relative">
+                                  <input
+                                    type="text"
+                                    class="form-control rounded"
+                                    placeholder="Search..."
+                                  />
+                                  <i class="mdi mdi-magnify search-icon"></i>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="d-none d-sm-inline-block">
+                        <div class="search-box mr-2">
+                          <div class="position-relative">
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Search..."
+                            />
+                            <i class="mdi mdi-magnify search-icon"></i>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-inline-item d-none d-sm-inline-block">
+                        <b-dropdown toggle-class="nav-btn" right variant="white">
+                          <template v-slot:button-content>
+                            <i class="mdi mdi-cog"></i>
+                          </template>
+                          <b-dropdown-item>View Profile</b-dropdown-item>
+                          <b-dropdown-item>Clear chat</b-dropdown-item>
+                          <b-dropdown-item>Muted</b-dropdown-item>
+                          <b-dropdown-item>Delete</b-dropdown-item>
+                        </b-dropdown>
+                      </li>
+
+                      <li class="list-inline-item">
+                        <b-dropdown toggle-class="nav-btn" right variant="white">
+                          <template v-slot:button-content>
+                            <i class="mdi mdi-dots-horizontal"></i>
+                          </template>
+                          <b-dropdown-item>Action</b-dropdown-item>
+                          <b-dropdown-item>Another action</b-dropdown-item>
+                          <b-dropdown-item>Something else</b-dropdown-item>
+                        </b-dropdown>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
-            </div>
+
+              <div class="px-lg-2 chat-users">
+                <div class="chat-conversation p-3">
+                  <simplebar
+                    style="max-height: 450px"
+                    id="containerElement"
+                    ref="current"
+                  >
+                    <ul class="list-unstyled mb-0 pr-3">
+                      <li>
+                        <div class="chat-day-title">
+                          <span class="title">Today</span>
+                        </div>
+                      </li>
+                      <li
+                        v-for="data of chatMessagesData"
+                        :key="data.message"
+                        :class="{ right: `${data.align}` === 'right' }"
+                      >
+                        <div class="conversation-list">
+                          <div class="chat-avatar" v-if="data.image">
+                            <img :src="`${data.image}`" alt />
+                          </div>
+
+                          <div class="ctext-wrap">
+                            <div class="conversation-name">{{ data.name }}</div>
+                            <div class="ctext-wrap-content">
+                              <p class="mb-0">{{ data.message }}</p>
+                            </div>
+
+                            <p class="chat-time mb-0">
+                              <i class="bx bx-time-five align-middle mr-1"></i>
+                              {{ data.time }}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </simplebar>
+                </div>
+                <div class="px-lg-3">
+                  <div class="p-3 chat-input-section">
+                    <form @submit.prevent="formSubmit" class="row">
+                      <div class="col">
+                        <div class="position-relative">
+                          <input
+                            type="text"
+                            v-model="form.message"
+                            class="form-control chat-input"
+                            placeholder="Enter Message..."
+                            :class="{
+                              'is-invalid': submitted && $v.form.message.$error,
+                            }"
+                          />
+                          <div
+                            v-if="submitted && $v.form.message.$error"
+                            class="invalid-feedback"
+                          >
+                            <span v-if="!$v.form.message.required"
+                              >This value is required.</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <button
+                          type="submit"
+                          class="btn btn-primary chat-send w-md waves-effect waves-light"
+                        >
+                          <span class="d-none d-sm-inline-block mr-2">Send</span>
+                          <i class="mdi mdi-send"></i>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -872,6 +1012,7 @@ function loading() {
           </div>
           <div>
             <b-button
+              v-if="!haveRelation"
               class="mt-2"
               variant="success"
               size="md"

@@ -17,6 +17,7 @@ class CreateRelationsTable extends Migration
             $table->char('id', 26)->primary();
             $table->char('patient_id', 26);
             $table->char('psychologist_id', 26);
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
 
             $table->foreign('patient_id')

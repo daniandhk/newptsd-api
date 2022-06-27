@@ -125,8 +125,8 @@ class PatientController extends BaseController
         $data->test_types = TestType::FilteredTest($patient_id)->get();
 
         //chat and consult
-        if($patient->relation){
-            $relation = $patient->relation;
+        $relation = $patient->relations->where('is_active', true)->first();
+        if($relation){
             $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
         }
 
@@ -142,8 +142,8 @@ class PatientController extends BaseController
         $data = new stdClass();
 
         //chat and consult
-        if($patient->relation){
-            $relation = $patient->relation;
+        $relation = $patient->relations->where('is_active', true)->first();
+        if($relation){
             $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
             $data->consult = Consult::with(['consult_info','note_questions'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }

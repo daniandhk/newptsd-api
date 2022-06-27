@@ -19,6 +19,7 @@ export default {
       registerData: {
         role: "",
 				email: "",
+        username: "",
         password: "",
         password_confirmation: "",
 			},
@@ -44,6 +45,7 @@ export default {
     registerData: {
       role: { required },
       email: { required },
+      username: { required },
       password: { required, minLength: minLength(6) },
       password_confirmation: { required, sameAsPassword: sameAs("password") },
     }
@@ -246,6 +248,23 @@ function loading() {
                               class="invalid-feedback"
                             >
                               Email harus diisi!
+                            </div>
+                          </div>
+
+                          <div class="form-group mb-4">
+                            <label for="username">Username</label>
+                            <input
+                              id="username"
+                              v-model="registerData.email"
+                              type="text"
+                              class="form-control"
+                              :class="{ 'is-invalid': submitted_reg && $v.registerData.username.$error }"
+                            >
+                            <div 
+                              v-if="submitted_reg && !$v.registerData.username.required" 
+                              class="invalid-feedback"
+                            >
+                              Username harus diisi!
                             </div>
                           </div>
 

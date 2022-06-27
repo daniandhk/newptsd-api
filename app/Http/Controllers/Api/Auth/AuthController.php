@@ -26,6 +26,7 @@ class AuthController extends BaseController
 		
 		$validation = Validator::make($request->all(), [
 			'email' => 'required',
+			'username' => 'required',
 			'password' => 'required',
 			'password_confirmation' => 'required',
 			'role' => 'required'
@@ -34,9 +35,14 @@ class AuthController extends BaseController
             return $this->validationError();
         }
 
-		$user = User::where('email', $request->email)->first();
-		if($user){
+		$check = User::where('email', $request->email)->first();
+		if($check){
 			return $this->errorForbidden('Email yang digunakan sudah terdaftar!');
+		}
+
+		$check = User::where('username', $request->username)->first();
+		if($check){
+			return $this->errorForbidden('Username yang digunakan sudah terdaftar!');
 		}
 
 		if($request->password != $request->password_confirmation){
@@ -70,15 +76,21 @@ class AuthController extends BaseController
 	 * Generate sanctum token on successful login
 	*/
 	public function login(Request $request) {
-		$request->validate([
-			'email' => 'required|email',
+		$validation = Validator::make($request->all(), [
+			'email' => 'required',
 			'password' => 'required',
 		]);
+		if($validation->fails()) {
+            return $this->validationError();
+        }
 
 		$user = User::where('email', $request->email)->first();
+		if(! $user){
+			$user = User::where('username', $request->email)->first();
+		}
 
 		if (! $user || ! Hash::check($request->password, $user->password)) {
-			return $this->errorNotFound('Email atau password salah!');
+			return $this->errorNotFound('Email / username atau password salah!');
 		}
 
 		$user['access_token'] = $user->createToken($request->email)->plainTextToken;

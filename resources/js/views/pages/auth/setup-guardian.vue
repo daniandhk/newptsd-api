@@ -143,7 +143,7 @@ function loading() {
                         class="font-size-16 mt-0"
                         style="font-weight: normal;"
                       >
-                        Selanjutnya isi informasi wali yang dapat dihubungi.
+                        Selanjutnya isi informasi wali yang dapat dihubungi. (opsional)
                       </p>
                     </div>
                   </div>
@@ -238,7 +238,7 @@ function loading() {
                       <input
                         id="phone"
                         v-model="profileData.phone"
-                        type="number"
+                        type="tel"
                         class="form-control"
                         :class="{ 'is-invalid': submitted && $v.profileData.phone.$error }"
                       >

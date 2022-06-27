@@ -207,23 +207,23 @@ function loading() {
                         >
                           <div class="form-group auth-form-group-custom mb-4">
                             <i
-                              class="ri-mail-line auti-custom-input-icon"
+                              class="ri-user-3-line auti-custom-input-icon"
                               style="color:#005C9A;"
                             />
-                            <label for="email">Email</label>
+                            <label for="email">Email / Username</label>
                             <input
                               id="email"
                               v-model="loginData.email"
-                              type="email"
+                              type="text"
                               class="form-control"
-                              placeholder="Masukkan Email"
+                              placeholder="Masukkan Email/Username"
                               :class="{ 'is-invalid': submitted && $v.loginData.email.$error }"
                             >
                             <div 
                               v-if="submitted && !$v.loginData.email.required" 
                               class="invalid-feedback"
                             >
-                              Email harus diisi!
+                              Email/Username harus diisi!
                             </div>
                           </div>
 

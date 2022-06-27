@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
     {
         $admin = User::create([
             'email' => 'admin@admin.com',
+            'username' => 'admin',
             'password' => Hash::make('admin'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
         //patient 1
         $user_patient = User::create([
             'email' => 'patient1@patient.com',
+            'username' => 'patient1',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -49,6 +51,7 @@ class UserSeeder extends Seeder
         //patient 2
         $user_patient = User::create([
             'email' => 'patient2@patient.com',
+            'username' => 'patient2',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -69,6 +72,7 @@ class UserSeeder extends Seeder
         //patient 3
         $user_patient = User::create([
             'email' => 'patient3@patient.com',
+            'username' => 'patient3',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -88,6 +92,7 @@ class UserSeeder extends Seeder
         //patient 4
         $user_patient = User::create([
             'email' => 'patient4@patient.com',
+            'username' => 'patient4',
             'password' => Hash::make('patient'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -108,6 +113,7 @@ class UserSeeder extends Seeder
         //psikolog 1
         $user_psychologist = User::create([
             'email' => 'psikolog1@psikolog.com',
+            'username' => 'psikolog1',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -129,6 +135,7 @@ class UserSeeder extends Seeder
         //psikolog 2
         $user_psychologist = User::create([
             'email' => 'psikolog2@psikolog.com',
+            'username' => 'psikolog2',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -164,6 +171,7 @@ class UserSeeder extends Seeder
         //psikolog 3
         $user_psychologist = User::create([
             'email' => 'psikolog3@psikolog.com',
+            'username' => 'psikolog3',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -199,6 +207,7 @@ class UserSeeder extends Seeder
         //psikolog 4
         $user_psychologist = User::create([
             'email' => 'psikolog4@psikolog.com',
+            'username' => 'psikolog4',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -234,6 +243,7 @@ class UserSeeder extends Seeder
         //psikolog 5
         $user_psychologist = User::create([
             'email' => 'psikolog5@psikolog.com',
+            'username' => 'psikolog5',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -269,6 +279,7 @@ class UserSeeder extends Seeder
         //psikolog 6
         $user_psychologist = User::create([
             'email' => 'psikolog6@psikolog.com',
+            'username' => 'psikolog6',
             'password' => Hash::make('psikolog'),
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
@@ -282,7 +293,8 @@ class UserSeeder extends Seeder
             'graduation_university' => 'Samudera Hindia',
             'city' => 'Bandung',
             'province' => 'Jawa Barat',
-            'str_number' => '12345'
+            'str_number' => '12345',
+            'is_dummy' => true,
         ]);
 
         $user_psychologist->assignRole('psychologist');

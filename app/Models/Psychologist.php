@@ -71,7 +71,7 @@ class Psychologist extends BaseModel
                 $idx_today = null;
         }
 
-        if($idx_today){
+        if(is_int($idx_today)){
             $getNextDays = array_filter(
                 $chat_schedules,
                 function ($s) use($idx_today) {
