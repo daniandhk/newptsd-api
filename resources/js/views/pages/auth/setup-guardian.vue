@@ -85,8 +85,8 @@ export default {
         }
     },
 
-    openGuardian(boolean){
-      this.$emit('openGuardian', boolean);
+    skipRegister(){
+      window.location.reload();
     }
   }
 };
@@ -275,7 +275,7 @@ function loading() {
                         <button
                           class="btn btn-secondary w-md waves-effect waves-light"
                           style="width:100%;"
-                          @click="openGuardian(false)"
+                          @click="skipRegister()"
                         >
                           Lewati
                         </button>

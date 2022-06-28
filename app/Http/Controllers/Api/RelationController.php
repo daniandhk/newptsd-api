@@ -62,13 +62,20 @@ class RelationController extends BaseController
             'patient_id' => 'required',
             'psychologist_id' => 'required',
         ]);
-
         $patient = Patient::find($request->patient_id);
         if ($patient) {
             $psychologist = Psychologist::find($request->psychologist_id);
             if ($psychologist) {
-                $relation = Relation::create($request->all());
-                return $this->respond($relation);
+                $relation = Relation::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->first();
+                if($relation){
+                    $relation->is_active = true;
+                    $relation->save();
+                    return $relation;
+                }
+                else{
+                    $relation = Relation::create($request->all());
+                    return $this->respond($relation);
+                }
             } else {
                 return $this->errorNotFound('Psychologist id not found');
             }

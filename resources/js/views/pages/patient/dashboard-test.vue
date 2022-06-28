@@ -668,7 +668,7 @@ function loading() {
                 style="font-size: 12px;"
               >
               <p>*psikolog mengetahui informasi wali Anda, ubah izin di <a
-                                                                          href="javascript:void(0);"
+                                                                          href="#"
                                                                           style="color:#505d69;"
                                                                           @click="goToSettingsMenu()"
                                                                         ><b>Pengaturan Akun</b></a></p>
@@ -676,7 +676,7 @@ function loading() {
             </div>
             <div v-if="!user.profile.guardian">
               <p class="mt-1">Submit data wali Anda di <a
-                                                          href="javascript:void(0);"
+                                                          href="#"
                                                           style="color:#505d69;"
                                                           @click="goToSettingsMenu()"
                                                         ><b>Pengaturan Akun</b></a>.</p>

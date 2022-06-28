@@ -15,12 +15,25 @@ use Illuminate\Http\Request;
 
 class ConsultController extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
-        $consults = Consult::with('relation.patient', 'relation.psychologist',
-                                'consult_info', 'note_questions',
-                                'note_questions.note_answers')
-                            ->get();
+        $consult = Consult::with(
+            'relation.patient', 
+            'relation.psychologist',
+            'consult_info',
+            'note_questions',
+            'note_questions.note_answers'
+        )->orderBy('created_at', 'desc');
+        if(is_null($request->relation_id)) {
+            $consults = $consult->get();
+        } else {
+            $relation = Relation::find($request->relation_id);
+            if(!$relation) {
+                return $this->errorNotFound('invalid relation id');
+            }
+
+            $consults = $consult->where('relation_id', $request->relation_id)->get();
+        }
 
         return $this->respond($consults);
     }

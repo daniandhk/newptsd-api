@@ -30,7 +30,7 @@
 
       &::after {
         content: "";
-        background: $primary;
+        background: #005C9A;
         height: 2px;
         position: absolute;
         width: 100%;
@@ -41,7 +41,7 @@
       }
 
       &.active{
-        color: $primary;
+        color: #005C9A;
         &:after{
           transform: scale(1);
         }

@@ -77,10 +77,7 @@ export default {
         v-if="viewProfile"
         @openGuardian="openGuardian"
       />
-      <SetupGuardian 
-        v-if="viewGuardian"
-        @openGuardian="openGuardian"
-      />
+      <SetupGuardian v-if="viewGuardian" />
     </div>
     <MainPage v-if="!viewEmail && !viewProfile && !viewGuardian" />
   </div>

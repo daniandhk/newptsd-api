@@ -395,7 +395,7 @@ export default {
     },
 
     onBackButtonClick(){
-      window.scrollTo(0,0)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.currentPage -= 1
       this.questionData = this.test.test_pages[this.currentPageIndex].test_questions
       this.pageData = this.test.test_pages[this.currentPageIndex]
@@ -427,7 +427,7 @@ export default {
         }
       }
       
-      window.scrollTo(0,0)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.currentPage += 1
       this.questionData = this.test.test_pages[this.currentPageIndex].test_questions
       this.pageData = this.test.test_pages[this.currentPageIndex]
@@ -537,18 +537,14 @@ export default {
     },
 
     isEmptyAnswerChecked(array, data){
-      let found = array.find(element => element.id == data.id);
-      if(found){
-        return true
-      }
-      return false
+      return array.find(element => element.id == data.id);
     },
 
     isAnswerEmpty(array, index){
       let id = 'card-' + index.toString()
       if(array.length == 0){
         this.isThisPageInvalid = true
-        document.getElementById(id).scrollIntoView();
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         return true
       }
 
@@ -557,7 +553,7 @@ export default {
       for (let i = 0; i < array.length; i++) {
         if(array[i].text == null || array[i].text == ""){
           isEmpty = true
-          document.getElementById(id).scrollIntoView();
+          document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
           break
         }
       }
@@ -622,7 +618,7 @@ export default {
         this.submitted_consult = true;
         this.$v.input_consult.$touch();
         if (this.$v.input_consult.$invalid) {
-          document.getElementById('card_scoring').scrollIntoView();
+          document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth' });
           return;
         }
         this.input_consult.is_consult = true;
@@ -783,7 +779,7 @@ function loading() {
                         <div class="row justify-content-center mr-1 ml-1 mb-2">
                           <div class="col-sm-3 text-center">
                             <img
-                              :src="backendUrl + (patient.image ? patient.image : 'avatars/default_profile.jpg')"
+                              :src="backendUrl + patient.image"
                               alt
                               class="avatar-md mt-2 rounded-circle"
                             >
@@ -836,7 +832,7 @@ function loading() {
                         <hr style="margin-bottom: 0;margin-left: -20px!important; margin-right: -20px!important;">
                         <div class="font-size-13 text-center mt-2 mb-2">
                           <a
-                            href="javascript:void(0);"
+                            href="#"
                             style="color:#505d69;"
                             @click="showHistory()"
                           ><b>Lihat riwayat tes</b></a>
@@ -1029,7 +1025,7 @@ function loading() {
                                 </div>
                               </div>
                               <div class="mt-3">
-                                Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek pasien setiap harinya selama jeda berlangsung.
+                                Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh pasien setiap harinya selama jeda berlangsung.
                                 <br><label class="mt-3">3. Isi catatan psikolog (opsional)</label>
                                 <div
                                   class="form-horizontal"
@@ -1397,7 +1393,7 @@ function loading() {
                   :disabled="test_id == data.id"
                   @click="goToTest(data.id)"
                 >
-                  <b>Tes ke-{{ data.index }}, {{ dateFormatted(data.created_at) }}</b>
+                  <b>Tes ke-{{ data.index }}, {{ dateFormatted(data.created_at) }}, Skor: {{ data.score.toString() }} dari {{ test.total_score.toString() }}</b>
                 </b-button>
               </div>
             </div>

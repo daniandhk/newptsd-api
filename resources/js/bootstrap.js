@@ -19,6 +19,7 @@ window.axios.defaults.withCredentials = true;
  */
 
 import Echo from 'laravel-echo';
+import httpAxios from './httpAxios.js';
 
 window.Pusher = require('pusher-js');
 
@@ -26,6 +27,23 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    encrypted: true,
     forceTLS: true,
     enabledTransports: ['ws', 'wss'],
+    authorizer: (channel, options) => {
+        return {
+            authorize: (socketId, callback) => {
+                httpAxios.post('/broadcasting/auth', {
+                    socket_id: socketId,
+                    channel_name: channel.name
+                })
+                .then(response => {
+                    callback(false, response.data);
+                })
+                .catch(error => {
+                    callback(true, error);
+                });
+            }
+        };
+    },
 });

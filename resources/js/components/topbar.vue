@@ -13,7 +13,7 @@ export default {
     return {
       user: store.getters.getLoggedUser,
       backendUrl: process.env.MIX_STORAGE_URL,
-      avatarUrl: store.getters.getLoggedUser ? (store.getters.getLoggedUser.profile ? (store.getters.getLoggedUser.profile.image ? store.getters.getLoggedUser.profile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg'
+      avatarUrl: store.getters.getLoggedUser ? (store.getters.getLoggedUser.profile ? store.getters.getLoggedUser.profile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg'
     };
   },
   methods: {
@@ -124,16 +124,18 @@ export default {
             v-if="user.profile"
             class="dropdown-item d-block"
             href="/settings/change-password"
+            style="display: flex; align-items: center; justify-content: left;"
           >
             <i class="ri-settings-2-line align-middle mr-1" />
             Pengaturan Akun
           </a>
-          <div class="dropdown-divider" />
+          <div v-if="user.profile" class="dropdown-divider" />
           <a
             class="dropdown-item text-danger"
             href="/logout"
+            style="display: flex; align-items: center; justify-content: left;"
           >
-            <i class="ri-shut-down-line align-middle mr-1 text-danger" />
+            <i class="ri-shut-down-line align-middle mr-2 text-danger" />
             Logout
           </a>
         </b-dropdown>

@@ -22,7 +22,7 @@ class CreatePatientsTable extends Migration
             $table->string('city');
             $table->string('province');
             $table->string('phone');
-            $table->string('image')->nullable();
+            $table->string('image')->default('avatars/default_profile.jpg');
             $table->boolean('is_dummy')->default(0);
             $table->timestamps();
 

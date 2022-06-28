@@ -115,11 +115,6 @@ class AuthController extends BaseController
 	*/
 	public function getAuthenticatedUser(Request $request) {
 		$user = $request->user();
-		$profile = $user->profile;
-		if($profile){
-			$user->profile->guardian;
-			$user->profile->chat_schedules;
-		}
         return $this->respond($user);
 	}
 

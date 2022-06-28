@@ -104,3 +104,15 @@ export function getTestTypes(params){
 export function getTestTypeQuestions(params){
     return httpAxios.get(`/testtype/questions`, { params });
 }
+
+export function getPrivateMessages(user_id){
+    return httpAxios.get(`/message/${user_id}`);
+}
+
+export function sendPrivateMessage(data, user_id){
+    return httpAxios({
+        url: `/message/${user_id}`,
+        method: 'POST',
+        data: data
+    })
+}

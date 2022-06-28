@@ -24,7 +24,7 @@ class CreatePshychologistsTable extends Migration
             $table->string('city');
             $table->string('province');
             $table->string('str_number');
-            $table->string('image')->nullable();
+            $table->string('image')->default('avatars/default_profile.jpg');
             $table->boolean('is_dummy')->default(0);
             $table->timestamps();
 

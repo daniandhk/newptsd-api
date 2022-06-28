@@ -44,27 +44,27 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['role'];
+    protected $appends = ['role', 'profile'];
 
     public function getRoleAttribute() {
         return $this->getRoleNames()[0];
     }
 
-    public function profile() {
-        if($this->getRoleNames()[0] == 'patient'){
-            return $this->hasOne(Patient::class);
+    public function getProfileAttribute() {
+        if($this->isPatient()){
+            return $this->patient()->with('guardian')->first();
         }
-        if($this->getRoleNames()[0] == 'psychologist'){
-            return $this->hasOne(Psychologist::class);
+        if($this->isPsychologist()){
+            return $this->psychologist()->with('chat_schedules')->first();
         }
     }
 
-    public function patients() {
-        return $this->hasMany(Patient::class);
+    public function patient() {
+        return $this->hasOne(Patient::class);
     }
 
-    public function psychologists() {
-        return $this->hasMany(Psychologist::class);
+    public function psychologist() {
+        return $this->hasOne(Psychologist::class);
     }
 
     public function messages() {

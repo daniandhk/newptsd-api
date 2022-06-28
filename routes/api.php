@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 // Auth
 Route::prefix('auth')->group(function () {
@@ -153,11 +154,9 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'chat',
-    'namespace' => 'Api',
+    'prefix' => 'message',
+    'middleware' => 'auth:sanctum'
 ], function ($router) {
-    Route::get('/messages', 'MessageController@fetchMessages');
-    Route::post('/messages', 'MessageController@sendMessage');
-    Route::get('/private-messages/{user}', 'MessageController@privateMessages')->name('privateMessages');
-    Route::post('/private-messages/{user}', 'MessageController@sendPrivateMessage')->name('privateMessages.store');
+    Route::get('/{user}', 'Api\Auth\MessageController@privateMessages');
+    Route::post('/{user}', 'Api\Auth\MessageController@sendPrivateMessage');
 });

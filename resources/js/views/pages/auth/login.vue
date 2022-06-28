@@ -26,6 +26,7 @@ export default {
       resetSuccess: this.$route.params.resetSuccess,
 
       mail: 'mailto:daniandhika03@gmail.com?subject=Bantuan%20helpPTSD',
+      isLoading: false,
     };
   },
   computed: {
@@ -48,12 +49,14 @@ export default {
     // and password they provided.
     tryToLogIn() {
       loading();
+      this.isLoading = true;
       this.submitted = true;
       // stop here if form is invalid
       this.$v.loginData.$touch();
 
       if (this.$v.loginData.$invalid) {
         loading();
+        this.isLoading = false;
         return;
       } else {
         this.tryingToLogIn = true;
@@ -69,6 +72,7 @@ export default {
 
               this.$store.commit('LOGGED_USER', response.data.data);
               loading();
+              this.isLoading = false;
               // Redirect to the originally requested page, or to the home page
               this.$router.push(
                 this.$route.query.redirectFrom || { name: "home" }
@@ -76,6 +80,7 @@ export default {
             })
             .catch(error => {
               loading();
+              this.isLoading = false;
               this.tryingToLogIn = false;
               this.authError = error.response.data.message;
               this.isAuthError = true;
@@ -252,25 +257,12 @@ function loading() {
                             </div>
                           </div>
 
-                          <!-- <div
-                            class="text-left"
-                            style="margin-top:0!important"
-                          >
-                            <p>
-                              <router-link
-                                to="/forgot-password"
-                                class="font-weight-medium text-primary"
-                              >
-                                Lupa password ?
-                              </router-link>
-                            </p>
-                          </div> -->
-
                           <div class="mt-4 mb-4 text-center">
                             <button
                               class="btn btn-primary w-md waves-effect waves-light"
                               type="submit"
                               style="width:100%; background-color:#005C9A"
+                              :disabled="isLoading"
                             >
                               Log In
                             </button>
@@ -284,6 +276,7 @@ function loading() {
                             class="btn btn-warning w-md waves-effect waves-light"
                             style="width:100%; background-color:#EEC73F;"
                             @click="onOrButtonClick()"
+                            :disabled="isLoading"
                           >
                             Registrasi
                           </button>

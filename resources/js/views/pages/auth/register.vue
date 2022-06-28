@@ -28,6 +28,7 @@ export default {
       dropdownRole: [{name: "Psikolog", role: "psychologist"}, {name: "Pasien", role: "patient"}],
 
       is_patient: true,
+      isLoading: false,
     };
   },
   computed: {
@@ -101,12 +102,14 @@ export default {
 
     tryToRegister() {
       loading();
+      this.isLoading = true;
       this.submitted_reg = true;
       // stop here if form is invalid
       this.$v.registerData.$touch();
 
       if (this.$v.registerData.$invalid) {
         loading();
+        this.isLoading = false;
         return;
       } else {
         this.registerError = null;
@@ -115,10 +118,12 @@ export default {
             // eslint-disable-next-line no-unused-vars
             .then(response => {
               loading();
+              this.isLoading = false;
               this.$router.push({ name: 'login', params: { registerSuccess: true } });
             })
             .catch(error => {
               loading();
+              this.isLoading = false;
               this.registerError = error.response ? error.response.data.message : error;
               this.isRegisterError = true;
             })
@@ -255,7 +260,7 @@ function loading() {
                             <label for="username">Username</label>
                             <input
                               id="username"
-                              v-model="registerData.email"
+                              v-model="registerData.username"
                               type="text"
                               class="form-control"
                               :class="{ 'is-invalid': submitted_reg && $v.registerData.username.$error }"
@@ -319,6 +324,7 @@ function loading() {
                               class="btn btn-warning w-md waves-effect waves-light"
                               type="submit"
                               style="width:100%; background-color:#EEC73F"
+                              :disabled="isLoading"
                             >
                               Buat Akun
                             </button>
@@ -332,6 +338,7 @@ function loading() {
                             class="btn btn-primary w-md waves-effect waves-light"
                             style="width:100%; background-color:#005C9A;"
                             @click="onOrButtonClick()"
+                            :disabled="isLoading"
                           >
                             Log In
                           </button>

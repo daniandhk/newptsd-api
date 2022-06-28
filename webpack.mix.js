@@ -1,5 +1,7 @@
 const mix = require('laravel-mix');
 
+mix.sourceMaps();
+
 mix.js('resources/js/app.js', 'public/js')
  .vue();
 
