@@ -6,7 +6,7 @@ import Topbar from "../../components/topbar";
 import ConfirmEmail from "../../views/pages/auth/confirm-email";
 import SetupProfile from "../../views/pages/auth/setup-profile";
 import SetupGuardian from "../../views/pages/auth/setup-guardian";
-import MainPage from "./patient/main-page"
+import MainPage from "./patient/dashboard-main"
 
 export default {
   page: {

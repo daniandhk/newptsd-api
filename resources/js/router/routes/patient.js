@@ -56,12 +56,4 @@ export default [
         },
         component: () => import('../../views/pages/patient/test/tests-page')
     },
-    {
-        path: '/journal',      
-        name: 'journal',
-        meta: {
-            authRequired: true,
-        },
-        component: () => import('../../views/pages/patient/journal-page')
-    },
 ]

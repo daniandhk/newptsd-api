@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 
 import Test from "./dashboard-test";
 import Consult from "./dashboard-consult";
-import Journal from "./journal-page";
+import Journal from "./dashboard-journal";
 
 export default {
   components: {

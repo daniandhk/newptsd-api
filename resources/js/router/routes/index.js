@@ -12,6 +12,11 @@ const baseRoutes = [
         },
         component: () => import('../../views/pages/dashboard')
     },
+    {
+        path: '/mail-admin',
+        name: 'mail-admin',
+        beforeEnter() {location.href = 'mailto:daniandhika03@gmail.com?subject=Bantuan%20helpPTSD'}
+    },
 ]
 
 const routes = baseRoutes.concat(etcRoutes, authRoutes, patientRoutes, psychologistRoutes);

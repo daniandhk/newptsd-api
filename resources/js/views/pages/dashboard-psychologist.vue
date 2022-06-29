@@ -5,6 +5,7 @@ import Topbar from "../../components/topbar";
 import ConfirmEmail from "../../views/pages/auth/confirm-email";
 import SetupProfile from "../../views/pages/auth/setup-psychologist";
 import SetupSchedule from "../../views/pages/auth/setup-schedule";
+import MainPage from "./psychologist/dashboard-main";
 
 import store from '../../store';
 import { notificationMethods } from "../../state/helpers";
@@ -20,7 +21,8 @@ export default {
     Topbar,
     ConfirmEmail,
     SetupProfile,
-    SetupSchedule
+    SetupSchedule,
+    MainPage
   },
   data() {
     return {
@@ -90,16 +92,6 @@ export default {
         <SetupSchedule v-if="viewChatSchedule" />
       </div>
     </div>
-    <div v-if="!viewEmail && !viewProfile && !viewChatSchedule">
-      <Layout>
-        <PageHeader
-          :title="title"
-          :items="items"
-        />
-        <div>
-          //
-        </div>
-      </Layout>
-    </div>
+    <MainPage v-if="!viewEmail && !viewProfile && !viewChatSchedule" />
   </div>
 </template>

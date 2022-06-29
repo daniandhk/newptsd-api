@@ -24,8 +24,6 @@ export default {
       tokenExpired: this.$route.params.tokenExpired,
       registerSuccess: this.$route.params.registerSuccess,
       resetSuccess: this.$route.params.resetSuccess,
-
-      mail: 'mailto:daniandhika03@gmail.com?subject=Bantuan%20helpPTSD',
       isLoading: false,
     };
   },
@@ -98,6 +96,12 @@ export default {
     onForgotButtonClick() {
       this.$router.push({
           name: 'forgot-password'
+      });
+    },
+
+    onHelpButtonClick() {
+      this.$router.push({
+          name: 'mail-admin'
       });
     },
   }
@@ -303,7 +307,7 @@ function loading() {
                           variant="outline-light"
                           size="sm"
                           style="width: 80%;"
-                          :href="mail"
+                          @click="onHelpButtonClick()"
                         >
                           <b>Butuh Bantuan?</b>
                         </b-button>
