@@ -108,6 +108,7 @@ Route::group([
     Route::post('/create', 'RelationController@create');
     Route::put('/update/{id}', 'RelationController@update');
     Route::delete('/delete/{id}', 'RelationController@delete');
+    Route::put('/finish/{id}', 'RelationController@finishRelation');
 });
 
 Route::group([

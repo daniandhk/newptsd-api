@@ -116,3 +116,14 @@ export function sendPrivateMessage(data, user_id){
         data: data
     })
 }
+
+export function getConsults(params){
+    return httpAxios.get(`/consult`, { params });
+}
+
+export function finishRelation(relation_id){
+    return httpAxios({
+        url: `/relation/finish/${relation_id}`,
+        method: 'PUT',
+    })
+}

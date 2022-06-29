@@ -38,7 +38,6 @@ export default {
       perPage: 5,
       pageOptions: [5, 10, 20, 50, 100],
       filter: "",
-      filterOn: [],
       isFetchingData: false,
 
       interval: null,
@@ -54,10 +53,29 @@ export default {
       allMessages: [],
       typingClock: null,
       submitted_chat: false,
-      allConsults: [],
+      
       tabIndexChat: 0,
       isChatLoading: false,
-      
+
+      allConsults: [],
+      currentPageConsults: 1,
+      perPageConsults: 5,
+      sortDescConsults: true,
+      sortByConsults: 'consult_index',
+      fieldsConsults: [
+        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', },
+        { key: "consult_info.videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', },
+        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
+        { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
+      ],
+
+      dataConsult: {
+        consult_index: 0,
+        note_questions: [],
+      },
+
+      canEndConsult: true,
+
     };
   },
   computed: {
@@ -91,6 +109,10 @@ export default {
         setTimeout(this.scrollToEnd,100);
       }
     },
+
+    onlineUsers: async function(){
+      await this.sortOnlineUsers(this.dashboard.psychologists, this.onlineUsers);
+    }
   },
   validations: {
     message: {
@@ -100,19 +122,14 @@ export default {
   methods: {
     ...notificationMethods,
 
-    getRequestParams(search, page, pageSize) {
+    getRequestParams(search, relation_id) {
       let params = {};
 
       if (search) {
         params["search"] = search;
       }
-
-      if (page) {
-        params["page"] = page;
-      }
-
-      if (pageSize) {
-        params["per_page"] = pageSize;
+      if (relation_id) {
+        params["relation_id"] = relation_id;
       }
 
       return params;
@@ -120,9 +137,7 @@ export default {
 
     async getDashboard(){
         const params = this.getRequestParams(
-            this.filter,
-            this.currentPage,
-            this.perPage,
+            this.filter, null
         );
         return (
           api.getConsultDashboard(this.user.profile.id, params)
@@ -134,7 +149,12 @@ export default {
                 }
             })
             .catch(error => {
-              //
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Terjadi kesalahan!',
+                  footer: error.response.data.message
+              })
             })
         );
     },
@@ -146,7 +166,7 @@ export default {
             }
             else{
               this.haveRelation = false;
-              this.totalRows = this.dashboard.psychologists.total;
+              this.totalRows = this.dashboard.psychologists.length;
             }
 
             this.isConsultLoaded = true;
@@ -184,16 +204,44 @@ export default {
     async refreshData(){
       loading();
       this.isLoading = true;
+
+      this.resetValue();
       await this.getDashboard();
       await this.setEcho();
       if(this.haveRelation){
         this.isChatLoading = true;
         this.activeUserId = this.dashboard.psychologist.user_id;
         await this.fetchMessages();
+        await this.checkVerificationTest();
         this.isChatLoading = false;
       }
+
       this.isLoading = false;
       loading();
+    },
+
+    checkVerificationTest(){
+      if(this.dashboard){
+        for (let i = 0; i < this.dashboard.test_types.length; i++){
+            if(this.dashboard.test_types[i].tests.length > 0){
+                if(!this.dashboard.test_types[i].tests[0].is_finished){
+                    if(this.dashboard.test_types[i].tests[0].videocall_date && this.dashboard.test_types[i].tests[0].videocall_link){
+                        this.canEndConsult = false;
+                    }
+                }
+            }
+        }
+      }
+    },
+
+    resetValue(){
+      this.tabIndexChat = 0;
+      this.haveRelation = false;
+      this.haveConsult = false;
+      this.isConsultToday = false;
+      this.isLinkNull = true;
+      this.isConsultFinished = false;
+      this.isConsultLoaded = false;
     },
 
     onProfileButtonClick(data){
@@ -202,12 +250,7 @@ export default {
     },
 
     onGoToLinkButtonClick(link){
-      if(link == 'chat'){
-        window.open("http://help-ptsd-chat.herokuapp.com/");
-      }
-      else{
-        window.open(link);
-      }
+      window.open(link);
     },
 
     onPilihButtonClick(data){
@@ -231,10 +274,14 @@ export default {
               .then(response => {
                   this.refreshData();
                   this.$bvModal.hide('modal-profile');
-                  // window.open("http://help-ptsd-chat.herokuapp.com/");
               })
               .catch(error => {
-                //
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan!',
+                    footer: error.response.data.message
+                })
               })
           }
       });
@@ -314,7 +361,6 @@ export default {
       this.isFetchingData = true;
 
       this.currentPage = value;
-      await this.getDashboard();
 
       await sleep(500);
       this.isFetchingData = false;
@@ -325,7 +371,6 @@ export default {
 
       this.perPage = value;
       this.currentPage = 1;
-      await this.getDashboard();
 
       await sleep(500);
       this.isFetchingData = false;
@@ -338,6 +383,7 @@ export default {
       });
     },
     sendMessage(){
+      this.isChatLoading = true;
       this.submitted_chat = true;
       //check if there message
       this.$v.message.$touch();
@@ -354,14 +400,20 @@ export default {
               this.submitted_chat = false;
               this.message.text = null;
               this.allMessages.push(response.data.data);
+              this.isChatLoading = false;
               setTimeout(this.scrollToEnd,100);
           })
           .catch(error => {
-            //
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response.data.message
+            })
           })
       );
     },
-    fetchMessages() {
+    async fetchMessages() {
       // if(!this.activeUserId){
       //   return alert('Please select friend');
       // }
@@ -371,7 +423,12 @@ export default {
               this.allMessages = response.data.data;
           })
           .catch(error => {
-            //
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response.data.message
+            })
           })
       );
     },
@@ -416,6 +473,15 @@ export default {
         });
     },
 
+    sortOnlineUsers(array, sortOrder){
+      const itemPositions = {};
+      for (const [index, data] of sortOrder.entries()) {
+        itemPositions[data.id] = index;
+      }
+
+      array.sort((a, b) => itemPositions[a.user_id] - itemPositions[b.user_id]);
+    },
+
     getHeader(index, datas){
       let isHeader = false;
       if(index == 0){
@@ -451,19 +517,112 @@ export default {
       return moment().add(-1, 'days').isSame(data, 'day');
     },
 
-    refreshChatData(value){
+    async refreshChatData(value){
       switch(value) {
         case 0:
-          return this.$refs.Test.refreshData();
+          if(this.haveRelation){
+            this.isChatLoading = true;
+            await this.fetchMessages();
+            this.scrollToEnd();
+            this.isChatLoading = false;
+          }
+          break
         case 1:
-          return this.$refs.Consult.refreshData();
+          if(this.haveRelation){
+            this.isChatLoading = true;
+            await this.fetchConsults();
+            this.isChatLoading = false;
+          }
+          break
         default:
-          this.$refs.Test.refreshData();
-          this.$refs.Consult.refreshData();
-          this.$refs.Journal.refreshData();
+          if(this.haveRelation){
+            this.isChatLoading = true;
+            await this.fetchMessages();
+            this.scrollToEnd();
+            await this.fetchConsults();
+            this.isChatLoading = false;
+          }
           break
       }
     },
+
+    async fetchConsults() {
+      const params = this.getRequestParams(
+          null, this.dashboard.relation_id
+      );
+      return (
+        api.getConsults(params)
+          .then(response => {
+              this.allConsults = response.data.data;
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response.data.message
+            })
+          })
+      );
+    },
+
+    onNoteQuestionsClick(data){
+      this.dataConsult = data
+      this.$bvModal.show('modal-notes');
+    },
+
+    goToTopPage(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    onEndConsultButtonClick(){
+      if(this.dashboard.consult){
+        if(this.dashboard.consult.is_finished){
+          this.canEndConsult = true;
+        }
+        else{
+          this.canEndConsult = false;
+        }
+      }
+      else{
+        this.canEndConsult = true;
+      }
+      if(this.canEndConsult){
+        Swal.fire({
+            title: "Akhiri konsultasi?",
+            html: "Anda akan mengakhiri konsultasi dengan<br>" + this.dashboard.psychologist.full_name,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#005C9A",
+            cancelButtonColor: "#f46a6a",
+            confirmButtonText: "Ya, akhiri!",
+            cancelButtonText: "Batalkan"
+        }).then(result => {
+            if (result.value) {
+                api.finishRelation(this.dashboard.relation_id)
+                // eslint-disable-next-line no-unused-vars
+                .then(response => {
+                    this.refreshData();
+                })
+                .catch(error => {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'Terjadi kesalahan!',
+                      footer: error.response.data.message
+                  })
+                })
+            }
+        });
+      }
+      else{
+        Swal.fire({
+            icon: 'error',
+            title: 'Masih ada jadwal Video Call!',
+            text: 'Harap selesaikan video call terlebih dahulu.',
+        })
+      }
+    }
   },
 };
 
@@ -726,27 +885,27 @@ function loading() {
                       </div>
                       <div 
                         v-if="isFetchingData"
-                        style="display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
+                        style="display: flex; justify-content: center; padding-top: 24.5px; padding-bottom: 25px;"
                       >
                         <b-spinner
-                          style="width: 1.2em; height: 1.2em;"
+                          style="width: 2rem; height: 2rem;"
                           class="mt-1"
                           variant="warning"
                           role="status"
                         />
                       </div>
                       <div 
-                        v-if="!isFetchingData && dashboard.psychologists.total == 0"
+                        v-if="!isFetchingData && dashboard.psychologists.length == 0"
                         style="font-size: 14px; display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
                       >
                         data tidak ditemukan.
                       </div>
-                      <div v-if="!isFetchingData && dashboard.psychologists.total > 0">
+                      <div v-if="!isFetchingData && dashboard.psychologists.length > 0">
                         <simplebar style="max-height: 345px" id="scrollElement">
                           <ul class="list-unstyled chat-list">
                             <li
                               class
-                              v-for="(psychologist, index) in dashboard.psychologists.data"
+                              v-for="(psychologist, index) in dashboard.psychologists"
                               :key="index"
                               @click="onProfileButtonClick(psychologist)"
                             >
@@ -865,7 +1024,11 @@ function loading() {
                             <i class="ri-logout-box-r-line text-danger"></i>
                           </template>
                           <b-dropdown-item>
-                            <div class="text-danger" style="display: flex; align-items: center; justify-content: left;">
+                            <div 
+                              class="text-danger" 
+                              style="display: flex; align-items: center; justify-content: left;"
+                              @click="onEndConsultButtonClick()"
+                            >
                               <i class="ri-error-warning-line align-middle mr-2 text-danger" />Akhiri konsultasi
                             </div>
                           </b-dropdown-item>
@@ -884,6 +1047,17 @@ function loading() {
 
               <div v-if="haveRelation" class="px-lg-2 chat-users">
                 <div class="chat-conversation p-3">
+                  <div
+                    v-if="isChatLoading"
+                    style="z-index:100; position:absolute; top: 60%; left: 68%; transform: translate(-50%, -50%);"
+                  >
+                    <b-spinner
+                      style="width: 3rem; height: 3rem;"
+                      class="m-2"
+                      variant="warning"
+                      role="status"
+                    />
+                  </div>
                   <simplebar
                     style="max-height: 450px"
                     id="containerElement"
@@ -930,6 +1104,7 @@ function loading() {
                             v-model="message.text"
                             class="form-control chat-input"
                             placeholder="Ketik Pesan..."
+                            @input="onTyping()"
                             :class="{
                               'is-invalid': submitted_chat && $v.message.text.$error,
                             }"
@@ -949,12 +1124,138 @@ function loading() {
                           type="submit"
                           class="btn btn-primary chat-send w-md waves-effect waves-light"
                           style="background-color:#005C9A;"
+                          :disabled="isChatLoading"
                         >
                           <span class="d-none d-sm-inline-block mr-2">Kirim</span>
                           <i class="mdi mdi-send"></i>
                         </button>
                       </div>
                     </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="tabIndexChat == 1" class="w-100 user-chat mt-4 mt-sm-0">
+              <div class="p-3 px-lg-4 user-chat-border">
+                <div class="row">
+                  <div class="col-md-8 col-6">
+                    <div style="height: 100%; display: flex!important; align-items: center!important; justify-content: left!important;">
+                      <h5
+                        class="text-center font-size-15 text-uppercase m-0"
+                        style="color:#005C9A;"
+                      >
+                        Riwayat Video Call
+                      </h5>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-6">
+                    <ul class="list-inline user-chat-nav text-right mb-0" :style="haveRelation ? 'visiblity: visible;' : 'visibility: hidden;'">
+                      <li class="list-inline-item">
+                        <b-dropdown toggle-class="nav-btn" right variant="white">
+                          <template v-slot:button-content>
+                            <i class="ri-logout-box-r-line text-danger"></i>
+                          </template>
+                          <b-dropdown-item>
+                            <div 
+                              class="text-danger" 
+                              style="display: flex; align-items: center; justify-content: left;"
+                              @click="onEndConsultButtonClick()"
+                            >
+                              <i class="ri-error-warning-line align-middle mr-2 text-danger" />Akhiri konsultasi
+                            </div>
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="!haveRelation" class="px-lg-2 py-4">
+                <div class="no-relation-title">
+                  <span class="title">Pilih psikolog terlebih dahulu!</span>
+                </div>
+              </div>
+
+              <div v-if="haveRelation" class="px-lg-2 chat-users">
+                <div class="chat-conversation px-3 pb-3">
+                  <simplebar
+                    style="max-height: 450px"
+                    id="containerElement"
+                    ref="currentConsult"
+                  >
+                    <div 
+                      v-if="isChatLoading"
+                      style="display: flex; justify-content: center; padding-top: 24.5px; padding-bottom: 25px;"
+                    >
+                      <b-spinner
+                        style="width: 1.2em; height: 1.2em;"
+                        class="mt-1"
+                        variant="warning"
+                        role="status"
+                      />
+                    </div>
+                    <div v-if="!isChatLoading" class="table-responsive">
+                      <b-table
+                        class="table-centered"
+                        :items="allConsults"
+                        :fields="fieldsConsults"
+                        responsive="sm"
+                        :per-page="perPageConsults"
+                        :current-page="currentPageConsults"
+                        :sort-by="sortByConsults"
+                        :sort-desc="sortDescConsults"
+                        :head-variant="'dark'"
+                        show-empty
+                      >
+                        <!-- eslint-disable-next-line vue/no-unused-vars -->
+                        <template #empty="scope">
+                          data masih kosong untuk saat ini.
+                        </template>
+                        <template v-slot:cell(consult_info.videocall_date)="data">
+                          {{ formatDate(data.item.consult_info.videocall_date, 'tanggal') }}
+                        </template>
+                        <template v-slot:cell(total_note_questions)="data">
+                          <b-button
+                            type="submit"
+                            variant="outline-light"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="onNoteQuestionsClick(data.item)" 
+                          >
+                            {{ data.item.total_note_questions }} Catatan
+                          </b-button>
+                        </template>
+                        <template v-slot:cell(status)="data">
+                          <b-button
+                            v-if="data.item.is_finished"
+                            variant="success"
+                            size="sm"
+                            style="min-width: 100px;"
+                            :disabled="true"
+                          >
+                            Selesai
+                          </b-button>
+                          <b-button
+                            v-if="!data.item.is_finished"
+                            variant="warning"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="goToTopPage()"
+                          >
+                            Berlangsung
+                          </b-button>
+                        </template>
+                      </b-table>
+                    </div>
+                  </simplebar>
+                </div>
+                <div class="px-lg-3">
+                  <label v-if="typingUser.username" class="mb-0">{{ typingUser.username }} sedang mengetik...</label>
+                  <div class="p-3 chat-input-section">
+                    <div class="no-relation-title">
+                      <span class="title">Ubah jadwal atau perlu video call? Silahkan kirim pesan ke psikolog!</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -972,9 +1273,6 @@ function loading() {
         hide-footer 
         title-class="font-18"
       >
-        <template v-slot:title>
-          <a class="font-weight-bold active">Profil Psikolog</a>
-        </template>
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <img
@@ -1027,6 +1325,32 @@ function loading() {
             >
               Pilih untuk Konsultasi
             </b-button>
+          </div>
+        </template>
+      </b-modal>
+    </div>
+
+    <div name="modalNotes">
+      <b-modal 
+        id="modal-notes" 
+        size="md" 
+        title="Catatan Psikolog" 
+        hide-footer 
+        title-class="font-18"
+      >
+        <template>
+          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <label>Catatan psikolog selama jeda Tes ke-{{ dataConsult.consult_index }}</label>
+          </div>
+          <div v-if="dataConsult.note_questions.length == 0" class="mt-2 text-center">-</div>
+          <div
+            v-for="(data, index) of dataConsult.note_questions"
+            :key="index"
+            class="mb-2"
+          >
+            <div class="mt-2 text-left">
+              {{ index+1 }}. {{ data.question_text }}
+            </div>
           </div>
         </template>
       </b-modal>

@@ -141,4 +141,17 @@ class RelationController extends BaseController
         $data['available'] = $available;
         return $this->respond($data);
     }
+
+    public function finishRelation($id)
+    {
+        $relation = Relation::find($id);
+        if(!$relation) {
+            return $this->respondNotFound('invalid relation id');
+        }
+
+        $relation->is_active = false;
+        $relation->save();
+
+        return $this->respond($relation);
+    }
 }

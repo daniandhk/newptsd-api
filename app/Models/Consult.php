@@ -15,6 +15,12 @@ class Consult extends BaseModel
         'next_date',
     ];
 
+    protected $appends = ['total_note_questions'];
+
+    public function getTotalNoteQuestionsAttribute() {
+        return $this->note_questions()->count();
+    }
+
     public function relation() {
         return $this->belongsTo(Relation::class);
     }

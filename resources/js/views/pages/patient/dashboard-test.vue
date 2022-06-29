@@ -578,9 +578,6 @@ function loading() {
         hide-footer 
         title-class="font-18"
       >
-        <template v-slot:title>
-          <a class="font-weight-bold active">Jenis Tes</a>
-        </template>
         <template>
           <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <label class="mb-0">Deskripsi tes:</label>
@@ -599,9 +596,6 @@ function loading() {
         hide-footer 
         title-class="font-18"
       >
-        <template v-slot:title>
-          <a class="font-weight-bold active">Hubungi</a>
-        </template>
         <template>
           <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <label 

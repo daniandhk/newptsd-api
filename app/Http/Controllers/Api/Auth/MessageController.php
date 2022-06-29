@@ -13,8 +13,8 @@ class MessageController extends BaseController
 {
     public function privateMessages(Request $request, User $user) {
         $privateCommunication= Message::with(['user', 'receiver'])
-        ->where(['user_id'=> $request->user()->id, 'receiver_id'=> $user->id])
-        ->orWhere(['user_id' => $user->id, 'receiver_id' => $request->user()->id])
+        ->where([['user_id', $request->user()->id], ['receiver_id', $user->id]])
+        ->orWhere([['user_id', $user->id], ['receiver_id', $request->user()->id]])
         ->orderBy('created_at')->get();
 
         return $this->respond($privateCommunication);

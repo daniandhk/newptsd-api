@@ -141,32 +141,27 @@ class PatientController extends BaseController
 
         $data = new stdClass();
 
+        //tests
+        $data->test_types = TestType::FilteredTest($patient_id)->get();
+
         //chat and consult
         $relation = $patient->relations->where('is_active', true)->first();
         if($relation){
+            $data->relation_id = $relation->id;
             $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
             $data->consult = Consult::with(['consult_info','note_questions'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
             $psychologists = Psychologist::where('is_dummy', $patient->is_dummy)->with('chat_schedules');
-            $per_page = 3;
-            $request->whenHas('per_page', function($size) use (&$per_page) {
-                $per_page = $size;
-            });
 
             if($request->has('search')) {
                 $search = $request->get('search');
                 $psychologists = $psychologists->where('full_name', 'ILIKE', '%'.$search.'%');
             }
 
-            //Paginate
-            // $psychologists = $this->paginator($psychologists,$per_page);
-
-            //Paginate Collection or Array
             $psychologists = $psychologists->get()->sortByDesc(function($psychologist){
                 return ($psychologist->online_schedule['is_online']);
             });
-            $psychologists = $this->paginateArray($psychologists,$per_page);
 
             $data->psychologists = $psychologists;
             $data->consult = null;
@@ -213,40 +208,41 @@ class PatientController extends BaseController
         //note_question
         $data->note_questions = [];
 
-        if($patient->relation){
-            $relation = $patient->relation;
-            $consult = Consult::with(['consult_info','note_questions','note_questions.note_answers'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
-        }
-        else{
-            $consult = null;
-        }
-
-        if($consult){
-            if(count($consult->note_questions) > 0){
+        $relation = $patient->relations->where('is_active', true)->first();
+        if($relation){
+            $consults = Consult::with(['consult_info','note_questions','note_questions.note_answers'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->get();
+            foreach($consults as $consult) {
                 $next_date = $consult->next_date;
                 $nextDate = date("Y-m-d", strtotime($next_date));
-                $last_date = $consult->last_date;
+                $last_date = $consult->created_at;
                 $lastDate = date("Y-m-d", strtotime($last_date));
-                if($date <= $nextDate && $date >= $lastDate){
-                    foreach($consult->note_questions as $question) {
-                        if(count($question->note_answers) > 0){
-                            foreach($question->note_answers as $answer) {
-                                $answer_date = $answer->date;
-                                $newAnswerDate = date("Y-m-d", strtotime($answer_date));
-                                if($date == $newAnswerDate){
-                                    $question->answer = $answer->answer_text;
-                                    break;
+                if($date <= $nextDate && $date > $lastDate){
+                    if(count($consult->note_questions) > 0){
+                        foreach($consult->note_questions as $question) {
+                            if(count($question->note_answers) > 0){
+                                foreach($question->note_answers as $answer) {
+                                    $answer_date = $answer->date;
+                                    $newAnswerDate = date("Y-m-d", strtotime($answer_date));
+                                    if($date == $newAnswerDate){
+                                        $question->answer = $answer->answer_text;
+                                        break;
+                                    }
+                                    $question->answer = null;
                                 }
+                            }
+                            else{
                                 $question->answer = null;
                             }
                         }
-                        else{
-                            $question->answer = null;
-                        }
                     }
                     $data->note_questions = $consult->note_questions;
+                    $data->consult_id = $consult->id;
+                    break;
                 }
             }
+        }
+        else{
+            $consult = null;
         }
 
         return $this->respond($data);

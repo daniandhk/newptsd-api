@@ -1374,9 +1374,6 @@ function loading() {
         hide-footer 
         title-class="font-18"
       >
-        <template v-slot:title>
-          <a class="font-weight-bold active">Riwayat tes {{ test.name }}</a>
-        </template>
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <label>{{ test.name }}</label>
