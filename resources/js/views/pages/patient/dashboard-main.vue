@@ -21,13 +21,13 @@ export default {
       tabIndex: 0,
     };
   },
-  mounted() {
-    this.refreshData(0);
-  },
   computed: {
     notification() {
       return this.$store ? this.$store.state.notification : null;
     },
+  },
+  mounted() {
+    this.refreshData(0);
   },
   methods: {
     ...notificationMethods,
@@ -83,12 +83,12 @@ function loading() {
       class="full-width"
     >
       <b-tabs
+        v-model="tabIndex"
         nav-class="nav-tabs-custom"
         class="mt-4"
         style="align-items: center; justify-content: center;"
         :active-nav-item-class="'tab-active-class'"
         @input="refreshData"
-        v-model="tabIndex"
       >
         <b-tab
           title-link-class="p-3"

@@ -873,7 +873,7 @@ function loading() {
                                 :disabled-date="disabledBeforeToday"
                                 :class="{ 'is-invalid': submitted_videocall && $v.test_review.videocall_date.$error }"
                               >
-                                <template v-slot:footer>
+                                <template #footer>
                                   <button
                                     class="mx-btn mx-btn-text"
                                     @click="toggleTimePanel"
@@ -1007,7 +1007,7 @@ function loading() {
                                     :disabled-date="disabledBeforeToday"
                                     :class="{ 'is-invalid': submitted_consult && $v.input_consult.date.$error }"
                                   >
-                                    <template v-slot:footer>
+                                    <template #footer>
                                       <button
                                         class="mx-btn mx-btn-text"
                                         @click="toggleTimePanel"
@@ -1374,28 +1374,26 @@ function loading() {
         hide-footer 
         title-class="font-18"
       >
-        <template>
-          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <label>{{ test.name }}</label>
-            <div
-              v-for="(data, index) of historyData"
-              :key="index"
-              class="mb-2"
-            >
-              <div class="mt-2">
-                <b-button
-                  variant="outline-dark"
-                  size="sm"
-                  style="width: 100%;"
-                  :disabled="test_id == data.id"
-                  @click="goToTest(data.id)"
-                >
-                  <b>Tes ke-{{ data.index }}, {{ dateFormatted(data.created_at) }}, Skor: {{ data.score.toString() }} dari {{ test.total_score.toString() }}</b>
-                </b-button>
-              </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <label>{{ test.name }}</label>
+          <div
+            v-for="(data, index) of historyData"
+            :key="index"
+            class="mb-2"
+          >
+            <div class="mt-2">
+              <b-button
+                variant="outline-dark"
+                size="sm"
+                style="width: 100%;"
+                :disabled="test_id == data.id"
+                @click="goToTest(data.id)"
+              >
+                <b>Tes ke-{{ data.index }}, {{ dateFormatted(data.created_at) }}, Skor: {{ data.score.toString() }} dari {{ test.total_score.toString() }}</b>
+              </b-button>
             </div>
           </div>
-        </template>
+        </div>
       </b-modal>
     </div>
   </div>

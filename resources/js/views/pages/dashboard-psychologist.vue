@@ -1,6 +1,4 @@
 <script>
-import Layout from "../layouts/main";
-import PageHeader from "../../components/page-header";
 import Topbar from "../../components/topbar";
 import ConfirmEmail from "../../views/pages/auth/confirm-email";
 import SetupProfile from "../../views/pages/auth/setup-psychologist";
@@ -16,8 +14,6 @@ export default {
     meta: [{ name: "description" }],
   },
   components: {
-    Layout,
-    PageHeader,
     Topbar,
     ConfirmEmail,
     SetupProfile,

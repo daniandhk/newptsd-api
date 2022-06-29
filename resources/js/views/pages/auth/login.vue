@@ -279,8 +279,8 @@ function loading() {
                           <button
                             class="btn btn-warning w-md waves-effect waves-light"
                             style="width:100%; background-color:#EEC73F;"
-                            @click="onOrButtonClick()"
                             :disabled="isLoading"
+                            @click="onOrButtonClick()"
                           >
                             Registrasi
                           </button>
@@ -292,25 +292,25 @@ function loading() {
                         style="margin-top:0!important;"
                       >
                         <div class="col-6 text-left">
-                        <b-button
-                          variant="outline-light"
-                          size="sm"
-                          style="width: 80%;"
-                          @click="onForgotButtonClick()"
-                        >
-                          <b>Lupa Password</b>
-                        </b-button>
+                          <b-button
+                            variant="outline-light"
+                            size="sm"
+                            style="width: 80%;"
+                            @click="onForgotButtonClick()"
+                          >
+                            <b>Lupa Password</b>
+                          </b-button>
                         </div>
                         
                         <div class="col-6 text-right">
-                        <b-button
-                          variant="outline-light"
-                          size="sm"
-                          style="width: 80%;"
-                          @click="onHelpButtonClick()"
-                        >
-                          <b>Butuh Bantuan?</b>
-                        </b-button>
+                          <b-button
+                            variant="outline-light"
+                            size="sm"
+                            style="width: 80%;"
+                            @click="onHelpButtonClick()"
+                          >
+                            <b>Butuh Bantuan?</b>
+                          </b-button>
                         </div>
                       </div>
                     </div>

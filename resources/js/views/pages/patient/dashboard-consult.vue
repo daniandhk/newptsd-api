@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       user: store.getters.getLoggedUser,
+      // eslint-disable-next-line no-undef
       backendUrl: process.env.MIX_STORAGE_URL,
       dashboard: {
           test: {
@@ -64,7 +65,7 @@ export default {
       sortByConsults: 'consult_index',
       fieldsConsults: [
         { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', },
-        { key: "consult_info.videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', },
+        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', },
         { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
         { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
       ],
@@ -91,6 +92,19 @@ export default {
       return this.onlineUsers;
     }
   },
+  watch:{
+    isLoading(){
+      if(this.haveRelation){
+        setTimeout(this.scrollToEnd,100);
+      }
+    },
+
+    onlineUsers: async function(){
+      if(!this.haveRelation){
+        await this.sortOnlineUsers(this.dashboard.psychologists, this.onlineUsers);
+      }
+    }
+  },
   beforeDestroy() {
     // prevent memory leak
     clearInterval(this.interval)
@@ -102,17 +116,6 @@ export default {
       this.time = moment().locale('id').format('HH:mm:ss')
       this.date = moment().locale('id')
     }, 1000)
-  },
-  watch:{
-    isLoading(){
-      if(this.haveRelation){
-        setTimeout(this.scrollToEnd,100);
-      }
-    },
-
-    onlineUsers: async function(){
-      await this.sortOnlineUsers(this.dashboard.psychologists, this.onlineUsers);
-    }
   },
   validations: {
     message: {
@@ -377,6 +380,7 @@ export default {
     },
 
     onTyping(){
+      // eslint-disable-next-line no-undef
       Echo.private('privatechat.'+this.activeUserId)
       .whisper('typing',{
         user: this.user
@@ -442,6 +446,7 @@ export default {
 
     async setEcho(){
 
+      // eslint-disable-next-line no-undef
       Echo.join('helpptsd')
         .here((users) => {
             console.log('here' + users)
@@ -456,6 +461,7 @@ export default {
             this.onlineUsers.splice(this.onlineUsers.indexOf(user),1);
         });
         
+      // eslint-disable-next-line no-undef
       Echo.private('privatechat.'+this.user.id)
         .listen('PrivateMessageSent',(e)=>{
           this.activeUserId = e.message.user_id;
@@ -828,37 +834,60 @@ function loading() {
               </div>
             </div>
           </div>
-          <div class="d-lg-flex mb-4" style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 0.25rem;">
+          <div
+            class="d-lg-flex mb-4"
+            style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 0.25rem;"
+          >
             <div class="chat-leftsidebar">
               <div class="chat-leftsidebar-nav">
                 <b-tabs 
+                  v-model="tabIndexChat" 
                   nav-class="nav-tabs-custom" 
                   pills 
                   fill 
-                  content-class="py-2" 
+                  content-class="py-2"
                   justified
                   @input="refreshChatData"
-                  v-model="tabIndexChat"
                 >
                   <b-tab>
                     <template v-slot:title>
-                      <i class="ri-message-2-line font-size-16" style="color:#005C9A;"></i>
-                      <span class="mt-1 d-none d-sm-block font-size-14" style="color:#005C9A;">Chat</span>
+                      <i
+                        class="ri-message-2-line font-size-16"
+                        style="color:#005C9A;"
+                      />
+                      <span
+                        class="mt-1 d-none d-sm-block font-size-14"
+                        style="color:#005C9A;"
+                      >Chat</span>
                     </template>
                   </b-tab>
                   <b-tab>
                     <template v-slot:title>
-                      <i class="ri-video-chat-line font-size-16" style="color:#005C9A;"></i>
-                      <span class="mt-1 d-none d-sm-block font-size-14" style="color:#005C9A;">Riwayat Video Call</span>
+                      <i
+                        class="ri-video-chat-line font-size-16"
+                        style="color:#005C9A;"
+                      />
+                      <span
+                        class="mt-1 d-none d-sm-block font-size-14"
+                        style="color:#005C9A;"
+                      >Riwayat Video Call</span>
                     </template>
                   </b-tab>
                   <b-card-text>
                     <div v-if="!haveRelation">
                       <div class="row px-3 mb-2 mt-1">
-                        <div class="col-6" style="display: flex; align-items: center; justify-content: left;">
-                          <h5 class="font-size-14">Pilih Psikolog</h5>
+                        <div
+                          class="col-6"
+                          style="display: flex; align-items: center; justify-content: left;"
+                        >
+                          <h5 class="font-size-14">
+                            Pilih Psikolog
+                          </h5>
                         </div>
-                        <div class="col-6" style="display: flex; align-items: center; justify-content: right;">
+                        <div
+                          class="col-6"
+                          style="display: flex; align-items: center; justify-content: right;"
+                        >
                           <label class="d-inline-flex align-items-center text-muted">
                             <b-form-select 
                               v-model="perPage" 
@@ -879,7 +908,7 @@ function loading() {
                               placeholder="ketik nama..."
                               @input="onSearchButtonClick()"
                             />
-                            <i class="ri-search-line search-icon"></i>
+                            <i class="ri-search-line search-icon" />
                           </div>
                         </div>
                       </div>
@@ -901,12 +930,15 @@ function loading() {
                         data tidak ditemukan.
                       </div>
                       <div v-if="!isFetchingData && dashboard.psychologists.length > 0">
-                        <simplebar style="max-height: 345px" id="scrollElement">
+                        <simplebar
+                          id="scrollElement"
+                          style="max-height: 345px"
+                        >
                           <ul class="list-unstyled chat-list">
                             <li
-                              class
                               v-for="(psychologist, index) in dashboard.psychologists"
                               :key="index"
+                              class
                               @click="onProfileButtonClick(psychologist)"
                             >
                               <a style="cursor: pointer;">
@@ -919,8 +951,8 @@ function loading() {
                                       :src="backendUrl + psychologist.image"
                                       class="rounded-circle avatar-xs"
                                       alt
-                                    />
-                                    <span class="user-status"></span>
+                                    >
+                                    <span class="user-status" />
                                   </div>
                                   <div class="media-body overflow-hidden">
                                     <h5 class="text-truncate font-size-14 mb-1">
@@ -960,8 +992,13 @@ function loading() {
                       </div>
                     </div>
                     <div v-if="haveRelation">
-                      <h5 class="font-size-14 px-3 mb-3 mt-2">Psikolog Anda</h5>
-                      <simplebar style="max-height: 345px" id="scrollElement">
+                      <h5 class="font-size-14 px-3 mb-3 mt-2">
+                        Psikolog Anda
+                      </h5>
+                      <simplebar
+                        id="scrollElement"
+                        style="max-height: 345px"
+                      >
                         <ul class="list-unstyled chat-list">
                           <li
                             class
@@ -977,8 +1014,8 @@ function loading() {
                                     :src="backendUrl + dashboard.psychologist.image"
                                     class="rounded-circle avatar-xs"
                                     alt
-                                  />
-                                  <span class="user-status"></span>
+                                  >
+                                  <span class="user-status" />
                                 </div>
                                 <div class="media-body overflow-hidden">
                                   <h5 class="text-truncate font-size-14 mb-1">
@@ -1003,7 +1040,10 @@ function loading() {
                 </b-tabs>
               </div>
             </div>
-            <div v-if="tabIndexChat == 0" class="w-100 user-chat mt-4 mt-sm-0">
+            <div
+              v-if="tabIndexChat == 0"
+              class="w-100 user-chat mt-4 mt-sm-0"
+            >
               <div class="p-3 px-lg-4 user-chat-border">
                 <div class="row">
                   <div class="col-md-8 col-6">
@@ -1017,11 +1057,18 @@ function loading() {
                     </div>
                   </div>
                   <div class="col-md-4 col-6">
-                    <ul class="list-inline user-chat-nav text-right mb-0" :style="haveRelation ? 'visiblity: visible;' : 'visibility: hidden;'">
+                    <ul
+                      class="list-inline user-chat-nav text-right mb-0"
+                      :style="haveRelation ? 'visiblity: visible;' : 'visibility: hidden;'"
+                    >
                       <li class="list-inline-item">
-                        <b-dropdown toggle-class="nav-btn" right variant="white">
+                        <b-dropdown
+                          toggle-class="nav-btn"
+                          right
+                          variant="white"
+                        >
                           <template v-slot:button-content>
-                            <i class="ri-logout-box-r-line text-danger"></i>
+                            <i class="ri-logout-box-r-line text-danger" />
                           </template>
                           <b-dropdown-item>
                             <div 
@@ -1039,13 +1086,19 @@ function loading() {
                 </div>
               </div>
 
-              <div v-if="!haveRelation" class="px-lg-2 py-4">
+              <div
+                v-if="!haveRelation"
+                class="px-lg-2 py-4"
+              >
                 <div class="no-relation-title">
                   <span class="title">Pilih psikolog terlebih dahulu!</span>
                 </div>
               </div>
 
-              <div v-if="haveRelation" class="px-lg-2 chat-users">
+              <div
+                v-if="haveRelation"
+                class="px-lg-2 chat-users"
+              >
                 <div class="chat-conversation p-3">
                   <div
                     v-if="isChatLoading"
@@ -1059,33 +1112,46 @@ function loading() {
                     />
                   </div>
                   <simplebar
-                    style="max-height: 450px"
                     id="containerElement"
                     ref="current"
+                    style="max-height: 450px"
                   >
                     <ul class="list-unstyled mb-0 pr-3">
                       <li
-                        v-for="(message, index) in allMessages"
+                        v-for="(msg, index) in allMessages"
                         :key="index"
-                        :class="message.user_id == user.id ? 'right' : 'left'"
+                        :class="msg.user_id == user.id ? 'right' : 'left'"
                       >
-                        <div v-if="getHeader(index, allMessages)" class="chat-day-title">
+                        <div
+                          v-if="getHeader(index, allMessages)"
+                          class="chat-day-title"
+                        >
                           <span class="title">{{ getHeader(index, allMessages) }}</span>
                         </div>
                         <div class="conversation-list">
-                          <div v-if="message.user_id != user.id" class="chat-avatar">
-                            <img :src="backendUrl + message.user.profile.image" alt />
+                          <div
+                            v-if="msg.user_id != user.id"
+                            class="chat-avatar"
+                          >
+                            <img
+                              :src="backendUrl + msg.user.profile.image"
+                              alt
+                            >
                           </div>
 
                           <div class="ctext-wrap">
-                            <div class="conversation-name">{{ message.user.username }}</div>
+                            <div class="conversation-name">
+                              {{ msg.user.username }}
+                            </div>
                             <div class="ctext-wrap-content">
-                              <p class="mb-0">{{ message.text }}</p>
+                              <p class="mb-0">
+                                {{ msg.text }}
+                              </p>
                             </div>
 
                             <p class="chat-time mb-0">
-                              <i class="bx bx-time-five align-middle mr-1"></i>
-                              {{ formatDate(message.created_at, 'chattime') }}
+                              <i class="bx bx-time-five align-middle mr-1" />
+                              {{ formatDate(msg.created_at, 'chattime') }}
                             </p>
                           </div>
                         </div>
@@ -1094,28 +1160,32 @@ function loading() {
                   </simplebar>
                 </div>
                 <div class="px-lg-3">
-                  <label v-if="typingUser.username" class="mb-0">{{ typingUser.username }} sedang mengetik...</label>
+                  <label
+                    v-if="typingUser.username"
+                    class="mb-0"
+                  >{{ typingUser.username }} sedang mengetik...</label>
                   <div class="p-3 chat-input-section">
-                    <form @submit.prevent="sendMessage" class="row">
+                    <form
+                      class="row"
+                      @submit.prevent="sendMessage"
+                    >
                       <div class="col">
                         <div class="position-relative">
                           <input
-                            type="text"
                             v-model="message.text"
+                            type="text"
                             class="form-control chat-input"
                             placeholder="Ketik Pesan..."
-                            @input="onTyping()"
                             :class="{
                               'is-invalid': submitted_chat && $v.message.text.$error,
                             }"
-                          />
+                            @input="onTyping()"
+                          >
                           <div
                             v-if="submitted_chat && $v.message.text.$error"
                             class="invalid-feedback"
                           >
-                            <span v-if="!$v.message.text.required"
-                              >Pesan harus diisi!</span
-                            >
+                            <span v-if="!$v.message.text.required">Pesan harus diisi!</span>
                           </div>
                         </div>
                       </div>
@@ -1127,7 +1197,7 @@ function loading() {
                           :disabled="isChatLoading"
                         >
                           <span class="d-none d-sm-inline-block mr-2">Kirim</span>
-                          <i class="mdi mdi-send"></i>
+                          <i class="mdi mdi-send" />
                         </button>
                       </div>
                     </form>
@@ -1135,7 +1205,10 @@ function loading() {
                 </div>
               </div>
             </div>
-            <div v-if="tabIndexChat == 1" class="w-100 user-chat mt-4 mt-sm-0">
+            <div
+              v-if="tabIndexChat == 1"
+              class="w-100 user-chat mt-4 mt-sm-0"
+            >
               <div class="p-3 px-lg-4 user-chat-border">
                 <div class="row">
                   <div class="col-md-8 col-6">
@@ -1149,11 +1222,18 @@ function loading() {
                     </div>
                   </div>
                   <div class="col-md-4 col-6">
-                    <ul class="list-inline user-chat-nav text-right mb-0" :style="haveRelation ? 'visiblity: visible;' : 'visibility: hidden;'">
+                    <ul
+                      class="list-inline user-chat-nav text-right mb-0"
+                      :style="haveRelation ? 'visiblity: visible;' : 'visibility: hidden;'"
+                    >
                       <li class="list-inline-item">
-                        <b-dropdown toggle-class="nav-btn" right variant="white">
+                        <b-dropdown
+                          toggle-class="nav-btn"
+                          right
+                          variant="white"
+                        >
                           <template v-slot:button-content>
-                            <i class="ri-logout-box-r-line text-danger"></i>
+                            <i class="ri-logout-box-r-line text-danger" />
                           </template>
                           <b-dropdown-item>
                             <div 
@@ -1171,18 +1251,24 @@ function loading() {
                 </div>
               </div>
 
-              <div v-if="!haveRelation" class="px-lg-2 py-4">
+              <div
+                v-if="!haveRelation"
+                class="px-lg-2 py-4"
+              >
                 <div class="no-relation-title">
                   <span class="title">Pilih psikolog terlebih dahulu!</span>
                 </div>
               </div>
 
-              <div v-if="haveRelation" class="px-lg-2 chat-users">
+              <div
+                v-if="haveRelation"
+                class="px-lg-2 chat-users"
+              >
                 <div class="chat-conversation px-3 pb-3">
                   <simplebar
-                    style="max-height: 450px"
                     id="containerElement"
                     ref="currentConsult"
+                    style="max-height: 450px"
                   >
                     <div 
                       v-if="isChatLoading"
@@ -1195,7 +1281,10 @@ function loading() {
                         role="status"
                       />
                     </div>
-                    <div v-if="!isChatLoading" class="table-responsive">
+                    <div
+                      v-if="!isChatLoading"
+                      class="table-responsive"
+                    >
                       <b-table
                         class="table-centered"
                         :items="allConsults"
@@ -1212,7 +1301,7 @@ function loading() {
                         <template #empty="scope">
                           data masih kosong untuk saat ini.
                         </template>
-                        <template v-slot:cell(consult_info.videocall_date)="data">
+                        <template v-slot:cell(videocall_date)="data">
                           {{ formatDate(data.item.consult_info.videocall_date, 'tanggal') }}
                         </template>
                         <template v-slot:cell(total_note_questions)="data">
@@ -1251,7 +1340,10 @@ function loading() {
                   </simplebar>
                 </div>
                 <div class="px-lg-3">
-                  <label v-if="typingUser.username" class="mb-0">{{ typingUser.username }} sedang mengetik...</label>
+                  <label
+                    v-if="typingUser.username"
+                    class="mb-0"
+                  >{{ typingUser.username }} sedang mengetik...</label>
                   <div class="p-3 chat-input-section">
                     <div class="no-relation-title">
                       <span class="title">Ubah jadwal atau perlu video call? Silahkan kirim pesan ke psikolog!</span>
@@ -1342,7 +1434,12 @@ function loading() {
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <label>Catatan psikolog selama jeda Tes ke-{{ dataConsult.consult_index }}</label>
           </div>
-          <div v-if="dataConsult.note_questions.length == 0" class="mt-2 text-center">-</div>
+          <div
+            v-if="dataConsult.note_questions.length == 0"
+            class="mt-2 text-center"
+          >
+            -
+          </div>
           <div
             v-for="(data, index) of dataConsult.note_questions"
             :key="index"

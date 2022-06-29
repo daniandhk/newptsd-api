@@ -264,10 +264,10 @@ function loading() {
                   >
                     <div class="hover-effect">
                       - <a
-                          href="#"
-                          style="color:#005C9A;"
-                          @click="goToCard(index)"
-                        >{{ test_type.name }}</a>
+                        href="#"
+                        style="color:#005C9A;"
+                        @click="goToCard(index)"
+                      >{{ test_type.name }}</a>
                     </div>
                   </div>
                 </div>
@@ -292,7 +292,10 @@ function loading() {
               <div class="card-body mt-2 ml-2 mr-2 pb-2">
                 <div class="text-center form-group mb-0">
                   <h5 class="text-center font-size-15 text-uppercase">
-                    <div class="hover-effect" style="display:inline-block">
+                    <div
+                      class="hover-effect"
+                      style="display:inline-block"
+                    >
                       <a
                         href="#"
                         style="color:#005C9A;"
@@ -579,9 +582,12 @@ function loading() {
         title-class="font-18"
       >
         <template>
-          <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <div
+            class="text-center"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+          >
             <label class="mb-0">Deskripsi tes:</label>
-            <p>{{dataTestType.description}}</p>
+            <p>{{ dataTestType.description }}</p>
             <p><b>Jeda tiap tes: </b>{{ dataTestType.delay_days }} hari</p>
           </div>
         </template>
@@ -597,7 +603,10 @@ function loading() {
         title-class="font-18"
       >
         <template>
-          <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <div
+            class="text-center"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+          >
             <label 
               class="mb-0"
               style="color:#005C9A;"
@@ -616,7 +625,10 @@ function loading() {
               class="mb-0 mt-4"
               style="color:#005C9A;"
             >Wali Anda</label>
-            <div v-if="user.profile.guardian" style="width: 100%;display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div
+              v-if="user.profile.guardian"
+              style="width: 100%;display: flex; flex-direction: column; align-items: center; justify-content: center;"
+            >
               <div class="col-6 mt-1">
                 <b-button
                   variant="outline-light"
@@ -661,19 +673,23 @@ function loading() {
                 class="mt-3"
                 style="font-size: 12px;"
               >
-              <p>*psikolog mengetahui informasi wali Anda, ubah izin di <a
-                                                                          href="#"
-                                                                          style="color:#505d69;"
-                                                                          @click="goToSettingsMenu()"
-                                                                        ><b>Pengaturan Akun</b></a></p>
+                <p>
+                  *psikolog mengetahui informasi wali Anda, ubah izin di <a
+                    href="#"
+                    style="color:#505d69;"
+                    @click="goToSettingsMenu()"
+                  ><b>Pengaturan Akun</b></a>
+                </p>
               </div>
             </div>
             <div v-if="!user.profile.guardian">
-              <p class="mt-1">Submit data wali Anda di <a
-                                                          href="#"
-                                                          style="color:#505d69;"
-                                                          @click="goToSettingsMenu()"
-                                                        ><b>Pengaturan Akun</b></a>.</p>
+              <p class="mt-1">
+                Submit data wali Anda di <a
+                  href="#"
+                  style="color:#505d69;"
+                  @click="goToSettingsMenu()"
+                ><b>Pengaturan Akun</b></a>.
+              </p>
             </div>
           </div>
         </template>

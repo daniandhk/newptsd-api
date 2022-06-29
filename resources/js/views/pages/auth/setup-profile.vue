@@ -208,11 +208,11 @@ function loading() {
                     style="min-width:260px;"
                     @submit.prevent="tryToRegister"
                   >
+                    <div
+                      class="col-md-12"
+                      style="padding:0!important; margin:0!important"
+                    >
                       <div
-                        class="col-md-12"
-                        style="padding:0!important; margin:0!important"
-                      >
-                        <div
                         class="col-md-12"
                         style="padding:0!important; margin:0!important"
                       >

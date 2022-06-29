@@ -129,7 +129,10 @@ export default {
             <i class="ri-settings-2-line align-middle mr-1" />
             Pengaturan Akun
           </a>
-          <div v-if="user.profile" class="dropdown-divider" />
+          <div
+            v-if="user.profile"
+            class="dropdown-divider"
+          />
           <a
             class="dropdown-item text-danger"
             href="/logout"

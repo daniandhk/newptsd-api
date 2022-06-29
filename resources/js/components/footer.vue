@@ -7,7 +7,7 @@
         </div>
         <div class="col-sm-6">
           <div class="text-sm-right d-none d-sm-block">
-            <!-- <a 
+            <!-- <a
             href="javascript:void(0);"
             style="color: #74788d;">
               About Impulse

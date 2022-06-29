@@ -4,15 +4,15 @@ export default {
   props: {
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     items: {
       type: Array,
       default: () => {
         return []
-      },
-    },
-  },
+      }
+    }
+  }
 }
 </script>
 

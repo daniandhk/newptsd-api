@@ -337,8 +337,8 @@ function loading() {
                           <button
                             class="btn btn-primary w-md waves-effect waves-light"
                             style="width:100%; background-color:#005C9A;"
-                            @click="onOrButtonClick()"
                             :disabled="isLoading"
+                            @click="onOrButtonClick()"
                           >
                             Log In
                           </button>
