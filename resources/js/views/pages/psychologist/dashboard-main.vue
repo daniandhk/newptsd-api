@@ -33,14 +33,18 @@ export default {
       backendUrl: process.env.MIX_STORAGE_URL,
 
       isLoading: false,
-
+      isFetchingData: false,
+      
       related_patients: [],
+      pageOptionsRelated: [5, 10, 20, 50, 100],
+      filterRelated: "",
       currentPageRelated: 1,
       perPageRelated: 10,
+      totalRowsRelated: 1,
       fieldsRelated: [
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
-        { key: "status", sortable: false, label: "Status", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "status", sortable: true, label: "Status", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "test", sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_test", sortable: false, label: "Jadwal Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_status", sortable: false, label: "Status Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
@@ -49,8 +53,11 @@ export default {
       ],
 
       available_patients: [],
+      pageOptionsAvailable: [5, 10, 20, 50, 100],
+      filterAvailable: "",
       currentPageAvailable: 1,
       perPageAvailable: 10,
+      totalRowsAvailable: 1,
       fieldsAvailable: [
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
@@ -65,7 +72,15 @@ export default {
   computed: {
     notification () {
       return this.$store ? this.$store.state.notification : null
-    }
+    },
+
+    rowsRelated() {
+      return this.totalRowsRelated;
+    },
+
+    rowsAvailable() {
+      return this.totalRowsAvailable;
+    },
   },
   mounted: async function () {
     await this.refreshData();
@@ -73,18 +88,46 @@ export default {
   methods: {
     ...notificationMethods,
 
+    getRequestParams(search_related, search_available) {
+      let params = {};
+
+      if (search_related) {
+        params["search_related"] = search_related;
+      }
+
+      if (search_available) {
+        params["search_available"] = search_available;
+      }
+
+      return params;
+    },
+
     async getDashboard(){
         loading();
+        const params = this.getRequestParams(
+            this.filterRelated,
+            this.filterAvailable,
+        );
         return (
-          api.getMainDashboard(this.user.profile.id)
+          api.getMainDashboard(this.user.profile.id, params)
             // eslint-disable-next-line no-unused-vars
             .then(response => {
                 if(response.data.data){
                     this.related_patients = response.data.data.related_patients;
                     this.perPageRelated = response.data.data.related_patients.length;
+                    this.totalRowsRelated = response.data.data.related_patients.length;
+
+                    this.pageOptionsRelated.push(response.data.data.related_patients.length);
+                    this.pageOptionsRelated = [...new Set(this.pageOptionsRelated)];
+                    this.pageOptionsRelated.sort(function (a, b) {  return a - b;  });
 
                     this.available_patients = response.data.data.available_patients;
                     this.perPageAvailable = response.data.data.available_patients.length;
+                    this.totalRowsAvailable = response.data.data.available_patients.length;
+
+                    this.pageOptionsAvailable.push(response.data.data.available_patients.length);
+                    this.pageOptionsAvailable = [...new Set(this.pageOptionsAvailable)];
+                    this.pageOptionsAvailable.sort(function (a, b) {  return a - b;  });
                 }
                 loading();
             })
@@ -109,16 +152,22 @@ export default {
     },
 
     checkStatus(status){{
-      if(status == 'chat'){
-        return 'outline-dark'
-      }
-      else if(status == 'input url konsultasi video call' || status == 'input jadwal verifikasi'){
-        return 'outline-danger'
+      if(status == 'konsultasi chat' || status == 'konsultasi video call' || status == 'verifikasi tes'){
+        return 'outline-info'
       }
       else{
         return 'outline-warning'
       }
     }},
+
+    isDateStarted(date){
+      if(date){
+        if(moment().isSameOrAfter(date)){
+          return true;
+        }
+      }
+      return false;
+    },
 
     onPilihButtonClick(data){
       Swal.fire({
@@ -153,8 +202,88 @@ export default {
       });
     },
 
-    //
+    async onSearchButtonClick(){
+      loading();
+      this.isFetchingData = true;
+
+      await this.getDashboard();
+
+      this.isFetchingData = false;
+      loading();
+    },
+
+    async handleSearch(value){
+      if(!value){
+        loading();
+        this.isFetchingData = true;
+
+        await this.getDashboard();
+
+        this.isFetchingData = false;
+        loading();
+      }
+    },
+
+    async handlePageChangeRelated(value) {
+      loading();
+      this.isFetchingData = true;
+
+      this.currentPageRelated = value;
+
+      this.isFetchingData = false;
+      loading();
+    },
+
+    async handlePageSizeChangeRelated(value) {
+      loading();
+      this.isFetchingData = true;
+
+      this.perPageRelated = value;
+      this.currentPageRelated = 1;
+
+      this.isFetchingData = false;
+      loading();
+    },
+
+    onFilteredRelated(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRowsRelated = filteredItems.length;
+      this.currentPageRelated = 1;
+    },
+
+    async handlePageChangeAvailable(value) {
+      loading();
+      this.isFetchingData = true;
+
+      this.currentPageAvailable = value;
+
+      this.isFetchingData = false;
+      loading();
+    },
+
+    async handlePageSizeChangeAvailable(value) {
+      loading();
+      this.isFetchingData = true;
+
+      this.perPageAvailable = value;
+      this.currentPageAvailable = 1;
+
+      this.isFetchingData = false;
+      loading();
+    },
+
+    onFilteredAvailable(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRowsAvailable = filteredItems.length;
+      this.currentPageAvailable = 1;
+    },
   }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function loading() {
@@ -188,19 +317,54 @@ function loading() {
       <div v-if="!isLoading">
         <div class="card">
           <div class="card-body">
-            <p
-              class="font-size-18 font-weight-bold mb-1"
-              style="color:#005C9A;"
-            >
-              Pasien Anda
-            </p>
-            <p class="font-size-12 mb-0">
-              *<b>Verifikasi Tes</b> via Video Call
-            </p>
-            <p class="font-size-12">
-              *<b>Konsultasi</b> via Video Call
-            </p>
-            <div class="table-responsive">
+            <div class="row my-2">
+              <div class="col-sm-12 col-md-7">
+                <p
+                  class="font-size-18 font-weight-bold mb-0"
+                  style="color:#005C9A;"
+                >
+                  Pasien Anda
+                </p>
+              </div>
+              <div
+                class="col-sm-12 col-md-5 mt-2"
+                style="align-self: flex-end;"
+              >
+                <div
+                  class="dataTables_filter text-md-right"
+                  style="display: flex; align-items: center; justify-content: right;"
+                >
+                  <label class="d-inline-flex align-items-center text-muted">
+                    <b-form-select 
+                      v-model="perPageRelated" 
+                      size="sm" 
+                      :options="pageOptionsRelated"
+                      @change="handlePageSizeChangeRelated"
+                    />
+                  </label>
+                  <label class="d-inline-flex align-items-center">
+                    <b-form-input
+                      v-model="filterRelated"
+                      type="search"
+                      placeholder="Ketik nama"
+                      class="form-control form-control-sm ml-2 mr-2"
+                      @input="handleSearch"
+                    />
+                    <b-button
+                      type="submit" 
+                      variant="outline-secondary"
+                      size="sm"
+                      @click="onSearchButtonClick" 
+                    >
+                      <div class="mr-1 ml-1">
+                        Cari
+                      </div>
+                    </b-button>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive border-bottom">
               <b-table
                 class="table-centered"
                 :items="related_patients"
@@ -209,7 +373,9 @@ function loading() {
                 :per-page="perPageRelated"
                 :current-page="currentPageRelated"
                 head-variant="light"
+                :busy.sync="isFetchingData"
                 show-empty
+                @filtered="onFilteredRelated"
               >
                 <!-- eslint-disable-next-line vue/no-unused-vars -->
                 <template #empty="scope">
@@ -239,7 +405,7 @@ function loading() {
                     :key="index"
                   >
                     <b-button
-                      :variant="checkStatus(data.item.status)"
+                      :variant="checkStatus(status)"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 144px;"
@@ -249,9 +415,27 @@ function loading() {
                   </div>
                 </template>
                 <template v-slot:cell(test)="data">
-                  <p v-if="!data.item.latest_test">
-                    -
-                  </p>
+                  <div v-if="!data.item.latest_test && !data.item.current_test">
+                    <b-button
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                  </div>
+                  <div v-if="!data.item.latest_test && data.item.current_test">
+                    <p class="mb-0">
+                      <b class="font-size-14">{{ data.item.current_test.test_type.type }}</b>
+                    </p>
+                    <p class="mb-0 font-size-12">
+                      skor {{ data.item.current_test.score + ' dari ' + data.item.current_test.test_type.total_score }}
+                    </p>
+                    <p class="mb-0 font-size-12">
+                      pada {{ dateFormatted(data.item.current_test.created_at) }}
+                    </p>
+                  </div>
                   <div v-if="data.item.latest_test">
                     <p class="mb-0">
                       <b class="font-size-14">{{ data.item.latest_test.test_type.type }}</b>
@@ -265,26 +449,65 @@ function loading() {
                   </div>
                 </template>
                 <template v-slot:cell(verification_test)="data">
-                  <p v-if="data.item.latest_test">
-                    {{ data.item.latest_test.videocall_date ? dateFormatted(data.item.latest_test.videocall_date) : "-" }}
-                  </p>
-                  <p v-if="!data.item.latest_test">
-                    -
-                  </p>
-                </template>
-                <template v-slot:cell(verification_status)="data">
-                  <div v-if="data.item.latest_test">
+                  <div v-if="!data.item.latest_test && !data.item.current_test">
                     <b-button
-                      v-if="!data.item.latest_test.is_finished"
-                      variant="outline-warning"
+                      variant="outline-light"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
                     >
-                      <b>berlangsung</b>
+                      <b>-</b>
                     </b-button>
+                  </div>
+                  <div v-if="!data.item.latest_test && data.item.current_test">
                     <b-button
-                      v-if="data.item.latest_test.is_finished"
+                      v-if="!data.item.current_test.videocall_date"
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                    <p
+                      v-if="data.item.current_test.videocall_date"
+                      class="mb-0"
+                    >
+                      {{ dateFormatted(data.item.current_test.videocall_date) }}
+                    </p>
+                  </div>
+                  <div v-if="data.item.latest_test">
+                    <b-button
+                      v-if="!data.item.latest_test.videocall_date"
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                    <p
+                      v-if="data.item.latest_test.videocall_date"
+                      class="mb-0"
+                    >
+                      {{ dateFormatted(data.item.latest_test.videocall_date) }}
+                    </p>
+                  </div>
+                </template>
+                <template v-slot:cell(verification_status)="data">
+                  <div v-if="!data.item.latest_test && !data.item.current_test">
+                    <b-button
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                  </div>
+                  <div v-if="!data.item.latest_test && data.item.current_test">
+                    <b-button
+                      v-if="data.item.current_test.is_finished"
                       variant="outline-success"
                       size="sm"
                       class="px-2 m-1"
@@ -293,14 +516,38 @@ function loading() {
                       <b>selesai</b>
                     </b-button>
                   </div>
-                  <p v-if="!data.item.latest_test">
-                    -
-                  </p>
+                  <div v-if="data.item.latest_test">
+                    <b-button
+                      v-if="!data.item.latest_test.is_finished && isDateStarted(data.item.latest_test.videocall_date)"
+                      variant="outline-warning"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>berlangsung</b>
+                    </b-button>
+                    <b-button
+                      v-if="!data.item.latest_test.is_finished && !isDateStarted(data.item.latest_test.videocall_date)"
+                      variant="outline-secondary"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>menunggu</b>
+                    </b-button>
+                  </div>
                 </template>
                 <template v-slot:cell(consult)="data">
-                  <p v-if="data.item.relations[0].consults.length == 0">
-                    -
-                  </p>
+                  <div v-if="data.item.relations[0].consults.length == 0">
+                    <b-button
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                  </div>
                   <div v-if="data.item.relations[0].consults.length > 0">
                     <p class="mb-0">
                       <b class="font-size-14">Konsultasi ke-{{ data.item.relations[0].consults[0].consult_index }}</b>
@@ -313,13 +560,22 @@ function loading() {
                 <template v-slot:cell(consult_status)="data">
                   <div v-if="data.item.relations[0].consults.length != 0">
                     <b-button
-                      v-if="!data.item.relations[0].consults[0].is_finished"
+                      v-if="!data.item.relations[0].consults[0].is_finished && isDateStarted(data.item.relations[0].consults[0].videocall_date)"
                       variant="outline-warning"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
                     >
                       <b>berlangsung</b>
+                    </b-button>
+                    <b-button
+                      v-if="!data.item.relations[0].consults[0].is_finished && !isDateStarted(data.item.relations[0].consults[0].videocall_date)"
+                      variant="outline-secondary"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>menunggu</b>
                     </b-button>
                     <b-button
                       v-if="data.item.relations[0].consults[0].is_finished"
@@ -331,24 +587,89 @@ function loading() {
                       <b>selesai</b>
                     </b-button>
                   </div>
-                  <p v-if="data.item.relations[0].consults.length == 0">
-                    -
-                  </p>
+                  <div v-if="data.item.relations[0].consults.length == 0">
+                    <b-button
+                      variant="outline-light"
+                      size="sm"
+                      class="px-2 m-1"
+                      style="width: 92px;"
+                    >
+                      <b>-</b>
+                    </b-button>
+                  </div>
                 </template>
               </b-table>
+            </div>
+            <div class="row px-3 mt-2">
+              <div class="col">
+                <div style="display: flex; align-items: center; justify-content: right;">
+                  <ul class="pagination pagination-rounded mb-0">
+                    <!-- pagination -->
+                    <b-pagination 
+                      v-model="currentPageRelated" 
+                      :total-rows="rowsRelated" 
+                      :per-page="perPageRelated"
+                      @input="handlePageChangeRelated"
+                    />
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="card-body">
-            <p
-              class="font-size-18 font-weight-bold mb-0"
-              style="color:#005C9A;"
-            >
-              Pasien Tersedia
-            </p>
-            <p>Pasien tersedia jika sudah melakukan tes namun belum memilih psikolog.</p>
-            <div class="table-responsive">
+            <div class="row my-2">
+              <div class="col-sm-12 col-md-7">
+                <p
+                  class="font-size-18 font-weight-bold mb-0"
+                  style="color:#005C9A;"
+                >
+                  Pasien Tersedia
+                </p>
+                <p class="mb-0">
+                  Pasien tersedia jika sudah melakukan tes namun belum memilih psikolog.
+                </p>
+              </div>
+              <div
+                class="col-sm-12 col-md-5 mt-2"
+                style="align-self: flex-end;"
+              >
+                <div
+                  class="dataTables_filter text-md-right"
+                  style="display: flex; align-items: center; justify-content: right;"
+                >
+                  <label class="d-inline-flex align-items-center text-muted">
+                    <b-form-select 
+                      v-model="perPageAvailable" 
+                      size="sm" 
+                      :options="pageOptionsAvailable"
+                      @change="handlePageSizeChangeAvailable"
+                    />
+                  </label>
+                  <label class="d-inline-flex align-items-center">
+                    <b-form-input
+                      v-model="filterAvailable"
+                      type="search"
+                      placeholder="Ketik nama"
+                      class="form-control form-control-sm mr-2 ml-2"
+                      @input="handleSearch"
+                    />
+                    <b-button
+                      type="submit" 
+                      variant="outline-secondary"
+                      size="sm"
+                      @click="onSearchButtonClick" 
+                    >
+                      <div class="mr-1 ml-1">
+                        Cari
+                      </div>
+                    </b-button>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive border-bottom">
               <b-table
                 class="table-centered"
                 :items="available_patients"
@@ -357,7 +678,9 @@ function loading() {
                 :per-page="perPageAvailable"
                 :current-page="currentPageAvailable"
                 head-variant="light"
+                :busy.sync="isFetchingData"
                 show-empty
+                @filtered="onFilteredAvailable"
               >
                 <!-- eslint-disable-next-line vue/no-unused-vars -->
                 <template #empty="scope">
@@ -408,15 +731,24 @@ function loading() {
                 </template>
               </b-table>
             </div>
+            <div class="row px-3 mt-2">
+              <div class="col">
+                <div style="display: flex; align-items: center; justify-content: right;">
+                  <ul class="pagination pagination-rounded mb-0">
+                    <!-- pagination -->
+                    <b-pagination 
+                      v-model="currentPageAvailable" 
+                      :total-rows="rowsAvailable" 
+                      :per-page="perPageAvailable"
+                      @input="handlePageChangeAvailable"
+                    />
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </Layout>
 </template>
-
-<style scoped>
-  .text-main-blue {
-    color: #005C9A;
-  }
-</style>

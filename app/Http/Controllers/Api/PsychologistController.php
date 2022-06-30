@@ -112,7 +112,7 @@ class PsychologistController extends BaseController
         return $this->respond($psychologist);
     }
 
-    public function getMainDashboard($psychologist_id){
+    public function getMainDashboard(Request $request, $psychologist_id){
         $psychologist = Psychologist::find($psychologist_id);
         if(!$psychologist){
             return $this->errorNotFound('invalid psychologist id');
@@ -125,11 +125,16 @@ class PsychologistController extends BaseController
                                                 $query->where([['psychologist_id', $psychologist->id], ['is_active', true]]);
                                             },
                                             'relations.consults' => function ($query) use ($psychologist) {
-                                                $query->orderBy('created_at', 'desc');
+                                                $query->orderBy('created_at', 'desc')->first();
                                             },
                                             ])
-                                            ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]])
-                                            ->get()->toArray();
+                                            ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]]);
+
+        if($request->has('search_related')) {
+            $search = $request->get('search_related');
+            $related_patients = $related_patients->where('first_name', 'ILIKE', '%'.$search.'%')->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+        }
+        $related_patients = $related_patients->get()->toArray();
 
         foreach($related_patients as $key=>$patient){
             $related_patients[$key]['status'] = [];
@@ -143,19 +148,19 @@ class PsychologistController extends BaseController
                 }
             }
             if($patient['latest_test'] == null && $isVidCall == false){
-                array_push($related_patients[$key]['status'], 'chat');
+                array_push($related_patients[$key]['status'], 'konsultasi chat');
             }
             if($patient['latest_test']){
                 if($patient['latest_test']['videocall_date'] == null){
                     array_push($related_patients[$key]['status'], 'input jadwal verifikasi');
                 }
                 else{
-                    array_push($related_patients[$key]['status'], 'penilaian tes');
+                    array_push($related_patients[$key]['status'], 'verifikasi tes');
                 }
             }
             if($isVidCall == true){
-                if($patient['relations'][0]['consults'][0]['videocall_date'] == null){
-                    array_push($related_patients[$key]['status'], 'input url konsultasi video call');
+                if($patient['relations'][0]['consults'][0]['videocall_link'] == null){
+                    array_push($related_patients[$key]['status'], 'input link konsultasi');
                 }
                 else{
                     array_push($related_patients[$key]['status'], 'konsultasi video call');
@@ -166,16 +171,20 @@ class PsychologistController extends BaseController
 
         $available_patients = Patient::where('is_dummy', $psychologist->is_dummy)
                                         ->doesntHave('relations')
-                                        ->orWhereRelation('relations', 'is_active', false)
-                                        ->get()
-                                        ->where('has_relation', false)
-                                        ->where('latest_test', '<>', '');
+                                        ->orWhereRelation('relations', 'is_active', false);
+
+        if($request->has('search_available')) {
+            $search = $request->get('search_available');
+            $available_patients = $available_patients->where('first_name', 'ILIKE', '%'.$search.'%')->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+        }
+
+        $available_patients = $available_patients->get()->where('has_relation', false)->where('latest_test', '<>', '');
         $data->available_patients = array_values($available_patients->toArray());
 
         return $this->respond($data);
     }
 
-    public function getPatientList($psychologist_id){
+    public function getPatientList(Request $request, $psychologist_id){
         $psychologist = Psychologist::find($psychologist_id);
         if(!$psychologist){
             return $this->errorNotFound('invalid psychologist id');
@@ -183,11 +192,17 @@ class PsychologistController extends BaseController
 
         $data = new stdClass();
 
-        $data->related_patients = Patient::with(['relations' => function ($query) use ($psychologist) {
+        $related_patients = Patient::with(['relations' => function ($query) use ($psychologist) {
                                                     $query->where([['psychologist_id', $psychologist->id], ['is_active', true]]);
                                                 }])
-                                                ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]])
-                                                ->get();
+                                                ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]]);
+
+        if($request->has('search')) {
+            $search = $request->get('search');
+            $related_patients = $related_patients->where('first_name', 'ILIKE', '%'.$search.'%')->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+        }
+
+        $data->related_patients = $related_patients->get();
 
         return $this->respond($data);
     }

@@ -34,10 +34,10 @@ export default {
 
       dataProfile: null,
 
-      totalRows: 1,
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, 20, 50, 100],
+      // totalRows: 1,
+      // currentPage: 1,
+      // perPage: 10,
+      // pageOptions: [5, 10, 20, 50, 100],
       filter: "",
       isFetchingData: false,
 
@@ -84,9 +84,9 @@ export default {
       return this.$store ? this.$store.state.notification : null;
     },
 
-    rows() {
-      return this.totalRows;
-    },
+    // rows() {
+    //   return this.totalRows;
+    // },
 
     onlineUsersData(){
       return this.onlineUsers;
@@ -169,7 +169,12 @@ export default {
             }
             else{
               this.haveRelation = false;
-              this.totalRows = this.dashboard.psychologists.length;
+
+              // this.totalRows = this.dashboard.psychologists.length;
+              // this.perPage = this.dashboard.psychologists.length;
+              // this.pageOptions.push(this.dashboard.psychologists.length);
+              // this.pageOptions = [...new Set(this.pageOptions)];
+              // this.pageOptions.sort(function (a, b) {  return a - b;  });
             }
 
             this.isConsultLoaded = true;
@@ -360,24 +365,24 @@ export default {
       }
     },
 
-    async handlePageChange(value) {
-      this.isFetchingData = true;
+    // async handlePageChange(value) {
+    //   this.isFetchingData = true;
 
-      this.currentPage = value;
+    //   this.currentPage = value;
 
-      await sleep(500);
-      this.isFetchingData = false;
-    },
+    //   await sleep(500);
+    //   this.isFetchingData = false;
+    // },
 
-    async handlePageSizeChange(value) {
-      this.isFetchingData = true;
+    // handlePageSizeChange(value) {
+    //   this.isFetchingData = true;
 
-      this.perPage = value;
-      this.currentPage = 1;
+    //   this.perPage = value;
+    //   this.currentPage = 1;
 
-      await sleep(500);
-      this.isFetchingData = false;
-    },
+    //   sleep(500);
+    //   this.isFetchingData = false;
+    // },
 
     onTyping(){
       // eslint-disable-next-line no-undef
@@ -447,7 +452,6 @@ export default {
     },
 
     async setEcho(){
-
       // eslint-disable-next-line no-undef
       Echo.join('helpptsd')
         .here((users) => {
@@ -562,6 +566,7 @@ export default {
         api.getConsults(params)
           .then(response => {
               this.allConsults = response.data.data;
+              this.perPageConsults = response.data.data.length;
           })
           .catch(error => {
             Swal.fire({
@@ -585,15 +590,9 @@ export default {
 
     onEndConsultButtonClick(){
       if(this.dashboard.consult){
-        if(this.dashboard.consult.is_finished){
-          this.canEndConsult = true;
-        }
-        else{
+        if(!this.dashboard.consult.is_finished){
           this.canEndConsult = false;
         }
-      }
-      else{
-        this.canEndConsult = true;
       }
       if(this.canEndConsult){
         Swal.fire({
@@ -664,7 +663,7 @@ function loading() {
       />
     </div>
     <div class="container-fluid">
-      <div class="row no-gutters p-4">
+      <div class="row no-gutters px-4 pt-4">
         <div class="col-lg-4 pl-2 pr-2">
           <div
             class="card"
@@ -886,7 +885,7 @@ function loading() {
                             Pilih Psikolog
                           </h5>
                         </div>
-                        <div
+                        <!-- <div
                           class="col-6"
                           style="display: flex; align-items: center; justify-content: right;"
                         >
@@ -898,7 +897,7 @@ function loading() {
                               @change="handlePageSizeChange"
                             />
                           </label>
-                        </div>
+                        </div> -->
                       </div>
                       <div class="card-body border-bottom border-top py-2">
                         <div class="search-box chat-search-box">
@@ -975,12 +974,12 @@ function loading() {
                           </ul>
                         </simplebar>
                       </div>
-                      <div class="border-top">
+                      <!-- pagination -->
+                      <!-- <div class="border-top">
                         <div class="row px-3 mt-2">
                           <div class="col">
                             <div style="display: flex; align-items: center; justify-content: center;">
                               <ul class="pagination pagination-rounded mb-0 font-size-12">
-                                <!-- pagination -->
                                 <b-pagination 
                                   v-model="currentPage" 
                                   :total-rows="rows" 
@@ -991,7 +990,7 @@ function loading() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                     <div v-if="haveRelation">
                       <h5 class="font-size-14 px-3 mb-3 mt-2">
@@ -1090,13 +1089,14 @@ function loading() {
 
               <div
                 v-if="!haveRelation"
-                class="px-lg-2 py-4"
+                class="px-lg-2 chat-users"
               >
-                <div class="no-relation-title">
-                  <span class="title">Pilih psikolog terlebih dahulu!</span>
+                <div class="chat-conversation p-3">
+                  <div class="no-relation-title">
+                    <span class="title">Pilih psikolog terlebih dahulu!</span>
+                  </div>
                 </div>
               </div>
-
               <div
                 v-if="haveRelation"
                 class="px-lg-2 chat-users"
@@ -1256,10 +1256,12 @@ function loading() {
 
               <div
                 v-if="!haveRelation"
-                class="px-lg-2 py-4"
+                class="px-lg-2 chat-users"
               >
-                <div class="no-relation-title">
-                  <span class="title">Pilih psikolog terlebih dahulu!</span>
+                <div class="chat-conversation p-3">
+                  <div class="no-relation-title">
+                    <span class="title">Pilih psikolog terlebih dahulu!</span>
+                  </div>
                 </div>
               </div>
 
@@ -1343,10 +1345,6 @@ function loading() {
                   </simplebar>
                 </div>
                 <div class="px-lg-3">
-                  <label
-                    v-if="typingUser.username"
-                    class="mb-0"
-                  >{{ typingUser.username }} sedang mengetik...</label>
                   <div class="p-3 chat-input-section">
                     <div class="no-relation-title">
                       <span class="title">Ubah jadwal atau perlu video call? Silahkan kirim pesan ke psikolog!</span>

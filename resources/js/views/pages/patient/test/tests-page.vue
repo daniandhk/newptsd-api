@@ -89,6 +89,7 @@ export default {
         patient_id: "",
         psychologist_id: "",
         date: "",
+        videocall_link: "",
         notes: [
           {
             question_text: ""
@@ -512,15 +513,18 @@ export default {
     },
 
     isUrlValid(string){
-      let url;
+      if(string){
+        let url;
       
-      try {
-        url = new URL(string);
-      } catch (_) {
-        return false;  
-      }
+        try {
+          url = new URL(string);
+        } catch (_) {
+          return false;  
+        }
 
-      return url.protocol === "http:" || url.protocol === "https:";
+        return url.protocol === "http:" || url.protocol === "https:";
+      }
+      return true
     },
 
     async updateVideoCall(){
@@ -631,6 +635,12 @@ export default {
           document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth' });
           return;
         }
+        if(this.input_consult.videocall_link){
+          if (!this.isUrlValid(this.input_consult.videocall_link)){
+            document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
+        }
         this.input_consult.is_consult = true;
         this.input_consult.patient_id = this.patient_id;
         this.input_consult.psychologist_id = this.user.profile.id;
@@ -640,7 +650,7 @@ export default {
       }
       Swal.fire({
         title: "Akhiri video call?",
-        text: "Penilaian tes akan berakhir dan data akan disimpan.",
+        text: "Verifikasi jawaban akan berakhir dan data akan disimpan.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
@@ -848,7 +858,7 @@ function loading() {
                       >
                         <div class="card-body">
                           <div class="text-center">
-                            <label class="mb-0">Verifikasi Jawaban via Video Call</label>
+                            <label class="mb-0">Jadwal Verifikasi Jawaban</label>
                             <hr style="margin-bottom: 0;margin-left: -20px!important; margin-right: -20px!important;">
                           </div>
                           <div class="row mt-4">
@@ -957,17 +967,19 @@ function loading() {
                       >
                         <div class="card-body">
                           <div class="text-center mb-4">
-                            <label class="mb-0">Penilaian Tes</label>
+                            <label class="mb-0">Verifikasi Jawaban via Video Call</label>
                             <hr style="margin-bottom: 0;margin-left: -20px!important; margin-right: -20px!important;">
                           </div>
                           <div
                             v-if="!isVideoCallStarted"
                             class="text-center"
                           >
-                            Penilaian tes dapat dilakukan saat jadwal Verifikasi Jawaban via Video Call sudah dimulai!
+                            Verifikasi Jawaban via Video Call dapat dilakukan saat jadwal sudah dimulai!
                           </div>
                           <div v-if="isVideoCallStarted">
-                            <div>Periksalah keadaan / kondisi pasien dan verifikasi setiap jawaban pasien selama video call berlangsung.</div>
+                            <div class="font-size-13">
+                              Periksalah keadaan / kondisi pasien dan verifikasi setiap jawaban pasien selama video call berlangsung.
+                            </div>
                             <div class="mt-3">
                               <div><label>1. Apakah pasien perlu konsultasi video call lagi?</label></div>
                               <div>
@@ -1027,8 +1039,33 @@ function loading() {
                                 </div>
                               </div>
                               <div class="mt-3">
-                                Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh pasien setiap harinya selama jeda berlangsung.
-                                <br><label class="mt-3">3. Isi catatan psikolog (opsional)</label>
+                                <div><label>3. Isi tautan / link konsultasi (opsional)</label></div>
+                                <div class="datepicker-div">
+                                  <input
+                                    v-model="input_consult.videocall_link"
+                                    type="text"
+                                    class="form-control"
+                                    :disabled="isReview && (!isPsychologist || !isRelated)"
+                                    :style="disabled_bg"
+                                    :class="{ 'is-invalid': submitted_consult && !isUrlValid(input_consult.videocall_link) }"
+                                  >
+                                  <span
+                                    v-if="isPsychologist && isRelated"
+                                    class="text-muted font-size-13"
+                                  >Google Meet, Zoom, atau sejenisnya</span>
+                                  <div
+                                    v-if="submitted_consult && !isUrlValid(input_consult.videocall_link)"
+                                    class="invalid-feedback"
+                                  >
+                                    Format URL harus benar! (diawali http atau https)
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="mt-3">
+                                <div class="font-size-13">
+                                  Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh pasien setiap harinya selama jeda berlangsung.
+                                </div>
+                                <label class="mt-3">4. Isi catatan psikolog (opsional)</label>
                                 <div
                                   class="form-horizontal"
                                   style="min-width:260px;"

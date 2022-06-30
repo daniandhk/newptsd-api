@@ -32,9 +32,10 @@ export function finishTest(data, test_id){
     })
 }
 
-export function getMainDashboard(psychologist_id){
-    return httpAxios({
-        url: `/psychologist/main-dashboard/${psychologist_id}`,
-        method: 'GET',
-    })
+export function getMainDashboard(psychologist_id, params){
+    return httpAxios.get(`/psychologist/main-dashboard/${psychologist_id}`, { params });
+}
+
+export function getPatientList(psychologist_id, params){
+    return httpAxios.get(`/psychologist/patients//${psychologist_id}`, { params });
 }

@@ -95,6 +95,7 @@ class ConsultController extends BaseController
             'consult_index' => count($consults)+1,
             'last_date' => $last_date,
             'videocall_date' => $request->date,
+            'videocall_link' => $request->videocall_link,
         ]);
 
         if($request->not_json && $request->not_json == true){

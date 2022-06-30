@@ -54,7 +54,7 @@ class User extends Authenticatable
         if($this->isPatient()){
             $patient = $this->patient()->with('guardian')->first();
             if($patient){
-                $patient->makeHidden('latest_test');
+                $patient->makeHidden(['latest_test', 'current_test']);
             }
             return $patient;
         }

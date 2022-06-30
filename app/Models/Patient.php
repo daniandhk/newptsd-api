@@ -21,11 +21,16 @@ class Patient extends BaseModel
 
     protected $appends = [
         'latest_test',
-        'has_relation'
+        'has_relation',
+        'current_test'
     ];
     
     function getLatestTestAttribute(){
-        return $this->tests()->with('test_type')->whereNull(['videocall_date', 'videocall_link'])->orderBy('created_at', 'desc')->first();
+        return $this->tests()->with('test_type')->where([['patient_id', $this->getKey()], ['is_finished', false]])->orderBy('created_at', 'desc')->first();
+    }
+
+    function getCurrentTestAttribute(){
+        return $this->tests()->with('test_type')->where([['patient_id', $this->getKey()], ['is_finished', true]])->orderBy('created_at', 'desc')->first();
     }
 
     function getHasRelationAttribute(){

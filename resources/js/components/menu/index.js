@@ -16,19 +16,19 @@ export const menuItems = [
         id: 3,
         label: 'menuitems.menu.test',
         icon: 'mdi mdi-file-document-edit-outline',
-        link: 'home'
+        link: 'test-page'
     },
     {
         id: 4,
         label: 'menuitems.menu.consult',
         icon: 'mdi mdi-stethoscope',
-        link: 'home'
+        link: 'consult-page'
     },
     {
         id: 5,
         label: 'menuitems.menu.journal',
         icon: 'mdi mdi-calendar-heart',
-        link: 'home'
+        link: 'journal-page'
     },
     {
         id: 6,
