@@ -11,6 +11,15 @@ export default {
   components: {
     DatePicker
   },
+  beforeRouteLeave(to, from, next) {
+    if(!this.isSubmitted && !this.isReview){
+      const answer = window.confirm('Keluar dan batalkan tes?');
+      answer ? next() : next(false);
+    }
+    else{
+      next();
+    }
+  },
   data() {
     return {
       user: store.getters.getLoggedUser,
@@ -109,12 +118,13 @@ export default {
   },
   created() {
     document.body.classList.add("auth-body-bg");
-    // if(!this.isSubmitted){
-    //   window.addEventListener("beforeunload", this.preventNav);
-    //   this.$once("hook:beforeDestroy", () => {
-    //     window.removeEventListener("beforeunload", this.preventNav);
-    //   })
-    // }
+
+    if(!this.isSubmitted && !this.isReview){
+      window.addEventListener("beforeunload", this.preventNav);
+      this.$once("hook:beforeDestroy", () => {
+        window.removeEventListener("beforeunload", this.preventNav);
+      })
+    }
   },
   validations: {
     data_input: {
@@ -145,7 +155,7 @@ export default {
     ...notificationMethods,
 
     preventNav(event) {
-      if (this.isSubmitted){
+      if (this.isSubmitted || this.isReview){
         return
       }
       event.preventDefault()
@@ -395,7 +405,7 @@ export default {
     },
 
     onBackButtonClick(){
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // window.scrollTo({ top: 0, behavior: 'smooth' });
       this.currentPage -= 1
       this.questionData = this.test.test_pages[this.currentPageIndex].test_questions
       this.pageData = this.test.test_pages[this.currentPageIndex]
@@ -693,14 +703,6 @@ export default {
 
     //
   },
-  // beforeRouteLeave(to, from, next) {
-  //   if(!this.isSubmitted){
-  //     if (!window.confirm("Keluar dan batalkan tes?")) {
-  //       return;
-  //     }
-  //   }
-  //   next();
-  // },
 };
 function loading() {
   var x = document.getElementById("loading");

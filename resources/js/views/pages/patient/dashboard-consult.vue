@@ -64,10 +64,10 @@ export default {
       sortDescConsults: true,
       sortByConsults: 'consult_index',
       fieldsConsults: [
-        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', },
-        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', },
-        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
-        { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', },
+        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
       ],
 
       dataConsult: {
@@ -181,16 +181,16 @@ export default {
               else{
                 this.isConsultFinished = false;
                 
-                if(this.dashboard.consult.next_date){
+                if(this.dashboard.consult.videocall_date){
                   moment()
-                    .isSameOrAfter(this.dashboard.consult.next_date) 
+                    .isSameOrAfter(this.dashboard.consult.videocall_date) 
                     ? this.isConsultToday = true : this.isConsultToday = false
                 }
                 else{
                   this.isConsultToday = false;
                 }
 
-                if(this.dashboard.consult.consult_info.videocall_link){
+                if(this.dashboard.consult.videocall_link){
                   this.isLinkNull = false;
                 }
                 else{
@@ -408,6 +408,8 @@ export default {
               setTimeout(this.scrollToEnd,100);
           })
           .catch(error => {
+            this.submitted_chat = false;
+            this.isChatLoading = false;
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -730,7 +732,7 @@ function loading() {
                               Konsultasi ke-{{ dashboard.consult.consult_index }}
                             </div>
                             <div style="font-weight:bold;">
-                              {{ formatDate(dashboard.consult.consult_info.videocall_date, 'lengkap') }}
+                              {{ formatDate(dashboard.consult.videocall_date, 'lengkap') }}
                             </div>
                           </div>
                           <div style="width:50%;">
@@ -743,7 +745,7 @@ function loading() {
                                 class="btn btn-primary m-1 btn-sm mr-2"
                                 style="background-color:#005C9A; min-width:80%;"
                                 :disabled="!isConsultToday || isLinkNull"
-                                @click.stop.prevent="onGoToLinkButtonClick(dashboard.consult.consult_info.videocall_link)"
+                                @click.stop.prevent="onGoToLinkButtonClick(dashboard.consult.videocall_link)"
                               >
                                 Video Call
                               </button>
@@ -775,7 +777,7 @@ function loading() {
                               Konsultasi ke-{{ dashboard.consult.consult_index }}
                             </div>
                             <div style="font-weight:bold;">
-                              {{ formatDate(dashboard.consult.next_date, 'lengkap') }}
+                              {{ formatDate(dashboard.consult.videocall_date, 'lengkap') }}
                             </div>
                           </div>
                         </div>
@@ -794,7 +796,7 @@ function loading() {
                             Konsultasi terakhir
                           </div>
                           <div v-if="isConsultFinished">
-                            {{ formatDate(dashboard.consult.next_date, 'tanggal') }}
+                            {{ formatDate(dashboard.consult.videocall_date, 'tanggal') }}
                           </div>
                           <div v-if="!isConsultFinished">
                             -
@@ -1179,6 +1181,7 @@ function loading() {
                             :class="{
                               'is-invalid': submitted_chat && $v.message.text.$error,
                             }"
+                            :disabled="isChatLoading"
                             @input="onTyping()"
                           >
                           <div
@@ -1294,7 +1297,7 @@ function loading() {
                         :current-page="currentPageConsults"
                         :sort-by="sortByConsults"
                         :sort-desc="sortDescConsults"
-                        :head-variant="'dark'"
+                        head-variant="light"
                         show-empty
                       >
                         <!-- eslint-disable-next-line vue/no-unused-vars -->
@@ -1302,7 +1305,7 @@ function loading() {
                           data masih kosong untuk saat ini.
                         </template>
                         <template v-slot:cell(videocall_date)="data">
-                          {{ formatDate(data.item.consult_info.videocall_date, 'tanggal') }}
+                          {{ formatDate(data.item.videocall_date, 'tanggal') }}
                         </template>
                         <template v-slot:cell(total_note_questions)="data">
                           <b-button

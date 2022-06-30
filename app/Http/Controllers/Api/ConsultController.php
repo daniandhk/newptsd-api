@@ -20,7 +20,6 @@ class ConsultController extends BaseController
         $consult = Consult::with(
             'relation.patient', 
             'relation.psychologist',
-            'consult_info',
             'note_questions',
             'note_questions.note_answers'
         )->orderBy('created_at', 'desc');
@@ -41,8 +40,7 @@ class ConsultController extends BaseController
     public function show($id)
     {
         $consult = Consult::with('relation.patient', 'relation.psychologist',
-                            'consult_info', 'note_questions',
-                            'note_questions.note_answers')
+                            'note_questions', 'note_questions.note_answers')
                         ->find($id);
         if(!$consult) {
             return $this->errorNotFound('invalid consult id');
@@ -89,18 +87,13 @@ class ConsultController extends BaseController
         $consults = Consult::where('relation_id', $relation_id)->orderBy('created_at', 'desc')->get();
         if(count($consults) >= 1){
             $last_consult = $consults->first();
-            $last_date = $last_consult->next_date;
+            $last_date = $last_consult->videocall_date;
         }
 
         $consult = Consult::create([
             'relation_id' => $relation_id,
             'consult_index' => count($consults)+1,
             'last_date' => $last_date,
-            'next_date' => $request->date,
-        ]);
-
-        $consult_info = ConsultInfo::create([
-            'consult_id' => $consult->id,
             'videocall_date' => $request->date,
         ]);
 

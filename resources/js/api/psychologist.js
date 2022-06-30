@@ -31,3 +31,10 @@ export function finishTest(data, test_id){
         data: data
     })
 }
+
+export function getMainDashboard(psychologist_id){
+    return httpAxios({
+        url: `/psychologist/main-dashboard/${psychologist_id}`,
+        method: 'GET',
+    })
+}

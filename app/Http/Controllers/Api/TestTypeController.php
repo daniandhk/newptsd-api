@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Patient;
 use App\Models\TestType;
 use Illuminate\Http\Request;
 
@@ -90,5 +91,16 @@ class TestTypeController extends BaseController
 
         $TestType->delete();
         return $this->respond($TestType);
+    }
+
+    public function getLatestTest($patient_id)
+    {
+        $patient = Patient::find($patient_id);
+        if(!$patient) {
+            return $this->respondNotFound('invalid patient id');
+        }
+
+        $test_types = TestType::FilteredTest($patient_id)->get();
+        $this->respond($test_types);
     }
 }

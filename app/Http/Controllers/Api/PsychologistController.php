@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use App\Models\Psychologist;
+use App\Models\Relation;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use stdClass;
 
 class PsychologistController extends BaseController
 {
@@ -107,6 +110,86 @@ class PsychologistController extends BaseController
 
         $psychologist->delete();
         return $this->respond($psychologist);
+    }
+
+    public function getMainDashboard($psychologist_id){
+        $psychologist = Psychologist::find($psychologist_id);
+        if(!$psychologist){
+            return $this->errorNotFound('invalid psychologist id');
+        }
+
+        $data = new stdClass();
+
+        $related_patients = Patient::with([
+                                            'relations' => function ($query) use ($psychologist) {
+                                                $query->where([['psychologist_id', $psychologist->id], ['is_active', true]]);
+                                            },
+                                            'relations.consults' => function ($query) use ($psychologist) {
+                                                $query->orderBy('created_at', 'desc');
+                                            },
+                                            ])
+                                            ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]])
+                                            ->get()->toArray();
+
+        foreach($related_patients as $key=>$patient){
+            $related_patients[$key]['status'] = [];
+            $isVidCall = false;
+            if(sizeof($patient['relations'][0]['consults']) > 0){
+                if($patient['relations'][0]['consults'][0]['is_finished'] == true){
+                    $isVidCall = false;
+                }
+                else{
+                    $isVidCall = true;
+                }
+            }
+            if($patient['latest_test'] == null && $isVidCall == false){
+                array_push($related_patients[$key]['status'], 'chat');
+            }
+            if($patient['latest_test']){
+                if($patient['latest_test']['videocall_date'] == null){
+                    array_push($related_patients[$key]['status'], 'input jadwal verifikasi');
+                }
+                else{
+                    array_push($related_patients[$key]['status'], 'penilaian tes');
+                }
+            }
+            if($isVidCall == true){
+                if($patient['relations'][0]['consults'][0]['videocall_date'] == null){
+                    array_push($related_patients[$key]['status'], 'input url konsultasi video call');
+                }
+                else{
+                    array_push($related_patients[$key]['status'], 'konsultasi video call');
+                }
+            }
+        }
+        $data->related_patients = $related_patients;
+
+        $available_patients = Patient::where('is_dummy', $psychologist->is_dummy)
+                                        ->doesntHave('relations')
+                                        ->orWhereRelation('relations', 'is_active', false)
+                                        ->get()
+                                        ->where('has_relation', false)
+                                        ->where('latest_test', '<>', '');
+        $data->available_patients = array_values($available_patients->toArray());
+
+        return $this->respond($data);
+    }
+
+    public function getPatientList($psychologist_id){
+        $psychologist = Psychologist::find($psychologist_id);
+        if(!$psychologist){
+            return $this->errorNotFound('invalid psychologist id');
+        }
+
+        $data = new stdClass();
+
+        $data->related_patients = Patient::with(['relations' => function ($query) use ($psychologist) {
+                                                    $query->where([['psychologist_id', $psychologist->id], ['is_active', true]]);
+                                                }])
+                                                ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]])
+                                                ->get();
+
+        return $this->respond($data);
     }
 
 }

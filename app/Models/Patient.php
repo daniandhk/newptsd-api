@@ -19,6 +19,23 @@ class Patient extends BaseModel
         'image',
     ];
 
+    protected $appends = [
+        'latest_test',
+        'has_relation'
+    ];
+    
+    function getLatestTestAttribute(){
+        return $this->tests()->with('test_type')->whereNull(['videocall_date', 'videocall_link'])->orderBy('created_at', 'desc')->first();
+    }
+
+    function getHasRelationAttribute(){
+        $relation = $this->relations()->where('is_active', true)->first();
+        if($relation){
+            return true;
+        }
+        return false;
+    }
+
     public function tests() {
         return $this->hasMany(Test::class);
     }

@@ -10,13 +10,12 @@ class Relation extends BaseModel
     protected $table = 'relations';
 
     protected $fillable = [
-        'relation_id',
         'patient_id',
         'psychologist_id',
     ];
 
-    public function consult() {
-        return $this->hasOne(Consult::class);
+    public function consults() {
+        return $this->hasMany(Consult::class);
     }
 
     public function psychologist() {

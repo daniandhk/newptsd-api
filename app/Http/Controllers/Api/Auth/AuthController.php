@@ -94,7 +94,7 @@ class AuthController extends BaseController
 		}
 
 		$user['access_token'] = $user->createToken($request->email)->plainTextToken;
-		return $this->respond($user);
+		return $this->respond($user->makeHidden('roles'));
 	}
 
 
@@ -114,7 +114,7 @@ class AuthController extends BaseController
 	 * Get authenticated user details
 	*/
 	public function getAuthenticatedUser(Request $request) {
-		$user = $request->user();
+		$user = $request->user()->makeHidden('roles');
         return $this->respond($user);
 	}
 

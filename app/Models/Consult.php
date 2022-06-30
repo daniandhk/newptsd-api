@@ -12,7 +12,8 @@ class Consult extends BaseModel
         'relation_id',
         'consult_index',
         'last_date',
-        'next_date',
+        'videocall_date',
+        'videocall_link',
     ];
 
     protected $appends = ['total_note_questions'];
@@ -23,10 +24,6 @@ class Consult extends BaseModel
 
     public function relation() {
         return $this->belongsTo(Relation::class);
-    }
-
-    public function consult_info() {
-        return $this->hasOne(ConsultInfo::class);
     }
 
     public function note_questions() {

@@ -18,7 +18,8 @@ class CreateConsultsTable extends Migration
             $table->char('relation_id', 26);
             $table->string('consult_index');
             $table->datetime('last_date')->nullable();
-            $table->datetime('next_date')->nullable();
+            $table->datetime('videocall_date');
+            $table->string('videocall_link')->nullable();
             $table->boolean('is_finished')->default(0);
             $table->timestamps();
 

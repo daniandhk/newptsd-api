@@ -52,7 +52,11 @@ class User extends Authenticatable
 
     public function getProfileAttribute() {
         if($this->isPatient()){
-            return $this->patient()->with('guardian')->first();
+            $patient = $this->patient()->with('guardian')->first();
+            if($patient){
+                $patient->makeHidden('latest_test');
+            }
+            return $patient;
         }
         if($this->isPsychologist()){
             return $this->psychologist()->with('chat_schedules')->first();

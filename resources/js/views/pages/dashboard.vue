@@ -35,11 +35,11 @@ export default {
 
     checkUser(){
       if(this.user){
-        if(this.user.roles[0].name == 'patient'){
+        if(this.user.role == 'patient'){
           this.isPatient = true;
           this.isPsychologist = false;
         }
-        else if(this.user.roles[0].name == 'psychologist'){
+        else if(this.user.role == 'psychologist'){
           this.isPatient = false;
           this.isPsychologist = true;
         }

@@ -47,9 +47,9 @@ export default {
       sortDesc: false,
       dataNotes: [],
       fields: [
-        { key: "question_text", sortable: true, label: "Catatan Psikolog" },
-        { key: "answer", sortable: false, label: "Jawaban Anda" },
-        { key: "action", label: "Aksi", sortable: false, thClass: 'text-center', tdClass: 'text-center', }
+        { key: "question_text", sortable: true, label: "Catatan Psikolog", thStyle: { color: "black" } },
+        { key: "answer", sortable: false, label: "Jawaban Anda", thStyle: { color: "black" } },
+        { key: "action", label: "Aksi", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } }
       ],
 
       isLoading: false,
@@ -507,7 +507,7 @@ function loading() {
                               :current-page="currentPage"
                               :sort-by="sortBy"
                               :sort-desc="sortDesc"
-                              :head-variant="'dark'"
+                              head-variant="light"
                               show-empty
                             >
                               <!-- eslint-disable-next-line vue/no-unused-vars -->

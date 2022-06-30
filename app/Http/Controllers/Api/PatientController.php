@@ -149,7 +149,7 @@ class PatientController extends BaseController
         if($relation){
             $data->relation_id = $relation->id;
             $data->psychologist = Psychologist::with('chat_schedules')->find($relation->psychologist_id);
-            $data->consult = Consult::with(['consult_info','note_questions'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
+            $data->consult = Consult::with('note_questions')->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->first();
         }
         else{
             $psychologists = Psychologist::where('is_dummy', $patient->is_dummy)->with('chat_schedules');
@@ -163,10 +163,8 @@ class PatientController extends BaseController
                 return ($psychologist->online_schedule['is_online']);
             });
 
-            $data->psychologists = $psychologists;
+            $data->psychologists = array_values($psychologists->toArray());
             $data->consult = null;
-
-            $data->psychologists->total_data = Psychologist::get()->count();
         }
 
         return $this->respond($data);
@@ -210,9 +208,9 @@ class PatientController extends BaseController
 
         $relation = $patient->relations->where('is_active', true)->first();
         if($relation){
-            $consults = Consult::with(['consult_info','note_questions','note_questions.note_answers'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->get();
+            $consults = Consult::with(['note_questions','note_questions.note_answers'])->where('relation_id', $relation->id)->orderBy('created_at', 'desc')->get();
             foreach($consults as $consult) {
-                $next_date = $consult->next_date;
+                $next_date = $consult->videocall_date;
                 $nextDate = date("Y-m-d", strtotime($next_date));
                 $last_date = $consult->created_at;
                 $lastDate = date("Y-m-d", strtotime($last_date));

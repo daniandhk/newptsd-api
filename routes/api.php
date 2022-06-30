@@ -70,9 +70,9 @@ Route::group([
     Route::post('/create', 'PatientController@create');
     Route::put('/update/{id}', 'PatientController@update');
     Route::delete('/delete/{id}', 'PatientController@delete');
-    Route::get('/test-dashboard/{user_id}', 'PatientController@getTestDashboard');
-    Route::get('/consult-dashboard/{user_id}', 'PatientController@getConsultDashboard');
-    Route::get('/journal-dashboard/{user_id}', 'PatientController@getJournalByDate');
+    Route::get('/test-dashboard/{patient_id}', 'PatientController@getTestDashboard');
+    Route::get('/consult-dashboard/{patient_id}', 'PatientController@getConsultDashboard');
+    Route::get('/journal-dashboard/{patient_id}', 'PatientController@getJournalByDate');
 });
 
 Route::group([
@@ -84,6 +84,8 @@ Route::group([
     Route::post('/create', 'PsychologistController@create');
     Route::put('/update/{id}', 'PsychologistController@update');
     Route::delete('/delete/{id}', 'PsychologistController@delete');
+    Route::get('/main-dashboard/{psychologist_id}', 'PsychologistController@getMainDashboard');
+    Route::get('/patients/{psychologist_id}', 'PsychologistController@getPatientList');
 });
 
 Route::group([
