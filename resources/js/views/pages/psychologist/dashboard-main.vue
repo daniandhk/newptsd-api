@@ -103,7 +103,6 @@ export default {
     },
 
     async getDashboard(){
-        loading();
         const params = this.getRequestParams(
             this.filterRelated,
             this.filterAvailable,
@@ -129,18 +128,19 @@ export default {
                     this.pageOptionsAvailable = [...new Set(this.pageOptionsAvailable)];
                     this.pageOptionsAvailable.sort(function (a, b) {  return a - b;  });
                 }
-                loading();
             })
             .catch(error => {
-              loading();
+              //
             })
         );
     },
 
     async refreshData(){
+      loading();
       this.isLoading = true;
       await this.getDashboard();
       this.isLoading = false;
+      loading();
     },
 
     getAge(string){
@@ -151,14 +151,27 @@ export default {
       return moment(string).locale('id').format('DD MMMM YYYY')
     },
 
-    checkStatus(status){{
+    checkStatus(status){
       if(status == 'konsultasi chat' || status == 'konsultasi video call' || status == 'verifikasi tes'){
         return 'outline-info'
       }
       else{
         return 'outline-warning'
       }
-    }},
+    },
+
+    onStatusButtonClick(status, patient){
+      if(status == 'konsultasi chat' || status == 'konsultasi video call' || status == 'input link konsultasi'){
+        this.$router.push({
+            name: 'main-page', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 1 }
+        });
+      }
+      else{
+        this.$router.push({
+            name: 'main-page', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 0 }
+        });
+      }
+    },
 
     isDateStarted(date){
       if(date){
@@ -325,6 +338,9 @@ function loading() {
                 >
                   Pasien Anda
                 </p>
+                <p class="mb-0">
+                  Tekan tombol <b>Status</b> untuk menuju ke hal yang perlu Anda lakukan.
+                </p>
               </div>
               <div
                 class="col-sm-12 col-md-5 mt-2"
@@ -409,6 +425,7 @@ function loading() {
                       size="sm"
                       class="px-2 m-1"
                       style="width: 144px;"
+                      @click="onStatusButtonClick(status, data.item)"
                     >
                       <b>{{ status }}</b>
                     </b-button>

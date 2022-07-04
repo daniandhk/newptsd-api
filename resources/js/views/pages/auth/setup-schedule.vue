@@ -283,8 +283,8 @@ function loading() {
                     class="card-title-desc"
                     style="font-size: 14px; margin: 0 !important;"
                   >
-                    - Jadwal Chat digunakan untuk informasi saat Anda <b>tidak online</b>,<br>
-                    - Jadwal Chat ditampilkan saat pasien memilih psikolog di menu konsultasi,<br>
+                    - <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat dan saat Anda membuka web,<br>
+                    - Jadwal Chat juga digunakan untuk informasi saat Anda <b>Offline</b>,<br>
                     - Jadwal Chat dapat diubah kapan saja.<br>
                   </p>
                 </div>

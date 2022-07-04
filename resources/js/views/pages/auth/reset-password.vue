@@ -96,7 +96,6 @@ export default {
         return;
       } else {
         this.registerError = null;
-        console.log(this.registerData)
         return (
           api.passwordReset(this.registerData)
             // eslint-disable-next-line no-unused-vars

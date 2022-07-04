@@ -1,26 +1,11 @@
 export default [
     {
-        path: '/test-page',
-        name: 'test-page',
+        path: '/psychologist',
+        name: 'main-page',
+        props: true,
         meta: {
             authRequired: true,
         },
-        component: () => import('../../views/pages/psychologist/test/index')
-    },
-    {
-        path: '/consult-page',
-        name: 'consult-page',
-        meta: {
-            authRequired: true,
-        },
-        component: () => import('../../views/pages/psychologist/consult/index')
-    },
-    {
-        path: '/journal-page',
-        name: 'journal-page',
-        meta: {
-            authRequired: true,
-        },
-        component: () => import('../../views/pages/psychologist/journal/index')
+        component: () => import('../../views/pages/psychologist/main-pages')
     },
 ]

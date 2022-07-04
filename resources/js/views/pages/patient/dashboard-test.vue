@@ -698,31 +698,13 @@ function loading() {
   </div>
 </template>
 
-<style>
-.card-header-tabs {
-  margin-right: -21px !important;
-  margin-left: -21px !important;
-}
+<style scoped>
+  .hover-effect {
+      transition: all 0.2s ease;
+      cursor: pointer;
+  }
 
-.full-width .nav-tabs .nav-item {
-  margin-bottom: 2px;
-  flex: 1;
-  text-align: center !important;
-  background-color: white;
-}
-
-.nav-link.active.tab-active-class {
-  background-color: #F1F5F7;
-  font-size: 24px;
-}
-
-.hover-effect {
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.hover-effect:hover {
-    transform: scale(1.1);
-}
-
+  .hover-effect:hover {
+      transform: scale(1.1);
+  }
 </style>

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Broadcast;
 //     return (int) $user->id === (int) $id;
 // });
 
-Broadcast::channel('privatechat.{receiver_id}', function ($user, $receiver_id) {
+Broadcast::channel('privaterelation.{receiver_id}', function ($user, $receiver_id) {
     return auth()->check();
 });
 

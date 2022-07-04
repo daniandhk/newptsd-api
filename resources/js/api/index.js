@@ -127,3 +127,19 @@ export function finishRelation(relation_id){
         method: 'PUT',
     })
 }
+
+export function getNotifications(user_id){
+    return httpAxios.get(`/notification/show/${user_id}`);
+}
+
+export function deleteNotification(id) {
+    return httpAxios.delete(`/notification/delete/${id}`);
+}
+
+export function storeNotification(data){
+    return httpAxios({
+        url: '/notification/create',
+        method: 'POST',
+        data: data
+    })
+}

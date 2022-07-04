@@ -5,6 +5,7 @@
     },
     "menu": {
       "text": "Menu",
+      "main": "Menu Utama",
       "test": "Tes Penilaian Diri",
       "consult": "Konsultasi",
       "journal": "Jurnal & Catatan Psikolog"

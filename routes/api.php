@@ -163,3 +163,13 @@ Route::group([
     Route::get('/{user}', 'Api\Auth\MessageController@privateMessages');
     Route::post('/{user}', 'Api\Auth\MessageController@sendPrivateMessage');
 });
+
+Route::group([
+    'prefix' => 'notification',
+    'namespace' => 'Api',
+], function ($router) {
+    Route::get('/', 'NotificationController@index');
+    Route::get('/show/{user_id}', 'NotificationController@show');
+    Route::post('/create', 'NotificationController@store');
+    Route::delete('/delete/{id}', 'NotificationController@delete');
+});

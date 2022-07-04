@@ -18,3 +18,7 @@ export default {
   }
 };
 </script>
+
+<style>
+  html { overflow-y: scroll }
+</style>

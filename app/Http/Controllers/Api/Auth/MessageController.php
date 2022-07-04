@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Events\MessageSent;
-use App\Events\PrivateMessageSent;
+use App\Events\PrivateRelation;
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -25,7 +24,7 @@ class MessageController extends BaseController
         $input['receiver_id'] = $user->id;
         $message=$request->user()->messages()->create($input);
 
-        broadcast(new PrivateMessageSent($message->load('user')))->toOthers();
+        broadcast(new PrivateRelation($message->load(['user', 'receiver'])))->toOthers();
         
         return $this->respond($message);
 

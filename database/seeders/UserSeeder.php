@@ -77,15 +77,16 @@ class UserSeeder extends Seeder
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
-        // $patient = Patient::create([
-        //     'user_id' => $user_patient->id,
-        //     'first_name' => 'Iwan 3',
-        //     'last_name' => 'Gunawan',
-        //     'datebirth' => "1999-04-07",
-        //     'city' => 'Bandung',
-        //     'province' => 'Jawa Barat',
-        //     'phone' => '0812345678'
-        // ]);
+        $patient = Patient::create([
+            'user_id' => $user_patient->id,
+            'first_name' => 'Iwan 3',
+            'last_name' => 'Gunawan',
+            'datebirth' => "1999-04-07",
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
+            'phone' => '0812345678',
+            'is_dummy' => true,
+        ]);
 
         $user_patient->assignRole('patient');
 
@@ -118,17 +119,18 @@ class UserSeeder extends Seeder
             'email_verified_at' => '2021-12-10 02:42:41'
         ]);
 
-        // $psychologist = Psychologist::create([
-        //     'user_id' => $user_psychologist->id,
-        //     'full_name' => 'Norman Kamaru M.Psi, Psikolog',
-        //     'speciality' => 'Psikolog Klinis',
-        //     'datebirth' => "1999-04-07",
-        //     'graduation_year' => '2020',
-        //     'graduation_university' => 'Samudera Hindia',
-        //     'city' => 'Bandung',
-        //     'province' => 'Jawa Barat',
-        //     'str_number' => '12345'
-        // ]);
+        $psychologist = Psychologist::create([
+            'user_id' => $user_psychologist->id,
+            'full_name' => 'Norman Kamaru M.Psi, Psikolog',
+            'speciality' => 'Psikolog Klinis',
+            'datebirth' => "1999-04-07",
+            'graduation_year' => '2020',
+            'graduation_university' => 'Samudera Hindia',
+            'city' => 'Bandung',
+            'province' => 'Jawa Barat',
+            'str_number' => '12345',
+            'is_dummy' => true,
+        ]);
 
         $user_psychologist->assignRole('psychologist');
 

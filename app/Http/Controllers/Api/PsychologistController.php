@@ -127,6 +127,7 @@ class PsychologistController extends BaseController
                                             'relations.consults' => function ($query) use ($psychologist) {
                                                 $query->orderBy('created_at', 'desc')->first();
                                             },
+                                            'user'
                                             ])
                                             ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]]);
 
@@ -194,7 +195,7 @@ class PsychologistController extends BaseController
 
         $related_patients = Patient::with(['relations' => function ($query) use ($psychologist) {
                                                     $query->where([['psychologist_id', $psychologist->id], ['is_active', true]]);
-                                                }])
+                                                }, 'user'],)
                                                 ->whereRelation('relations', [['psychologist_id', $psychologist->id], ['is_active', true]]);
 
         if($request->has('search')) {

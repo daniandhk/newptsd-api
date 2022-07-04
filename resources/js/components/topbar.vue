@@ -1,8 +1,14 @@
 <script>
 import store from '../store';
+import * as api from '../api';
+import simplebar from "simplebar-vue";
+import moment from 'moment';
+import Swal from "sweetalert2";
 
 export default {
-  components: {  },
+  components: { 
+    simplebar
+   },
   props: {
     isResizeable: {
       type: Boolean,
@@ -13,14 +19,131 @@ export default {
     return {
       user: store.getters.getLoggedUser,
       backendUrl: process.env.MIX_STORAGE_URL,
-      avatarUrl: store.getters.getLoggedUser ? (store.getters.getLoggedUser.profile ? store.getters.getLoggedUser.profile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg'
+      avatarUrl: store.getters.getLoggedUser ? (store.getters.getLoggedUser.profile ? store.getters.getLoggedUser.profile.image : 'avatars/default_profile.jpg') : 'avatars/default_profile.jpg',
+
+      notificationData: [],
+      interval: null,
+      now: moment(),
+
+      addedNotification: false,
     };
+  },
+  computed: {
+    getNotifications() {
+      return this.notificationData;
+    },
+
+    getNow() {
+      return this.now;
+    }
+  },
+  beforeDestroy() {
+    // prevent memory leak
+    clearInterval(this.interval)
+  },
+  created() {
+    this.getAllNotifications();
+    // eslint-disable-next-line no-undef
+    Echo.private('privaterelation.'+this.user.id)
+        .listen('PrivateRelation',(e)=>{
+          // let message = e.message;
+          this.addedNotification = true;
+          this.getAllNotifications();
+          
+        })
+
+    // update the time every second
+    this.interval = setInterval(() => {
+      // Concise way to format time according to system locale.
+      this.now = moment()
+    }, 1000)
   },
   methods: {
     toggleMenu() {
       this.$parent.toggleMenu();
     },
-  }
+
+    getTimeComparison(date){
+      var duration = moment.duration(moment().diff(date));
+      var asMinutes = duration.asMinutes();
+      if(asMinutes < 1){
+        return "beberapa saat yang lalu";
+      }
+      else if(asMinutes >= 60){
+        var asHours = duration.asHours();
+        if(asHours >= 24){
+          return moment(date).format('DD/MM/YYYY')
+        }
+        var hours = duration.hours();
+        return hours.toString() + " jam yang lalu";
+      }
+      var minutes = duration.minutes();
+      return minutes.toString() + " menit yang lalu";
+      
+    },
+
+    getAllNotifications(){
+      return (
+        api.getNotifications(this.user.id)
+          .then(response => {
+              this.notificationData = response.data.data;
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response.data.message
+            })
+          })
+      );
+    },
+
+    onNotificationClick(notification){
+      api.deleteNotification(notification.id)
+        .then(response => {
+            //
+        })
+        .catch(error => {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Terjadi kesalahan!',
+              footer: error.response.data.message
+          })
+        })
+
+      if(this.user.role == 'patient'){
+        if(notification.type == 'verification'){
+          this.$router.push({
+              name: 'home', params: { page_index: 0 }
+          });
+        }
+        if(notification.type == 'message' || notification.type == 'consult'){
+          this.$router.push({
+              name: 'home', params: { page_index: 1 }
+          });
+        }
+      }
+      else if(this.user.role == 'psychologist'){
+        if(notification.type == 'verification'){
+          this.$router.push({
+              name: 'test-page', params: { activeUserId: notification.user_id }
+          });
+        }
+        if(notification.type == 'message' || notification.type == 'consult'){
+          this.$router.push({
+              name: 'consult-page', params: { activeUserId: notification.user_id }
+          });
+        }
+        
+      }
+    },
+
+    onClickBellButton(){
+      this.addedNotification = false;
+    }
+  },
 };
 </script>
 
@@ -97,6 +220,92 @@ export default {
       </div>
 
       <div class="d-flex">
+        <b-dropdown
+          right
+          menu-class="dropdown-menu-lg p-0"
+          toggle-class="header-item noti-icon"
+          variant="black"
+        >
+          <template v-slot:button-content>
+            <i
+              class="ri-notification-3-line"
+              @click="onClickBellButton()"
+            />
+            <span
+              v-if="addedNotification"
+              class="noti-dot"
+            />
+          </template>
+          <div class="p-3 border-bottom">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="m-0">
+                  Notifikasi
+                </h6>
+              </div>
+            </div>
+          </div>
+          <simplebar style="max-height: 230px;">
+            <div
+              v-if="getNotifications.length == 0"
+              class="p-3"
+            >
+              <span>
+                belum ada notifikasi baru.
+              </span>
+            </div>
+            <a
+              v-for="(notification, index) in getNotifications"
+              :key="index"
+              style="cursor: pointer;"
+              class="text-reset notification-item"
+              @click="onNotificationClick(notification)"
+            >
+              <div class="media">
+                <div class="mr-3">
+                  <img
+                    v-if="notification.type == 'message'"
+                    :src="backendUrl + notification.avatar"
+                    class="rounded-circle avatar-xs"
+                    alt
+                  >
+                  <div
+                    v-if="notification.type =='verification'"
+                    class="avatar-xs"
+                  >
+                    <span class="avatar-title bg-primary rounded-circle font-size-16">
+                      <i
+                        class="mdi mdi-file-document-edit-outline"
+                        style="color: #005C9A; background-color: #F1F5F7;"
+                      />
+                    </span>
+                  </div>
+                  <div
+                    v-if="notification.type =='consult'"
+                    class="avatar-xs"
+                  >
+                    <span class="avatar-title rounded-circle font-size-16">
+                      <i
+                        class="mdi mdi-stethoscope"
+                        style="color: #005C9A; background-color: #F1F5F7;"
+                      />
+                    </span>
+                  </div>
+                </div>
+                <div class="media-body">
+                  <h6 class="mt-0 mb-1">{{ notification.header }}</h6>
+                  <div class="font-size-12 text-muted">
+                    <p class="mb-1">{{ notification.body }}</p>
+                    <p class="mb-0">
+                      <i class="mdi mdi-clock-outline" />
+                      {{ getTimeComparison(notification.created_at) }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </simplebar>
+        </b-dropdown>
         <b-dropdown
           right
           variant="black"

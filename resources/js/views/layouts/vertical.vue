@@ -1,6 +1,5 @@
 <script>
 import router from "../../router";
-import { layoutComputed } from "../../state/helpers";
 
 import Topbar from "../../components/topbar";
 import SideBar from "../../components/side-bar";
@@ -13,7 +12,7 @@ export default {
     };
   },
   computed: {
-    ...layoutComputed,
+    //
   },
   created: () => {
     document.body.removeAttribute("data-layout", "horizontal");
@@ -74,8 +73,6 @@ export default {
       <Topbar :is-resizeable="true" />
       <SideBar
         :is-condensed="isMenuCondensed"
-        :type="leftSidebarType"
-        :width="layoutWidth"
       />
       <!-- ============================================================== -->
       <!-- Start right Content here -->

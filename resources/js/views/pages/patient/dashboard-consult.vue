@@ -156,7 +156,7 @@ export default {
                   icon: 'error',
                   title: 'Oops...',
                   text: 'Terjadi kesalahan!',
-                  footer: error.response.data.message
+                  footer: error.response ? error.response : error
               })
             })
         );
@@ -288,7 +288,7 @@ export default {
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Terjadi kesalahan!',
-                    footer: error.response.data.message
+                    footer: error.response ? error.response : error
                 })
               })
           }
@@ -353,17 +353,17 @@ export default {
       this.isFetchingData = false;
     },
 
-    async handleSearch(value){
-      if(!value){
-        loading();
-        this.isFetchingData = true;
+    // async handleSearch(value){
+    //   if(!value){
+    //     loading();
+    //     this.isFetchingData = true;
 
-        await this.getDashboard();
+    //     await this.getDashboard();
 
-        this.isFetchingData = false;
-        loading();
-      }
-    },
+    //     this.isFetchingData = false;
+    //     loading();
+    //   }
+    // },
 
     // async handlePageChange(value) {
     //   this.isFetchingData = true;
@@ -386,7 +386,7 @@ export default {
 
     onTyping(){
       // eslint-disable-next-line no-undef
-      Echo.private('privatechat.'+this.activeUserId)
+      Echo.private('privaterelation.'+this.activeUserId)
       .whisper('typing',{
         user: this.user
       });
@@ -410,6 +410,7 @@ export default {
               this.message.text = null;
               this.allMessages.push(response.data.data);
               this.isChatLoading = false;
+              this.storeNotification(response.data.data);
               setTimeout(this.scrollToEnd,100);
           })
           .catch(error => {
@@ -419,7 +420,7 @@ export default {
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Terjadi kesalahan!',
-                footer: error.response.data.message
+                footer: error.response ? error.response : error
             })
           })
       );
@@ -438,7 +439,7 @@ export default {
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Terjadi kesalahan!',
-                footer: error.response.data.message
+                footer: error.response ? error.response : error
             })
           })
       );
@@ -468,8 +469,8 @@ export default {
         });
         
       // eslint-disable-next-line no-undef
-      Echo.private('privatechat.'+this.user.id)
-        .listen('PrivateMessageSent',(e)=>{
+      Echo.private('privaterelation.'+this.user.id)
+        .listen('PrivateRelation',(e)=>{
           this.activeUserId = e.message.user_id;
           this.allMessages.push(e.message);
           setTimeout(this.scrollToEnd,100);
@@ -485,13 +486,16 @@ export default {
         });
     },
 
-    sortOnlineUsers(array, sortOrder){
-      const itemPositions = {};
-      for (const [index, data] of sortOrder.entries()) {
-        itemPositions[data.id] = index;
-      }
-
-      array.sort((a, b) => itemPositions[a.user_id] - itemPositions[b.user_id]);
+    async sortOnlineUsers(array, sortOrder){
+      array.sort( function (a, b) {
+        var A = a['user_id'], B = b['user_id'];
+        var onlineA = a['online_schedule']['is_online'], onlineB = b['online_schedule']['is_online'];
+        if (sortOrder.findIndex(x => x.id === A) < sortOrder.findIndex(x => x.id === B) || (!onlineA && onlineB)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
     },
 
     getHeader(index, datas){
@@ -573,7 +577,7 @@ export default {
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Terjadi kesalahan!',
-                footer: error.response.data.message
+                footer: error.response ? error.response : error
             })
           })
       );
@@ -616,7 +620,7 @@ export default {
                       icon: 'error',
                       title: 'Oops...',
                       text: 'Terjadi kesalahan!',
-                      footer: error.response.data.message
+                      footer: error.response ? error.response : error
                   })
                 })
             }
@@ -629,6 +633,33 @@ export default {
             text: 'Harap selesaikan video call terlebih dahulu.',
         })
       }
+    },
+
+    storeNotification(message){
+      let data = {
+        user_id: this.activeUserId,
+        type: 'message',
+        header: message.receiver.profile.full_name ? 
+                message.receiver.profile.full_name : 
+                message.receiver.profile.first_name + " " + message.receiver.profile.last_name,
+        body: message.text,
+        avatar: message.receiver.profile.image
+      }
+
+      return (
+        api.storeNotification(data)
+          .then(response => {
+              //
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
+            })
+          })
+      );
     }
   },
 };
@@ -1093,7 +1124,7 @@ function loading() {
               >
                 <div class="chat-conversation p-3">
                   <div class="no-relation-title">
-                    <span class="title">Pilih psikolog terlebih dahulu!</span>
+                    <span class="title">Harap pilih psikolog terlebih dahulu!</span>
                   </div>
                 </div>
               </div>
@@ -1164,7 +1195,7 @@ function loading() {
                 <div class="px-lg-3">
                   <label
                     v-if="typingUser.username"
-                    class="mb-0"
+                    class="mb-0 mx-3"
                   >{{ typingUser.username }} sedang mengetik...</label>
                   <div class="p-3 chat-input-section">
                     <form
@@ -1260,7 +1291,7 @@ function loading() {
               >
                 <div class="chat-conversation p-3">
                   <div class="no-relation-title">
-                    <span class="title">Pilih psikolog terlebih dahulu!</span>
+                    <span class="title">Harap pilih psikolog terlebih dahulu!</span>
                   </div>
                 </div>
               </div>

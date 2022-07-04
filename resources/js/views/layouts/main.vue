@@ -1,5 +1,4 @@
 <script>
-import { layoutComputed } from "../../state/helpers";
 import Vertical from "./vertical";
 
 export default {
@@ -8,7 +7,7 @@ export default {
     return {};
   },
   computed: {
-    ...layoutComputed
+    //
   },
   methods: {}
 };
@@ -16,10 +15,7 @@ export default {
 
 <template>
   <div>
-    <vertical
-      v-if="layoutType === 'vertical'"
-      :layout="layoutType"
-    >
+    <vertical layout="vertical">
       <slot />
     </vertical>
   </div>

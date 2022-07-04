@@ -1,55 +1,67 @@
 <script>
-import Layout from '../../../layouts/main'
-import PageHeader from '../../../../components/page-header'
 import store from '../../../../store'
 import * as api from '../../../../api';
 import { notificationMethods } from '../../../../state/helpers'
 import Swal from "sweetalert2"
 import moment from 'moment'
-import simplebar from "simplebar-vue"
+import { required } from "vuelidate/lib/validators"
 
 export default {
   page: {
-    title: 'Tes Penilaian Diri',
+    title: 'Konsultasi',
     meta: [{ name: 'description' }]
   },
   components: {
-    Layout,
-    PageHeader,
-    simplebar
+    //
+  },
+  props: {
+    activeUser: {
+      type: Object,
+      default: () => ({id: null})
+    },
   },
   data () {
     return {
-      title: 'Tes Penilaian Diri',
-      items: [
-        {
-          text: 'Psikolog'
-        },
-        {
-          text: 'Tes Penilaian Diri',
-          active: true
-        }
-      ],
-
       user: store.getters.getLoggedUser,
       backendUrl: process.env.MIX_STORAGE_URL,
 
       isLoading: false,
-      
-      related_patients: [],
-      filter: "",
       isFetchingData: false,
+      isChatLoading: false,
+      maxHeight: "max-height: 345px;",
 
       message: {
         text: null,
       },
-      activeUserId: null,
+      relationId: this.$route.params.relationId ? this.$route.params.relationId : null,
       typingUser: {},
-      onlineUsers: [],
       allMessages: [],
       typingClock: null,
       submitted_chat: false,
+      tabIndex: this.$route.params.tabIndex ? this.$route.params.tabIndex : 0,
 
+      allConsults: [],
+      currentPageConsults: 1,
+      perPageConsults: 5,
+      sortDescConsults: true,
+      sortByConsults: 'consult_index',
+      fieldsConsults: [
+        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+      ],
+
+      dataConsult: {
+        consult_index: 0,
+        note_questions: [],
+      },
+
+    }
+  },
+  validations: {
+    message: {
+      text: { required },
     }
   },
   computed: {
@@ -57,52 +69,266 @@ export default {
       return this.$store ? this.$store.state.notification : null
     },
 
-    onlineUsersData(){
-      return this.onlineUsers;
+    getMaxHeight() {
+      return this.maxHeight;
     }
   },
+  watch: {
+    activeUser() {
+      this.refreshData()
+    },
+
+    isChatLoading() {
+      this.maxHeight = "max-height: 345px;";
+      if(this.isChatLoading == true){
+        setTimeout(this.changeHeight,500);
+      }
+    },
+
+    isFetchingData() {
+      this.maxHeight = "max-height: 345px;";
+      if(this.isFetchingData == true){
+        setTimeout(this.changeHeight,500);
+      }
+    },
+  },
   mounted: async function () {
-    await this.refreshData();
+    await this.setEcho();
   },
   methods: {
     ...notificationMethods,
 
+    getRequestParams(relation_id) {
+      let params = {};
+
+      if (relation_id) {
+        params["relation_id"] = relation_id;
+      }
+
+      return params;
+    },
+
     async getDashboard(){
-        loading();
-        return (
-          api.getPatientList(this.user.profile.id)
-            // eslint-disable-next-line no-unused-vars
-            .then(response => {
-                if(response.data.data){
-                  console.log(response.data.data)
-                  this.related_patients = response.data.data.related_patients;
-                }
-                loading();
+      if(this.activeUser.id){
+        if(this.tabIndex == 0){
+          await this.fetchMessages();
+        }
+        else if(this.tabIndex == 1){
+          await this.fetchConsults();
+        }
+      }
+    },
+
+    async fetchMessages() {
+      // if(!this.activeUserId){
+      //   return alert('Please select friend');
+      // }
+      return (
+        api.getPrivateMessages(this.activeUser.id)
+          .then(response => {
+              this.allMessages = response.data.data;
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
             })
-            .catch(error => {
-              loading();
+          })
+      );
+    },
+
+    async fetchConsults() {
+      const params = this.getRequestParams(
+          this.relationId
+      );
+      return (
+        api.getConsults(params)
+          .then(response => {
+              this.allConsults = response.data.data;
+              this.perPageConsults = response.data.data.length;
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
             })
-        );
+          })
+      );
     },
 
     async refreshData(){
       this.isLoading = true;
+      this.isFetchingData = true;
       await this.getDashboard();
+      this.isFetchingData = false;
       this.isLoading = false;
     },
 
-    getAge(string){
-      return (moment().diff(moment(string, 'YYYY-MM-DD'), 'years')).toString() + ' Tahun'
+    async fetchData(){
+      this.isChatLoading = true;
+      await this.getDashboard();
+      this.isChatLoading = false;
     },
 
-    dateFormatted(string){
-      return moment(string).locale('id').format('DD MMMM YYYY')
+    async setEcho(){
+      // eslint-disable-next-line no-undef
+      Echo.private('privaterelation.'+this.user.id)
+        .listen('PrivateRelation',(e)=>{
+          this.allMessages.push(e.message);
+        })
+        .listenForWhisper('typing', (e) => {
+          if(e.user.id == this.activeUser.id){
+            this.typingUser = e.user;
+            if(this.typingClock) clearTimeout();
+            this.typingClock = setTimeout(()=>{
+                                  this.typingUser = {};
+                                },9000);
+          }
+        });
     },
 
-    isOnline(data){
-      return this.onlineUsersData.find(user => user.id === data.user_id);
+    changeHeight(){
+      if(document.getElementById('main-container-test')){
+        let height = document.getElementById('main-container-test').clientHeight - 110;
+        if(height > 345){
+          this.maxHeight = "max-height: " + height.toString() + "px;";
+          this.$emit('changeHeight', height);
+        }
+      }
     },
-  }
+
+    storeNotification(message){
+      let data = {
+        user_id: this.activeUser.id,
+        type: 'message',
+        header: message.receiver.profile.full_name ? 
+                message.receiver.profile.full_name : 
+                message.receiver.profile.first_name + " " + message.receiver.profile.last_name,
+        body: message.text,
+        avatar: message.receiver.profile.image
+      }
+
+      return (
+        api.storeNotification(data)
+          .then(response => {
+              //
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
+            })
+          })
+      );
+    },
+
+    formatDate(date, format){
+      if(date){
+        if(format == 'lengkap'){
+          return moment(date).locale('id').format('LLLL')
+        }
+        else{
+          return moment(date).locale('id')
+        }
+      }
+      else{
+        return "-"
+      }
+    },
+
+    getHeader(index, datas){
+      let isHeader = false;
+      if(index == 0){
+        isHeader = true;
+      }
+      else if(!this.isDateSame(moment(datas[index-1].created_at), datas[index].created_at)){
+        isHeader = true;
+      }
+
+      if(isHeader){
+        if(this.isDateSame(moment(), datas[index].created_at)){
+          return 'Hari Ini';
+        }
+        else if(this.isYesterday(datas[index].created_at)){
+          return 'Kemarin';
+        }
+        else {
+          return moment(datas[index].created_at).format('DD/MM/YYYY')
+        }
+      }
+
+      return null;
+    },
+
+    isDateSame(data1, data2){
+      if(!data1){
+        data1 = moment();
+      }
+      return data1.isSame(data2, 'day');
+    },
+
+    isYesterday(data){
+      return moment().add(-1, 'days').isSame(data, 'day');
+    },
+
+    onNoteQuestionsClick(data){
+      this.dataConsult = data
+      this.$bvModal.show('modal-notes');
+    },
+
+    onTyping(){
+      // eslint-disable-next-line no-undef
+      Echo.private('privaterelation.'+this.activeUser.id)
+      .whisper('typing',{
+        user: this.user
+      });
+    },
+    sendMessage(){
+      this.isChatLoading = true;
+      this.submitted_chat = true;
+      //check if there message
+      this.$v.message.$touch();
+      if (this.$v.message.$invalid) {
+        return;
+      }
+      // if(!this.activeUserId){
+      //   return alert('Please select friend');
+      // }
+      return (
+        api.sendPrivateMessage(this.message, this.activeUser.id)
+          // eslint-disable-next-line no-unused-vars
+          .then(response => {
+              this.submitted_chat = false;
+              this.message.text = null;
+              this.allMessages.push(response.data.data);
+              this.isChatLoading = false;
+              this.storeNotification(response.data.data);
+          })
+          .catch(error => {
+            this.submitted_chat = false;
+            this.isChatLoading = false;
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
+            })
+          })
+      );
+    },
+  },
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function loading() {
@@ -116,127 +342,46 @@ function loading() {
 </script>
 
 <template>
-  <Layout>
-    <PageHeader
-      :title="title"
-      :items="items"
-    />
-    <div>
-      <div
-        id="loading"
-        style="display:none; z-index:100; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+  <div
+    id="main-container-test"
+    class="w-100 user-chat m-lg-1 my-md-1"
+  >
+    <div class="card-body">
+      <div 
+        v-if="isLoading"
+        style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
       >
         <b-spinner
-          style="width: 3rem; height: 3rem;"
-          class="m-2"
+          style="width: 2rem; height: 2rem;"
+          class="mt-1"
           variant="warning"
           role="status"
         />
       </div>
       <div v-if="!isLoading">
         <div
-          class="d-lg-flex mb-4"
-          style="border-radius: 0.25rem;"
+          v-if="!activeUser.id"
+          style="display: flex; justify-content: center;"
         >
-          <div class="chat-leftsidebar">
-            <div class="chat-leftsidebar-nav">
-              <b-tabs 
-                nav-class="nav-tabs-custom" 
-                pills 
-                fill 
-                content-class="py-2"
-                justified
-              >
-                <b-card-text>
-                  <div class="row px-3 my-3">
-                    <div
-                      class="col-12"
-                      style="display: flex; align-items: center; justify-content: left;"
-                    >
-                      <h5 class="font-size-14">
-                        Pasien Anda
-                      </h5>
-                    </div>
-                  </div>
-                  <div class="card-body border-bottom border-top py-2">
-                    <div class="search-box chat-search-box">
-                      <div class="position-relative">
-                        <b-form-input 
-                          v-model="filter"
-                          type="search"
-                          class="form-control" 
-                          placeholder="ketik nama..."
-                          @input="onSearchButtonClick()"
-                        />
-                        <i class="ri-search-line search-icon" />
-                      </div>
-                    </div>
-                  </div>
-                  <div 
-                    v-if="isFetchingData"
-                    style="display: flex; justify-content: center; padding-top: 24.5px; padding-bottom: 25px;"
-                  >
-                    <b-spinner
-                      style="width: 2rem; height: 2rem;"
-                      class="mt-1"
-                      variant="warning"
-                      role="status"
-                    />
-                  </div>
-                  <div 
-                    v-if="!isFetchingData && related_patients.length == 0"
-                    style="font-size: 14px; display: flex; justify-content: center; padding-top: 25px; padding-bottom: 25px;"
-                  >
-                    data tidak ditemukan.
-                  </div>
-                  <div v-if="!isFetchingData && related_patients.length > 0">
-                    <simplebar
-                      id="scrollElement"
-                      style="max-height: 345px"
-                    >
-                      <ul class="list-unstyled chat-list">
-                        <li
-                          v-for="(patient, index) in related_patients"
-                          :key="index"
-                          class
-                        >
-                          <a style="cursor: pointer;">
-                            <div class="media">
-                              <div
-                                class="user-img align-self-center mr-3"
-                                :class="isOnline(patient) ? 'online' : null"
-                              >
-                                <img
-                                  :src="backendUrl + patient.image"
-                                  class="rounded-circle avatar-xs"
-                                  alt
-                                >
-                                <span class="user-status" />
-                              </div>
-                              <div class="media-body overflow-hidden">
-                                <h5 class="text-truncate font-size-14 mb-1">
-                                  {{ patient.first_name + " " + patient.last_name }}
-                                </h5>
-                                <p class="text-truncate mb-0">
-                                  {{ getAge(patient.datebirth) }}
-                                </p>
-                                <p class="text-truncate mb-0">
-                                  {{ patient.city + ", " + patient.province }}
-                                </p>
-                              </div>
-                            </div>
-                          </a>
-                        </li>
-                      </ul>
-                    </simplebar>
-                  </div>
-                </b-card-text>
-              </b-tabs>
-            </div>
+          Harap pilih pasien terlebih dahulu!
+        </div>
+        <div v-if="activeUser.id">
+          <div 
+            v-if="isFetchingData"
+            style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
+          >
+            <b-spinner
+              style="width: 2rem; height: 2rem;"
+              class="mt-1"
+              variant="warning"
+              role="status"
+            />
           </div>
-          //
+          <div v-if="!isFetchingData">
+            //
+          </div>
         </div>
       </div>
     </div>
-  </Layout>
+  </div>
 </template>

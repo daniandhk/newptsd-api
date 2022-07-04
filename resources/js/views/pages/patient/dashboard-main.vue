@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       user: store.getters.getLoggedUser,
-      tabIndex: 0,
+      tabIndex: this.$route.params.page_index ? this.$route.params.page_index : 0,
     };
   },
   computed: {
@@ -27,7 +27,7 @@ export default {
     },
   },
   mounted() {
-    this.refreshData(0);
+    this.refreshData(this.tabIndex);
   },
   methods: {
     ...notificationMethods,
@@ -84,6 +84,8 @@ function loading() {
     >
       <b-tabs
         v-model="tabIndex"
+        fill
+        justified
         nav-class="nav-tabs-custom"
         class="mt-4"
         style="align-items: center; justify-content: center;"
@@ -156,33 +158,11 @@ function loading() {
 </template>
 
 <style>
-  .card-header-tabs {
-    margin-right: -21px !important;
-    margin-left: -21px !important;
-  }
-
-  .full-width .nav-tabs .nav-item {
-    margin-bottom: 2px;
-    flex: 1;
-    text-align: center !important;
+  .full-width .nav-tabs {
     background-color: white;
   }
 
   .nav-link.active.tab-active-class {
     background-color: #F1F5F7;
-    font-size: 24px;
   }
-
-  @media (min-width:576px) {
-    .card-psikolog {
-      width: 420px;
-    }
-  }
-
-  @media (min-width:1200px) {
-    .main-card {
-      width: 85%;
-    }
-  }
-
 </style>
