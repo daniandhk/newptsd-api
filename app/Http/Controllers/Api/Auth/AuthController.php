@@ -69,7 +69,7 @@ class AuthController extends BaseController
 			// return $this->respond($user);
 		}
 
-		return $this->respondNotFound(null);
+		return $this->errorNotFound(null);
 	}
 
 	/*

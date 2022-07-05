@@ -11,7 +11,7 @@ class NotificationController extends BaseController
 {
     public function index()
     {
-        $notifications = Notification::with(['user', 'message'])->orderByDesc('created_at')->get();
+        $notifications = Notification::with(['user'])->orderByDesc('created_at')->get();
         return $this->respond($notifications);
     }
 
@@ -69,7 +69,7 @@ class NotificationController extends BaseController
     {
         $notification = Notification::find($id);
         if(!$notification) {
-            return $this->respondNotFound('invalid notification id');
+            return $this->errorNotFound('invalid notification id');
         }
 
         $notification->delete();

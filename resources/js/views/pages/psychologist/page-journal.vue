@@ -1,7 +1,7 @@
 <script>
-import store from '../../../../store'
-import * as api from '../../../../api';
-import { notificationMethods } from '../../../../state/helpers'
+import store from '../../../store'
+import * as api from '../../../api';
+import { notificationMethods } from '../../../state/helpers'
 import Swal from "sweetalert2"
 import moment from 'moment'
 import { required } from "vuelidate/lib/validators"
@@ -19,6 +19,10 @@ export default {
       type: Object,
       default: () => ({id: null})
     },
+    relationId: {
+      type: String,
+      default: null,
+    },
   },
   data () {
     return {
@@ -33,7 +37,6 @@ export default {
       message: {
         text: null,
       },
-      relationId: this.$route.params.relationId ? this.$route.params.relationId : null,
       typingUser: {},
       allMessages: [],
       typingClock: null,
@@ -164,6 +167,7 @@ export default {
       this.isLoading = true;
       this.isFetchingData = true;
       await this.getDashboard();
+      setTimeout(this.changeHeight,500);
       this.isFetchingData = false;
       this.isLoading = false;
     },
@@ -171,6 +175,7 @@ export default {
     async fetchData(){
       this.isChatLoading = true;
       await this.getDashboard();
+      setTimeout(this.changeHeight,500);
       this.isChatLoading = false;
     },
 
@@ -192,8 +197,8 @@ export default {
     },
 
     changeHeight(){
-      if(document.getElementById('main-container-test')){
-        let height = document.getElementById('main-container-test').clientHeight - 110;
+      if(document.getElementById('main-container-journal')){
+        let height = document.getElementById('main-container-journal').clientHeight;
         if(height > 345){
           this.maxHeight = "max-height: " + height.toString() + "px;";
           this.$emit('changeHeight', height);
@@ -343,43 +348,42 @@ function loading() {
 
 <template>
   <div
-    id="main-container-test"
-    class="w-100 user-chat m-lg-1 my-md-1"
+    id="main-container-journal"
+    class="w-100"
   >
-    <div class="card-body">
-      <div 
-        v-if="isLoading"
-        style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
+    <div 
+      v-if="isLoading"
+      style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
+    >
+      <b-spinner
+        style="width: 2rem; height: 2rem;"
+        class="mt-1"
+        variant="warning"
+        role="status"
+      />
+    </div>
+    <div v-if="!isLoading">
+      <div
+        v-if="!activeUser.id"
+        class="my-4"
+        style="display: flex; justify-content: center;"
       >
-        <b-spinner
-          style="width: 2rem; height: 2rem;"
-          class="mt-1"
-          variant="warning"
-          role="status"
-        />
+        Harap pilih pasien terlebih dahulu!
       </div>
-      <div v-if="!isLoading">
-        <div
-          v-if="!activeUser.id"
-          style="display: flex; justify-content: center;"
+      <div v-if="activeUser.id">
+        <div 
+          v-if="isFetchingData"
+          style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
         >
-          Harap pilih pasien terlebih dahulu!
+          <b-spinner
+            style="width: 2rem; height: 2rem;"
+            class="mt-1"
+            variant="warning"
+            role="status"
+          />
         </div>
-        <div v-if="activeUser.id">
-          <div 
-            v-if="isFetchingData"
-            style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
-          >
-            <b-spinner
-              style="width: 2rem; height: 2rem;"
-              class="mt-1"
-              variant="warning"
-              role="status"
-            />
-          </div>
-          <div v-if="!isFetchingData">
-            //
-          </div>
+        <div v-if="!isFetchingData">
+          //
         </div>
       </div>
     </div>

@@ -1,11 +1,11 @@
 export default [
     {
         path: '/psychologist',
-        name: 'main-page',
+        name: 'psychologist-main',
         props: true,
         meta: {
             authRequired: true,
         },
-        component: () => import('../../views/pages/psychologist/main-pages')
+        component: () => import('../../views/pages/psychologist/page-main')
     },
 ]

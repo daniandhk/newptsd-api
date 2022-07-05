@@ -106,7 +106,7 @@ class PatientController extends BaseController
     {
         $patient = Patient::find($id);
         if(!$patient) {
-            return $this->respondNotFound('invalid patient id');
+            return $this->errorNotFound('invalid patient id');
         }
 
         $patient->delete();

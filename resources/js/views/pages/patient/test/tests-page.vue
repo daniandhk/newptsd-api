@@ -88,7 +88,7 @@ export default {
         is_consult: false,
         patient_id: "",
         psychologist_id: "",
-        date: "",
+        videocall_date: "",
         videocall_link: "",
         notes: [
           {
@@ -146,7 +146,7 @@ export default {
     },
 
     input_consult: {
-      date: { required },
+      videocall_date: { required },
     }
   },
   mounted: async function() {
@@ -1010,7 +1010,7 @@ function loading() {
                                 <div><label>2. Isi jadwal konsultasi selanjutnya</label></div>
                                 <div class="datepicker-div">
                                   <date-picker
-                                    v-model="input_consult.date"
+                                    v-model="input_consult.videocall_date"
                                     :first-day-of-week="1" 
                                     lang="en"
                                     type="datetime"
@@ -1019,19 +1019,19 @@ function loading() {
                                     :show-time-panel="showTimePanel"
                                     :disabled="isReview && (!isPsychologist || !isRelated)"
                                     :disabled-date="disabledBeforeToday"
-                                    :class="{ 'is-invalid': submitted_consult && $v.input_consult.date.$error }"
+                                    :class="{ 'is-invalid': submitted_consult && $v.input_consult.videocall_date.$error }"
                                   >
                                     <template #footer>
                                       <button
                                         class="mx-btn mx-btn-text"
                                         @click="toggleTimePanel"
                                       >
-                                        {{ showTimePanel ? 'pilih tanggal' : 'pilih waktu' }}
+                                        {{ showTimePanel ? 'pilih tanggal' : 'pilih jam' }}
                                       </button>
                                     </template>
                                   </date-picker>
                                   <div
-                                    v-if="submitted_consult && !$v.input_consult.date.required"
+                                    v-if="submitted_consult && !$v.input_consult.videocall_date.required"
                                     class="invalid-feedback"
                                   >
                                     Jadwal harus diisi!
@@ -1045,6 +1045,7 @@ function loading() {
                                     v-model="input_consult.videocall_link"
                                     type="text"
                                     class="form-control"
+                                    placeholder="(opsional)"
                                     :disabled="isReview && (!isPsychologist || !isRelated)"
                                     :style="disabled_bg"
                                     :class="{ 'is-invalid': submitted_consult && !isUrlValid(input_consult.videocall_link) }"
@@ -1100,6 +1101,7 @@ function loading() {
                                           v-model="note.question_text"
                                           type="text"
                                           class="form-control"
+                                          placeholder="(opsional)"
                                           style="min-width: 150px;"
                                         >
                                       </div>
@@ -1407,7 +1409,8 @@ function loading() {
 
     <div name="modalHistory">
       <b-modal 
-        id="modal-history" 
+        id="modal-history"
+        class="modal-dialog"
         size="md" 
         title="Riwayat Tes Pasien" 
         hide-footer 

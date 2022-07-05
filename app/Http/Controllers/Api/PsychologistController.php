@@ -105,7 +105,7 @@ class PsychologistController extends BaseController
     {
         $psychologist = Psychologist::find($id);
         if(!$psychologist) {
-            return $this->respondNotFound('invalid psychologist id');
+            return $this->errorNotFound('invalid psychologist id');
         }
 
         $psychologist->delete();

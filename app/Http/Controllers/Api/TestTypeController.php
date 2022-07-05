@@ -86,7 +86,7 @@ class TestTypeController extends BaseController
     {
         $TestType = TestType::find($id);
         if(!$TestType) {
-            return $this->respondNotFound('invalid TestType id');
+            return $this->errorNotFound('invalid TestType id');
         }
 
         $TestType->delete();
@@ -97,7 +97,7 @@ class TestTypeController extends BaseController
     {
         $patient = Patient::find($patient_id);
         if(!$patient) {
-            return $this->respondNotFound('invalid patient id');
+            return $this->errorNotFound('invalid patient id');
         }
 
         $test_types = TestType::FilteredTest($patient_id)->get();

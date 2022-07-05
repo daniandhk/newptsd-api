@@ -70,7 +70,7 @@ class JournalController extends BaseController
     {
         $journal = Journal::find($id);
         if(!$journal) {
-            return $this->respondNotFound('invalid journal id');
+            return $this->errorNotFound('invalid journal id');
         }
 
         $journal->delete();

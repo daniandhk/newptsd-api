@@ -78,7 +78,7 @@ class ChatScheduleController extends BaseController
     {
         $chatschedule = ChatSchedule::find($id);
         if(!$chatschedule) {
-            return $this->respondNotFound('invalid chat schedule id');
+            return $this->errorNotFound('invalid chat schedule id');
         }
 
         $chatschedule->delete();

@@ -143,7 +143,7 @@ function loading() {
                         class="font-size-16 mt-0"
                         style="font-weight: normal;"
                       >
-                        Selanjutnya isi informasi wali yang dapat dihubungi. (opsional)
+                        Selanjutnya isi informasi wali yang dapat dihubungi.<br>(opsional)
                       </p>
                     </div>
                   </div>

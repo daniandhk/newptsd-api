@@ -73,7 +73,7 @@ class GuardianController extends BaseController
     {
         $guardian = Guardian::find($id);
         if(!$guardian) {
-            return $this->respondNotFound('invalid guardian id');
+            return $this->errorNotFound('invalid guardian id');
         }
 
         $guardian->delete();

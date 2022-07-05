@@ -163,12 +163,12 @@ export default {
     onStatusButtonClick(status, patient){
       if(status == 'konsultasi chat' || status == 'konsultasi video call' || status == 'input link konsultasi'){
         this.$router.push({
-            name: 'main-page', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 1 }
+            name: 'psychologist-main', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 1 }
         });
       }
       else{
         this.$router.push({
-            name: 'main-page', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 0 }
+            name: 'psychologist-main', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 0 }
         });
       }
     },

@@ -575,7 +575,8 @@ function loading() {
 
     <div name="modalTestType">
       <b-modal 
-        id="modal-testtype" 
+        id="modal-testtype"
+        class="modal-dialog"
         size="md" 
         :title="'Tes ' + dataTestType.name" 
         hide-footer 
@@ -596,7 +597,8 @@ function loading() {
 
     <div name="modalCall">
       <b-modal 
-        id="modal-call" 
+        id="modal-call"
+        class="modal-dialog"
         size="md" 
         title="Hubungi" 
         hide-footer 

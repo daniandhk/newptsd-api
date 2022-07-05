@@ -85,11 +85,8 @@ export default {
     },
 
     async changeActiveUser(patient){
-      console.log(patient)
       this.isFetchingUsers = true;
       this.$emit('changeActiveUser', patient);
-
-      await sleep(1000);
       this.isFetchingUsers = false;
     },
 
@@ -161,7 +158,7 @@ function loading() {
 </script>
 
 <template>
-  <div class="chat-leftsidebar m-lg-1 my-md-1">
+  <div class="chat-leftsidebar m-lg-1 my-md-2">
     <div class="chat-leftsidebar-nav">
       <b-card-text>
         <div class="row px-3">

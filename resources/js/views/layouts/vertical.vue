@@ -54,6 +54,10 @@ export default {
       }
       this.isMenuCondensed = !this.isMenuCondensed;
     },
+
+    changePage(data){
+      this.$emit('changePage', data);
+    }
   },
 };
 </script>
@@ -70,7 +74,10 @@ export default {
 
     <!-- Begin page -->
     <div id="layout-wrapper">
-      <Topbar :is-resizeable="true" />
+      <Topbar
+        :is-resizeable="true"
+        @changePage="changePage"
+      />
       <SideBar
         :is-condensed="isMenuCondensed"
       />

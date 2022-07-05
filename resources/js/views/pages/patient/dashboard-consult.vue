@@ -481,7 +481,7 @@ export default {
             if(this.typingClock) clearTimeout();
             this.typingClock = setTimeout(()=>{
                                   this.typingUser = {};
-                                },9000);
+                                },1000);
           }
         });
     },
@@ -639,11 +639,12 @@ export default {
       let data = {
         user_id: this.activeUserId,
         type: 'message',
-        header: message.receiver.profile.full_name ? 
-                message.receiver.profile.full_name : 
-                message.receiver.profile.first_name + " " + message.receiver.profile.last_name,
+        header: message.user.profile.full_name ? 
+                message.user.profile.full_name : 
+                message.user.profile.first_name + " " + message.user.profile.last_name,
         body: message.text,
-        avatar: message.receiver.profile.image
+        avatar: message.user.profile.image,
+        receiver_id: message.receiver.id
       }
 
       return (
@@ -660,6 +661,21 @@ export default {
             })
           })
       );
+    },
+
+    checkConsultStatus(data){
+      if(moment().isBefore(data.videocall_date, 'day') || !data.videocall_link){
+        return 'waiting'
+      }
+      else if(moment().isSame(data.videocall_date, 'day')){
+        return 'now'
+      }
+      else if(moment().isAfter(data.videocall_date, 'day')){
+        return 'late'
+      }
+      else{
+        return '-'
+      }
     }
   },
 };
@@ -1361,15 +1377,43 @@ function loading() {
                           >
                             Selesai
                           </b-button>
-                          <b-button
-                            v-if="!data.item.is_finished"
-                            variant="warning"
-                            size="sm"
-                            style="min-width: 100px;"
-                            @click="goToTopPage()"
-                          >
-                            Berlangsung
-                          </b-button>
+                          <div v-if="!data.item.is_finished">
+                            <b-button
+                              v-if="checkConsultStatus(data.item) == 'now'"
+                              variant="warning"
+                              size="sm"
+                              style="min-width: 100px;"
+                              @click="goToTopPage()"
+                            >
+                              Berlangsung
+                            </b-button>
+                            <b-button
+                              v-if="checkConsultStatus(data.item) == 'waiting'"
+                              variant="secondary"
+                              size="sm"
+                              style="min-width: 100px;"
+                              @click="goToTopPage()"
+                            >
+                              Menunggu
+                            </b-button>
+                            <b-button
+                              v-if="checkConsultStatus(data.item) == 'late'"
+                              variant="danger"
+                              size="sm"
+                              style="min-width: 100px;"
+                              @click="goToTopPage()"
+                            >
+                              Terlambat
+                            </b-button>
+                            <b-button
+                              v-if="checkConsultStatus(data.item) == '-'"
+                              variant="outline-light"
+                              size="sm"
+                              style="min-width: 100px;"
+                            >
+                              -
+                            </b-button>
+                          </div>
                         </template>
                       </b-table>
                     </div>
@@ -1391,7 +1435,8 @@ function loading() {
 
     <div name="modalProfile">
       <b-modal 
-        id="modal-profile" 
+        id="modal-profile"
+        class="modal-dialog"
         size="md" 
         title="Profil Psikolog" 
         hide-footer 
@@ -1456,7 +1501,8 @@ function loading() {
 
     <div name="modalNotes">
       <b-modal 
-        id="modal-notes" 
+        id="modal-notes"
+        class="modal-dialog"
         size="md" 
         title="Catatan Psikolog" 
         hide-footer 
@@ -1468,17 +1514,27 @@ function loading() {
           </div>
           <div
             v-if="dataConsult.note_questions.length == 0"
-            class="mt-2 text-center"
+            class="mt-1"
           >
-            -
+            <input
+              value="-"
+              :disabled="true"
+              type="text"
+              class="form-control"
+            >
           </div>
           <div
             v-for="(data, index) of dataConsult.note_questions"
             :key="index"
             class="mb-2"
           >
-            <div class="mt-2 text-left">
-              {{ index+1 }}. {{ data.question_text }}
+            <div class="mt-1">
+              <input
+                v-model="data.question_text"
+                :disabled="true"
+                type="text"
+                class="form-control"
+              >
             </div>
           </div>
         </template>

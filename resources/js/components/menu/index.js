@@ -16,7 +16,7 @@ export const menuItems = [
         id: 3,
         label: 'menuitems.menu.main',
         icon: 'mdi mdi-apps',
-        link: 'main-page'
+        link: 'psychologist-main'
     },
     {
         id: 4,

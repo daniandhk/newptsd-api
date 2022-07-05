@@ -54,7 +54,7 @@ class ConsultController extends BaseController
         $validation = Validator::make($request->all(), [
             'patient_id' => 'required',
             'psychologist_id' => 'required',
-            'date' => 'required',
+            'videocall_date' => 'required',
         ]);
         if($validation->fails()) {
             return $this->validationError();
@@ -94,15 +94,41 @@ class ConsultController extends BaseController
             'relation_id' => $relation_id,
             'consult_index' => count($consults)+1,
             'last_date' => $last_date,
-            'videocall_date' => $request->date,
+            'videocall_date' => $request->videocall_date,
             'videocall_link' => $request->videocall_link,
         ]);
+
+        if(is_array($request->notes) && sizeof($request->notes) > 0){
+            foreach($request->notes as $note){
+                if($note['question_text']){
+                    NoteQuestion::create([
+                        'consult_id' => $consult->id,
+                        'question_text' => $note['question_text'],
+                    ]);
+                }
+            }
+        }
 
         if($request->not_json && $request->not_json == true){
             return $consult;
         }
 
         return $this->respond($consult);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'videocall_date' => 'required',
+        ]);
+        if (Consult::find($id) != null) {
+            $consult = Consult::findOrFail($id);
+            $consult->fill($request->all());
+            $consult->save();
+            return $this->respond($consult);
+        } else {
+            return $this->errorNotFound('invalid consult id');
+        }
     }
 
     public function storeNoteQuestion(Request $request) {
@@ -119,10 +145,23 @@ class ConsultController extends BaseController
             return $this->errorNotFound('invalid consult id');
         }
 
-        NoteQuestion::create([
+        $note = NoteQuestion::create([
             'consult_id' => $consult->id,
             'question_text' => $request->question_text,
         ]);
+
+        return $this->respond($note);
+    }
+
+    public function deleteNoteQuestion($id)
+    {
+        $note = NoteQuestion::find($id);
+        if(!$note) {
+            return $this->errorNotFound('invalid note id');
+        }
+
+        $note->delete();
+        return $this->respond($note);
     }
 
     public function storeNoteAnswer(Request $request) {
@@ -139,11 +178,13 @@ class ConsultController extends BaseController
             return $this->errorNotFound('invalid note question id');
         }
 
-        NoteAnswer::create([
+        $note = NoteAnswer::create([
             'note_question_id' => $note_question->id,
             'date' => Carbon::now(),
             'answer_text' => $request->answer_text,
         ]);
+
+        return $this->respond($note);
     }
 
     public function finishConsult(Request $request, $consult_id) {
@@ -158,17 +199,6 @@ class ConsultController extends BaseController
         if($request->is_consult == true){
             $request->not_json = true;
             $new_consult = json_decode(app('App\Http\Controllers\Api\ConsultController')->store($request));
-
-            if(is_array($request->notes) && sizeof($request->notes) > 0){
-                foreach($request->notes as $note){
-                    if($note['question_text']){
-                        NoteQuestion::create([
-                            'consult_id' => $new_consult->id,
-                            'question_text' => $note['question_text'],
-                        ]);
-                    }
-                }
-            }
         }
         
         return $this->respond($consult);

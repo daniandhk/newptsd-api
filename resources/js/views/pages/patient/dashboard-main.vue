@@ -15,10 +15,16 @@ export default {
     Consult,
     Journal
   },
+  props: {
+    getPage: {
+      type: Number,
+      default: null,
+    },
+  },
   data() {
     return {
       user: store.getters.getLoggedUser,
-      tabIndex: this.$route.params.page_index ? this.$route.params.page_index : 0,
+      tabIndex: this.getPage ? this.getPage : (this.$route.params.page_index ? this.$route.params.page_index : 0),
     };
   },
   computed: {

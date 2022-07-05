@@ -224,17 +224,6 @@ class TestController extends BaseController
         if($request->is_consult == true){
             $request->not_json = true;
             $consult = json_decode(app('App\Http\Controllers\Api\ConsultController')->store($request));
-
-            if(is_array($request->notes) && sizeof($request->notes) > 0){
-                foreach($request->notes as $note){
-                    if($note['question_text']){
-                        NoteQuestion::create([
-                            'consult_id' => $consult->id,
-                            'question_text' => $note['question_text'],
-                        ]);
-                    }
-                }
-            }
         }
         
         return $this->respond($test);

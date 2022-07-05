@@ -47,9 +47,8 @@ export default {
     Echo.private('privaterelation.'+this.user.id)
         .listen('PrivateRelation',(e)=>{
           // let message = e.message;
-          this.addedNotification = true;
           this.getAllNotifications();
-          
+          this.addedNotification = true;
         })
 
     // update the time every second
@@ -87,6 +86,9 @@ export default {
         api.getNotifications(this.user.id)
           .then(response => {
               this.notificationData = response.data.data;
+              if(response.data.data.length > 0){
+                this.addedNotification = true;
+              }
           })
           .catch(error => {
             Swal.fire({
@@ -102,7 +104,7 @@ export default {
     onNotificationClick(notification){
       api.deleteNotification(notification.id)
         .then(response => {
-            //
+            this.getAllNotifications();
         })
         .catch(error => {
           Swal.fire({
@@ -115,26 +117,33 @@ export default {
 
       if(this.user.role == 'patient'){
         if(notification.type == 'verification'){
-          this.$router.push({
-              name: 'home', params: { page_index: 0 }
-          });
+          this.$emit('changePage', 0);
         }
         if(notification.type == 'message' || notification.type == 'consult'){
-          this.$router.push({
-              name: 'home', params: { page_index: 1 }
-          });
+          this.$emit('changePage', 1);
         }
       }
       else if(this.user.role == 'psychologist'){
         if(notification.type == 'verification'){
-          this.$router.push({
-              name: 'test-page', params: { activeUserId: notification.user_id }
-          });
+          if(this.$router.history.current.path == '/psychologist'){
+            this.$emit('changePage', {index: 0, activeUserId: notification.receiver_id});
+          }
+          else{
+            this.$router.push({
+                name: 'psychologist-main', params: { activeUserId: notification.receiver_id }
+            });
+          }
         }
         if(notification.type == 'message' || notification.type == 'consult'){
-          this.$router.push({
-              name: 'consult-page', params: { activeUserId: notification.user_id }
-          });
+          console.log()
+          if(this.$router.history.current.path == '/psychologist'){
+            this.$emit('changePage', {index: 1, activeUserId: notification.receiver_id});
+          }
+          else{
+            this.$router.push({
+                name: 'psychologist-main', params: { activeUserId: notification.receiver_id }
+            });
+          }
         }
         
       }
@@ -142,7 +151,7 @@ export default {
 
     onClickBellButton(){
       this.addedNotification = false;
-    }
+    },
   },
 };
 </script>
@@ -221,6 +230,7 @@ export default {
 
       <div class="d-flex">
         <b-dropdown
+          v-if="user.profile"
           right
           menu-class="dropdown-menu-lg p-0"
           toggle-class="header-item noti-icon"

@@ -39,3 +39,39 @@ export function getMainDashboard(psychologist_id, params){
 export function getPatientList(psychologist_id, params){
     return httpAxios.get(`/psychologist/patients//${psychologist_id}`, { params });
 }
+
+export function storeNoteQuestion(data){
+    return httpAxios({
+        url: '/consult/question',
+        method: 'POST',
+        data: data
+    })
+}
+
+export function deleteNoteQuestion(id){
+    return httpAxios.delete(`/consult/question/delete/${id}`);
+}
+
+export function storeConsult(data){
+    return httpAxios({
+        url: '/consult',
+        method: 'POST',
+        data: data
+    })
+}
+
+export function updateConsult(data, consult_id){
+    return httpAxios({
+        url: `/consult/update/${consult_id}`,
+        method: 'PUT',
+        data: data
+    })
+}
+
+export function finishConsult(data, consult_id){
+    return httpAxios({
+        url: `/consult/finish/${consult_id}`,
+        method: 'PUT',
+        data: data
+    })
+}

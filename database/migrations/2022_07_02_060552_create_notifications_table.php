@@ -20,6 +20,7 @@ class CreateNotificationsTable extends Migration
             $table->string('header');
             $table->string('body');
             $table->string('avatar')->nullable();
+            $table->char('receiver_id', 26)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

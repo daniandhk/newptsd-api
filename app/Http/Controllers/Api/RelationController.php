@@ -118,7 +118,7 @@ class RelationController extends BaseController
     {
         $relation = Relation::find($id);
         if(!$relation) {
-            return $this->respondNotFound('invalid relation id');
+            return $this->errorNotFound('invalid relation id');
         }
 
         $relation->delete();
@@ -146,7 +146,7 @@ class RelationController extends BaseController
     {
         $relation = Relation::find($id);
         if(!$relation) {
-            return $this->respondNotFound('invalid relation id');
+            return $this->errorNotFound('invalid relation id');
         }
 
         $relation->is_active = false;

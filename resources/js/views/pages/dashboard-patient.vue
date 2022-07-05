@@ -26,12 +26,17 @@ export default {
       viewEmail: false,
       viewProfile: false,
       viewGuardian: false,
+      index: null,
     };
   },
   computed: {
     notification() {
       return this.$store ? this.$store.state.notification : null;
     },
+
+    getIndex() {
+      return this.index;
+    }
   },
   beforeMount: function(){
     document.body.setAttribute("data-topbar", "dark");
@@ -60,6 +65,10 @@ export default {
     openGuardian(boolean) {
       this.viewProfile = false
       this.viewGuardian = boolean
+    },
+
+    changePage(index) {
+      this.index = index
     }
   },
 };
@@ -67,7 +76,10 @@ export default {
 
 <template>
   <div>
-    <Topbar :is-resizeable="false" />
+    <Topbar
+      :is-resizeable="false"
+      @changePage="changePage"
+    />
     <div
       v-if="viewEmail || viewProfile || viewGuardian"
       class="popup-body"
@@ -79,7 +91,10 @@ export default {
       />
       <SetupGuardian v-if="viewGuardian" />
     </div>
-    <MainPage v-if="!viewEmail && !viewProfile && !viewGuardian" />
+    <MainPage
+      v-if="!viewEmail && !viewProfile && !viewGuardian"
+      :get-page="getIndex"
+    />
   </div>
 </template>
 

@@ -56,8 +56,11 @@ Route::group([
     Route::post('/', 'ConsultController@store');
     Route::get('/', 'ConsultController@index');
     Route::get('/show/{id}', 'ConsultController@show');
+    Route::put('/update/{id}', 'ConsultController@update');
+    Route::put('/finish/{consult_id}', 'ConsultController@finishConsult');
 
     Route::post('/question', 'ConsultController@storeNoteQuestion');
+    Route::delete('/question/delete/{id}', 'ConsultController@deleteNoteQuestion');
     Route::post('/answer', 'ConsultController@storeNoteAnswer');
 });
 
