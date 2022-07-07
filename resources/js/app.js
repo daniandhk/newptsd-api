@@ -31,6 +31,11 @@ const options = {
   autoClose: true,
 }
 
+// We import JQuery
+const $ = require('jquery');
+// We declare it globally
+window.$ = $;
+
 Vue.config.productionTip = false;
 Vue.prototype.$backendUrl = '/api';
 Vue.use(BootstrapVue);
@@ -41,7 +46,7 @@ Vue.use(VueSweetalert2);
 Vue.use(VueMask);
 Vue.use(Notification);
 Vue.use(require('vue-chartist'));
-Vue.component('apexchart', VueApexCharts);
+Vue.component('Apexchart', VueApexCharts);
 Vue.use(VueScreen);
 Vue.use(Croppa);
 

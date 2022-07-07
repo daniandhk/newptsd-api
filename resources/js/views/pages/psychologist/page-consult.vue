@@ -26,7 +26,7 @@ export default {
       type: String,
       default: null,
     },
-    getTabIndex: {
+    setTabIndex: {
       type: Number,
       default: 0,
     },
@@ -48,7 +48,7 @@ export default {
       allMessages: [],
       typingClock: null,
       submitted_chat: false,
-      tabIndex: 0,
+      tabIndex: this.setTabIndex,
 
       allConsults: [],
       currentPageConsults: 1,
@@ -210,12 +210,12 @@ export default {
     },
 
     async refreshData(){
-      this.isLoading = true;
+      this.allMessages = [];
+      this.allConsults = [];
       this.isFetchingData = true;
       await this.getDashboard();
       setTimeout(this.changeHeight,500);
       this.isFetchingData = false;
-      this.isLoading = false;
     },
 
     async fetchData(){
@@ -263,7 +263,7 @@ export default {
                 message.user.profile.first_name + " " + message.user.profile.last_name,
         body: message.text,
         avatar: message.user.profile.image,
-        receiver_id: message.receiver.id
+        from_id: message.receiver.id
       }
 
       return (
@@ -390,7 +390,7 @@ export default {
 
     canCreateConsult(data){
       if(data.length > 0){
-        if(data[0].is_finished){
+        if(!data[0].is_finished){
           return false
         }
       }
@@ -398,10 +398,19 @@ export default {
     },
 
     onCreateConsultButtonClick(){
-      this.isConsultUpdate = false;
-      this.isConsultFinish = false;
-      this.resetConsultInput();
-      this.$bvModal.show('modal-consult');
+      if(this.canCreateConsult(this.allConsults)){
+        this.isConsultUpdate = false;
+        this.isConsultFinish = false;
+        this.resetConsultInput();
+        this.$bvModal.show('modal-consult');
+      }
+      else{
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            html: 'Masih ada konsultasi yang berjalan!<br>Harap selesaikan terlebih dahulu.',
+        })
+      }
     },
 
     onEditConsultButtonClick(data){
@@ -412,10 +421,19 @@ export default {
     },
 
     onStartConsultButtonClick(data){
-      this.isConsultUpdate = false;
-      this.isConsultFinish = true;
-      this.resetConsultInput(data);
-      this.$bvModal.show('modal-consult');
+      if(this.checkConsultStatus(data) == 'link' || this.checkConsultStatus(data) == 'waiting'){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            html: 'Konsultasi baru dapat dimulai sesuai jadwal!',
+        })
+      }
+      else{
+        this.isConsultUpdate = false;
+        this.isConsultFinish = true;
+        this.resetConsultInput(data);
+        this.$bvModal.show('modal-consult');
+      }
     },
 
     onSaveConsultButtonClick(){
@@ -431,6 +449,7 @@ export default {
           }
         }
         this.input_consult.is_consult = true;
+        this.input_consult.videocall_date = moment(this.input_consult.videocall_date).format('YYYY-MM-DD HH:mm:ss');
       }
       else{
         this.input_consult.is_consult = false;
@@ -537,7 +556,7 @@ export default {
       this.isNeedConsult = true;
       this.input_consult = {
         id: data.id,
-        videocall_date: new Date(data.videocall_date),
+        videocall_date: moment(data.videocall_date, 'YYYY-MM-DD HH:mm:ss').toDate(),
         videocall_link: data.videocall_link,
       }
     },
@@ -682,6 +701,14 @@ export default {
     onGoToLinkButtonClick(link){
       window.open(link);
     },
+
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
+    },
   },
 }
 
@@ -726,18 +753,33 @@ function loading() {
         Harap pilih pasien terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
-        <div 
-          v-if="isFetchingData"
-          style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
-        >
-          <b-spinner
-            style="width: 2rem; height: 2rem;"
-            class="mt-1"
-            variant="warning"
-            role="status"
-          />
+        <div v-if="isFetchingData">
+          <hr
+            style="height: 12px; 
+                    background-color: #F1F5F7; 
+                    border: 0 none; 
+                    color: #F1F5F7;
+                    margin-top:0;
+                    margin-bottom:0;"
+          >
+          <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
+            <b-spinner
+              style="width: 2rem; height: 2rem;"
+              class="mt-1"
+              variant="warning"
+              role="status"
+            />
+          </div>
         </div>
         <div v-if="!isFetchingData">
+          <hr
+            style="height: 12px; 
+                    background-color: #F1F5F7; 
+                    border: 0 none; 
+                    color: #F1F5F7;
+                    margin-top:0;
+                    margin-bottom:0;"
+          >
           <b-tabs
             v-model="tabIndex"
             nav-class="nav-tabs-custom"
@@ -917,7 +959,7 @@ function loading() {
                   </div>
                   <div
                     v-if="!isChatLoading"
-                    class="table-responsive"
+                    class="table-responsive text-center"
                   >
                     <b-table
                       class="table-centered"
@@ -951,7 +993,7 @@ function loading() {
                         </b-button>
                         <b-button
                           v-if="!data.item.videocall_link"
-                          variant="light"
+                          variant="outline-light"
                           size="sm"
                           style="min-width: 100px;"
                         >
@@ -960,7 +1002,7 @@ function loading() {
                       </template>
                       <template v-slot:cell(total_note_questions)="data">
                         <b-button
-                          variant="outline-light"
+                          variant="outline-secondary"
                           size="sm"
                           style="min-width: 100px;"
                           @click="onNoteQuestionsClick(data.item)" 
@@ -1026,7 +1068,6 @@ function loading() {
                       <template v-slot:cell(action)="data">
                         <div v-if="!data.item.is_finished">
                           <b-button
-                            :disabled="checkConsultStatus(data.item) == 'link' || checkConsultStatus(data.item) == 'waiting'"
                             variant="outline-success"
                             size="sm"
                             class="m-1"
@@ -1060,7 +1101,6 @@ function loading() {
                   </div>
                   <div>
                     <b-button
-                      :disabled="canCreateConsult(allConsults)"
                       class="mt-3"
                       variant="primary"
                       size="md"
@@ -1082,10 +1122,12 @@ function loading() {
       <b-modal 
         id="modal-consult"
         class="modal-dialog"
-        size="md" 
+        size="md"
         :title="getTitle()"
         hide-footer 
         title-class="font-18"
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div
@@ -1288,6 +1330,8 @@ function loading() {
         title="Catatan Psikolog" 
         hide-footer 
         title-class="font-18"
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

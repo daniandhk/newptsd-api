@@ -126,22 +126,21 @@ export default {
       else if(this.user.role == 'psychologist'){
         if(notification.type == 'verification'){
           if(this.$router.history.current.path == '/psychologist'){
-            this.$emit('changePage', {index: 0, activeUserId: notification.receiver_id});
+            this.$emit('changePage', {index: 0, activeUserId: notification.from_id});
           }
           else{
             this.$router.push({
-                name: 'psychologist-main', params: { activeUserId: notification.receiver_id }
+                name: 'psychologist-main', params: {page_index: 0, activeUserId: notification.from_id }
             });
           }
         }
         if(notification.type == 'message' || notification.type == 'consult'){
-          console.log()
           if(this.$router.history.current.path == '/psychologist'){
-            this.$emit('changePage', {index: 1, activeUserId: notification.receiver_id});
+            this.$emit('changePage', {index: 1, activeUserId: notification.from_id});
           }
           else{
             this.$router.push({
-                name: 'psychologist-main', params: { activeUserId: notification.receiver_id }
+                name: 'psychologist-main', params: {page_index: 1, activeUserId: notification.from_id }
             });
           }
         }

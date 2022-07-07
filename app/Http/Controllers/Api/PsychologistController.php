@@ -6,6 +6,7 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use App\Models\Psychologist;
 use App\Models\Relation;
+use App\Models\TestType;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -206,6 +207,16 @@ class PsychologistController extends BaseController
         $data->related_patients = $related_patients->get();
 
         return $this->respond($data);
+    }
+
+    public function getTestPage($patient_id){
+        $patient = Patient::find($patient_id);
+        if(!$patient){
+            return $this->errorNotFound('invalid user id');
+        }
+        $test_types = TestType::FilteredTest($patient_id)->get();
+
+        return $this->respond($test_types);
     }
 
 }

@@ -14,7 +14,7 @@ class Notification extends BaseModel
         'header',
         'body',
         'avatar',
-        'receiver_id'
+        'from_id'
     ];
 
     public function user() {

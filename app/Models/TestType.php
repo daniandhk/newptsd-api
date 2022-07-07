@@ -32,6 +32,12 @@ class TestType extends BaseModel
         }]);
     }
 
+    public function scopeFilteredAllTest($query, $patient_id) {
+        return $query->with(["tests" => function($q) use($patient_id) {
+            $q->where('tests.patient_id', '=', $patient_id)->orderBy('created_at', 'desc')->get();
+        }]);
+    }
+
     public function tests() {
         return $this->hasMany(Test::class);
     }

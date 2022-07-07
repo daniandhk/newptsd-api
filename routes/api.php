@@ -89,6 +89,7 @@ Route::group([
     Route::delete('/delete/{id}', 'PsychologistController@delete');
     Route::get('/main-dashboard/{psychologist_id}', 'PsychologistController@getMainDashboard');
     Route::get('/patients/{psychologist_id}', 'PsychologistController@getPatientList');
+    Route::get('/test-page/{patient_id}', 'PsychologistController@getTestPage');
 });
 
 Route::group([

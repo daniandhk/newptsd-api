@@ -44,7 +44,7 @@ export default {
       fieldsRelated: [
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
-        { key: "status", sortable: true, label: "Status", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "status", sortable: true, label: "Aksi", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "test", sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_test", sortable: false, label: "Jadwal Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_status", sortable: false, label: "Status Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
@@ -161,14 +161,19 @@ export default {
     },
 
     onStatusButtonClick(status, patient){
-      if(status == 'konsultasi chat' || status == 'konsultasi video call' || status == 'input link konsultasi'){
+      if(status == 'konsultasi chat'){
         this.$router.push({
-            name: 'psychologist-main', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 1 }
+            name: 'psychologist-main', params: { activeUser: patient.user, relationId: patient.relations[0].id, page_index: 1, tabChat: 0 }
+        });
+      }
+      else if(status == 'konsultasi video call' || status == 'input link konsultasi'){
+        this.$router.push({
+            name: 'psychologist-main', params: { activeUser: patient.user, relationId: patient.relations[0].id, page_index: 1, tabChat: 1 }
         });
       }
       else{
         this.$router.push({
-            name: 'psychologist-main', params: { activeUser: patient.user, relatioId: patient.relations[0].id, page_index: 0 }
+            name: 'psychologist-main', params: { activeUser: patient.user, page_index: 0 }
         });
       }
     },
@@ -339,7 +344,7 @@ function loading() {
                   Pasien Anda
                 </p>
                 <p class="mb-0">
-                  Tekan tombol <b>Status</b> untuk menuju ke hal yang perlu Anda lakukan.
+                  Tekan tombol <b>Aksi</b> untuk menuju ke halaman terkait.
                 </p>
               </div>
               <div
@@ -525,7 +530,7 @@ function loading() {
                   <div v-if="!data.item.latest_test && data.item.current_test">
                     <b-button
                       v-if="data.item.current_test.is_finished"
-                      variant="outline-success"
+                      variant="success"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
@@ -533,10 +538,10 @@ function loading() {
                       <b>selesai</b>
                     </b-button>
                   </div>
-                  <div v-if="data.item.latest_test">
+                  <div v-if="data.item.latest_test && !data.item.current_test">
                     <b-button
                       v-if="!data.item.latest_test.is_finished && isDateStarted(data.item.latest_test.videocall_date)"
-                      variant="outline-warning"
+                      variant="warning"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
@@ -545,7 +550,7 @@ function loading() {
                     </b-button>
                     <b-button
                       v-if="!data.item.latest_test.is_finished && !isDateStarted(data.item.latest_test.videocall_date)"
-                      variant="outline-secondary"
+                      variant="secondary"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
@@ -578,7 +583,7 @@ function loading() {
                   <div v-if="data.item.relations[0].consults.length != 0">
                     <b-button
                       v-if="!data.item.relations[0].consults[0].is_finished && isDateStarted(data.item.relations[0].consults[0].videocall_date)"
-                      variant="outline-warning"
+                      variant="warning"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
@@ -587,7 +592,7 @@ function loading() {
                     </b-button>
                     <b-button
                       v-if="!data.item.relations[0].consults[0].is_finished && !isDateStarted(data.item.relations[0].consults[0].videocall_date)"
-                      variant="outline-secondary"
+                      variant="secondary"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"
@@ -596,7 +601,7 @@ function loading() {
                     </b-button>
                     <b-button
                       v-if="data.item.relations[0].consults[0].is_finished"
-                      variant="outline-success"
+                      variant="success"
                       size="sm"
                       class="px-2 m-1"
                       style="width: 92px;"

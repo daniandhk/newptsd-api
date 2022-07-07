@@ -148,7 +148,6 @@ export default {
       if(format == 'hari'){
         return moment(date).locale('id').format('dddd')
       }
-        
     },
 
     showDescPopup(test_type){
@@ -200,6 +199,14 @@ export default {
 
     goToSettingsMenu(){
       //this.$router.push({name: 'settings'});
+    },
+
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
     },
   },
 };
@@ -575,12 +582,14 @@ function loading() {
 
     <div name="modalTestType">
       <b-modal 
-        id="modal-testtype"
+        id="modal-testtype" 
         class="modal-dialog"
-        size="md" 
-        :title="'Tes ' + dataTestType.name" 
+        size="md"
+        :title="'Tes ' + dataTestType.name"
         hide-footer 
-        title-class="font-18"
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div
@@ -597,12 +606,14 @@ function loading() {
 
     <div name="modalCall">
       <b-modal 
-        id="modal-call"
+        id="modal-call" 
         class="modal-dialog"
-        size="md" 
-        title="Hubungi" 
+        size="md"
+        title="Hubungi"
         hide-footer 
-        title-class="font-18"
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div

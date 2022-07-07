@@ -28,6 +28,7 @@ export default {
       test_type: this.$route.params.test_type,
       test_id: this.$route.params.test_id,
       patient_id: this.$route.params.patient_id,
+      active_user: this.$route.params.active_user,
 
       currentPage: 1,
       data_input:{
@@ -417,7 +418,14 @@ export default {
 
     onExitButtonClick(){
       this.isSubmitted = true;
-      this.$router.push({name: 'home'});
+      if(this.user.role == 'patient'){
+        this.$router.push({name: 'home'});
+      }
+      else if(this.user.role == 'psychologist'){
+        this.$router.push({
+            name: 'psychologist-main', params: { activeUser: this.active_user, page_index: 0 }
+        });
+      }
     },
 
     onNextButtonClick(){
@@ -644,6 +652,7 @@ export default {
         this.input_consult.is_consult = true;
         this.input_consult.patient_id = this.patient_id;
         this.input_consult.psychologist_id = this.user.profile.id;
+        this.input_consult.videocall_date = moment(this.input_consult.videocall_date).format('YYYY-MM-DD HH:mm:ss');
       }
       else{
         this.input_consult.is_consult = false;
@@ -711,7 +720,13 @@ export default {
       });
     },
 
-    //
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
+    },
   },
 };
 function loading() {
@@ -1409,12 +1424,14 @@ function loading() {
 
     <div name="modalHistory">
       <b-modal 
-        id="modal-history"
+        id="modal-history" 
         class="modal-dialog"
-        size="md" 
-        title="Riwayat Tes Pasien" 
+        size="md"
+        title="Riwayat Tes Pasien"
         hide-footer 
-        title-class="font-18"
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <label>{{ test.name }}</label>

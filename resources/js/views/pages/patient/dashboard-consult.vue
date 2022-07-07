@@ -644,7 +644,7 @@ export default {
                 message.user.profile.first_name + " " + message.user.profile.last_name,
         body: message.text,
         avatar: message.user.profile.image,
-        receiver_id: message.receiver.id
+        from_id: message.receiver.id
       }
 
       return (
@@ -676,7 +676,15 @@ export default {
       else{
         return '-'
       }
-    }
+    },
+
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
+    },
   },
 };
 
@@ -1335,7 +1343,7 @@ function loading() {
                     </div>
                     <div
                       v-if="!isChatLoading"
-                      class="table-responsive"
+                      class="table-responsive text-center"
                     >
                       <b-table
                         class="table-centered"
@@ -1435,12 +1443,14 @@ function loading() {
 
     <div name="modalProfile">
       <b-modal 
-        id="modal-profile"
+        id="modal-profile" 
         class="modal-dialog"
-        size="md" 
-        title="Profil Psikolog" 
+        size="md"
+        title="Profil Psikolog"
         hide-footer 
-        title-class="font-18"
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -1501,12 +1511,14 @@ function loading() {
 
     <div name="modalNotes">
       <b-modal 
-        id="modal-notes"
+        id="modal-notes" 
         class="modal-dialog"
-        size="md" 
-        title="Catatan Psikolog" 
+        size="md"
+        title="Catatan Psikolog"
         hide-footer 
-        title-class="font-18"
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

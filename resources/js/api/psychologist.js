@@ -75,3 +75,10 @@ export function finishConsult(data, consult_id){
         data: data
     })
 }
+
+export function getTestPage(patient_id){
+    return httpAxios({
+        url: `/psychologist/test-page/${patient_id}`,
+        method: 'GET',
+    })
+}

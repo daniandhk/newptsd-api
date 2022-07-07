@@ -20,5 +20,11 @@ export default {
 </script>
 
 <style>
+  .modal {
+    overflow-y:visible !important;
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
   html { overflow-y: scroll }
 </style>

@@ -19,10 +19,6 @@ export default {
       type: Object,
       default: () => ({id: null})
     },
-    relationId: {
-      type: String,
-      default: null,
-    },
   },
   data () {
     return {
@@ -43,21 +39,29 @@ export default {
       submitted_chat: false,
       tabIndex: this.$route.params.tabIndex ? this.$route.params.tabIndex : 0,
 
-      allConsults: [],
-      currentPageConsults: 1,
-      perPageConsults: 5,
-      sortDescConsults: true,
-      sortByConsults: 'consult_index',
-      fieldsConsults: [
-        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+      allTests: [],
+      testData: [],
+      sortBy: 'index',
+      sortDesc: true,
+      fields: [
+        { key: "index", sortable: false, label: "Tes Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "created_at", sortable: false, label: "Tanggal Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "score", label: "Skor Tes", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "videocall_date", label: "Jadwal Verifikasi", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "videocall_link", label: "Tautan Verifikasi", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "action", label: "Aksi", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
       ],
 
-      dataConsult: {
+      dataTest: {
         consult_index: 0,
         note_questions: [],
+      },
+
+      dataTestType: {
+        name: "",
+        description: "",
+        delay_days: 0
       },
 
     }
@@ -96,102 +100,34 @@ export default {
     },
   },
   mounted: async function () {
-    await this.setEcho();
+    //
   },
   methods: {
     ...notificationMethods,
 
-    getRequestParams(relation_id) {
-      let params = {};
-
-      if (relation_id) {
-        params["relation_id"] = relation_id;
-      }
-
-      return params;
-    },
-
     async getDashboard(){
       if(this.activeUser.id){
-        if(this.tabIndex == 0){
-          await this.fetchMessages();
-        }
-        else if(this.tabIndex == 1){
-          await this.fetchConsults();
-        }
+        return (
+          api.getTestPage(this.activeUser.profile.id)
+            .then(response => {
+                this.allTests = response.data.data;
+            })
+            .catch(error => {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Terjadi kesalahan!',
+                  footer: error.response ? error.response : error
+              })
+            })
+        );
       }
-    },
-
-    async fetchMessages() {
-      // if(!this.activeUserId){
-      //   return alert('Please select friend');
-      // }
-      return (
-        api.getPrivateMessages(this.activeUser.id)
-          .then(response => {
-              this.allMessages = response.data.data;
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
-    },
-
-    async fetchConsults() {
-      const params = this.getRequestParams(
-          this.relationId
-      );
-      return (
-        api.getConsults(params)
-          .then(response => {
-              this.allConsults = response.data.data;
-              this.perPageConsults = response.data.data.length;
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
     },
 
     async refreshData(){
-      this.isLoading = true;
       this.isFetchingData = true;
       await this.getDashboard();
       this.isFetchingData = false;
-      this.isLoading = false;
-    },
-
-    async fetchData(){
-      this.isChatLoading = true;
-      await this.getDashboard();
-      this.isChatLoading = false;
-    },
-
-    async setEcho(){
-      // eslint-disable-next-line no-undef
-      Echo.private('privaterelation.'+this.user.id)
-        .listen('PrivateRelation',(e)=>{
-          this.allMessages.push(e.message);
-        })
-        .listenForWhisper('typing', (e) => {
-          if(e.user.id == this.activeUser.id){
-            this.typingUser = e.user;
-            if(this.typingClock) clearTimeout();
-            this.typingClock = setTimeout(()=>{
-                                  this.typingUser = {};
-                                },9000);
-          }
-        });
     },
 
     changeHeight(){
@@ -236,6 +172,9 @@ export default {
         if(format == 'lengkap'){
           return moment(date).locale('id').format('LLLL')
         }
+        else if(format == 'tanggal'){
+          return moment(date).locale('id').format('DD MMMM YYYY')
+        }
         else{
           return moment(date).locale('id')
         }
@@ -245,85 +184,52 @@ export default {
       }
     },
 
-    getHeader(index, datas){
-      let isHeader = false;
-      if(index == 0){
-        isHeader = true;
-      }
-      else if(!this.isDateSame(moment(datas[index-1].created_at), datas[index].created_at)){
-        isHeader = true;
-      }
+    onGoToLinkButtonClick(link){
+      window.open(link);
+    },
 
-      if(isHeader){
-        if(this.isDateSame(moment(), datas[index].created_at)){
-          return 'Hari Ini';
+    checkConsultStatus(data){
+      if(!data.videocall_link){
+        return 'link'
+      }
+      else if(moment().isBefore(data.videocall_date, 'day')){
+        return 'waiting'
+      }
+      else if(moment().isSame(data.videocall_date, 'day')){
+        return 'now'
+      }
+      else if(moment().isAfter(data.videocall_date, 'day')){
+        return 'late'
+      }
+      else{
+        return '-'
+      }
+    },
+
+    onShowTestButtonClick(data ,test_type){
+      let id = data.id
+      this.$router.push({
+        name: 'test-review', 
+        params: { 
+          test_type: test_type.type,
+          test_id: id,
+          patient_id: data.patient_id,
+          active_user: this.activeUser,
         }
-        else if(this.isYesterday(datas[index].created_at)){
-          return 'Kemarin';
-        }
-        else {
-          return moment(datas[index].created_at).format('DD/MM/YYYY')
-        }
-      }
-
-      return null;
-    },
-
-    isDateSame(data1, data2){
-      if(!data1){
-        data1 = moment();
-      }
-      return data1.isSame(data2, 'day');
-    },
-
-    isYesterday(data){
-      return moment().add(-1, 'days').isSame(data, 'day');
-    },
-
-    onNoteQuestionsClick(data){
-      this.dataConsult = data
-      this.$bvModal.show('modal-notes');
-    },
-
-    onTyping(){
-      // eslint-disable-next-line no-undef
-      Echo.private('privaterelation.'+this.activeUser.id)
-      .whisper('typing',{
-        user: this.user
       });
     },
-    sendMessage(){
-      this.isChatLoading = true;
-      this.submitted_chat = true;
-      //check if there message
-      this.$v.message.$touch();
-      if (this.$v.message.$invalid) {
-        return;
-      }
-      // if(!this.activeUserId){
-      //   return alert('Please select friend');
-      // }
-      return (
-        api.sendPrivateMessage(this.message, this.activeUser.id)
-          // eslint-disable-next-line no-unused-vars
-          .then(response => {
-              this.submitted_chat = false;
-              this.message.text = null;
-              this.allMessages.push(response.data.data);
-              this.isChatLoading = false;
-              this.storeNotification(response.data.data);
-          })
-          .catch(error => {
-            this.submitted_chat = false;
-            this.isChatLoading = false;
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
+
+    showDescPopup(test_type){
+      this.dataTestType = test_type;
+      this.$bvModal.show('modal-testtype');
+    },
+
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
     },
   },
 }
@@ -369,21 +275,216 @@ function loading() {
         Harap pilih pasien terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
-        <div 
-          v-if="isFetchingData"
-          style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
-        >
-          <b-spinner
-            style="width: 2rem; height: 2rem;"
-            class="mt-1"
-            variant="warning"
-            role="status"
-          />
+        <div v-if="isFetchingData">
+          <hr
+            style="height: 12px; 
+                    background-color: #F1F5F7; 
+                    border: 0 none; 
+                    color: #F1F5F7;
+                    margin-top:0;
+                    margin-bottom:0;"
+          >
+          <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
+            <b-spinner
+              style="width: 2rem; height: 2rem;"
+              class="mt-1"
+              variant="warning"
+              role="status"
+            />
+          </div>
         </div>
         <div v-if="!isFetchingData">
-          //
+          <div
+            v-for="(test_type, index) in allTests"
+            :key="index"
+            class="mb-4"
+          >
+            <div :id="'card-' + index">
+              <div class="pb-2">
+                <div class="text-center form-group mb-0">
+                  <hr
+                    style="height: 12px; 
+                            background-color: #F1F5F7; 
+                            border: 0 none; 
+                            color: #F1F5F7;
+                            margin-top:0;"
+                  >
+                  <h5 class="text-center font-size-15 text-uppercase">
+                    <div
+                      class="hover-effect my-1"
+                      style="display:inline-block"
+                    >
+                      <a
+                        href="#"
+                        style="color:#005C9A;"
+                        @click="showDescPopup(test_type)"
+                      >Tes {{ test_type.name }}</a>
+                    </div>
+                  </h5>
+                  <hr
+                    style="height: 2px; 
+                            background-color: #eee; 
+                            border: 0 none; 
+                            color: #eee;
+                            margin-bottom:0;"
+                  >
+                  <div class="table-responsive">
+                    <b-table
+                      class="table-centered"
+                      :items="test_type.tests"
+                      :fields="fields"
+                      responsive="sm"
+                      :sort-by="sortBy"
+                      :sort-desc="sortDesc"
+                      head-variant="light"
+                      show-empty
+                    >
+                      <!-- eslint-disable-next-line vue/no-unused-vars -->
+                      <template #empty="scope">
+                        data masih kosong untuk saat ini.
+                      </template>
+                      <template v-slot:cell(created_at)="data">
+                        {{ formatDate(data.item.created_at, 'tanggal') }}
+                      </template>
+                      <template v-slot:cell(videocall_date)="data">
+                        <b-button
+                          variant="outline-light"
+                          size="sm"
+                          style="min-width: 100px;"
+                        >
+                          {{ formatDate(data.item.videocall_date, 'tanggal') }}
+                        </b-button>
+                      </template>
+                      <template v-slot:cell(videocall_link)="data">
+                        <b-button
+                          v-if="data.item.videocall_link"
+                          :variant="data.item.is_finished ? 'outline-light' : 'primary'"
+                          size="sm"
+                          style="min-width: 100px;"
+                          :style="data.item.is_finished ? '' : 'background-color:#005C9A;'"
+                          @click="onGoToLinkButtonClick(data.item.videocall_link)"
+                        >
+                          Buka Tautan
+                        </b-button>
+                        <b-button
+                          v-if="!data.item.videocall_link"
+                          variant="outline-light"
+                          size="sm"
+                          style="min-width: 100px;"
+                        >
+                          -
+                        </b-button>
+                      </template>
+                      <template v-slot:cell(status)="data">
+                        <b-button
+                          v-if="data.item.is_finished"
+                          variant="success"
+                          size="sm"
+                          style="min-width: 100px;"
+                        >
+                          Selesai
+                        </b-button>
+                        <div v-if="!data.item.is_finished">
+                          <b-button
+                            v-if="checkConsultStatus(data.item) == 'link'"
+                            variant="outline-warning"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="onShowTestButtonClick(data.item, test_type)" 
+                          >
+                            Input Tautan
+                          </b-button>
+                          <b-button
+                            v-if="checkConsultStatus(data.item) == 'now'"
+                            variant="warning"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="onShowTestButtonClick(data.item, test_type)" 
+                          >
+                            Berlangsung
+                          </b-button>
+                          <b-button
+                            v-if="checkConsultStatus(data.item) == 'waiting'"
+                            variant="secondary"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="onShowTestButtonClick(data.item, test_type)"
+                          >
+                            Menunggu
+                          </b-button>
+                          <b-button
+                            v-if="checkConsultStatus(data.item) == 'late'"
+                            variant="danger"
+                            size="sm"
+                            style="min-width: 100px;"
+                            @click="onShowTestButtonClick(data.item, test_type)"
+                          >
+                            Terlambat
+                          </b-button>
+                          <b-button
+                            v-if="checkConsultStatus(data.item) == '-'"
+                            variant="outline-light"
+                            size="sm"
+                            style="min-width: 100px;"
+                          >
+                            -
+                          </b-button>
+                        </div>
+                      </template>
+                      <template v-slot:cell(action)="data">
+                        <b-button
+                          :variant="data.item.is_finished ? 'light' : 'outline-success'"
+                          size="sm"
+                          class="m-1"
+                          style="min-width: 110px;"
+                          @click="onShowTestButtonClick(data.item, test_type)" 
+                        >
+                          Detail Tes
+                        </b-button>
+                      </template>
+                    </b-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div name="modalTestType">
+      <b-modal 
+        id="modal-testtype" 
+        class="modal-dialog"
+        size="md"
+        :title="'Tes ' + dataTestType.name"
+        hide-footer 
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
+      >
+        <template>
+          <div
+            class="text-center"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+          >
+            <label class="mb-0">Deskripsi tes:</label>
+            <p>{{ dataTestType.description }}</p>
+            <p><b>Jeda tiap tes: </b>{{ dataTestType.delay_days }} hari</p>
+          </div>
+        </template>
+      </b-modal>
+    </div>
   </div>
 </template>
+
+<style scoped>
+  .hover-effect {
+      transition: all 0.2s ease;
+      cursor: pointer;
+  }
+
+  .hover-effect:hover {
+      transform: scale(1.1);
+  }
+</style>

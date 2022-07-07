@@ -164,19 +164,10 @@ export default {
     },
 
     async refreshData(){
-      this.isLoading = true;
       this.isFetchingData = true;
       await this.getDashboard();
       setTimeout(this.changeHeight,500);
       this.isFetchingData = false;
-      this.isLoading = false;
-    },
-
-    async fetchData(){
-      this.isChatLoading = true;
-      await this.getDashboard();
-      setTimeout(this.changeHeight,500);
-      this.isChatLoading = false;
     },
 
     async setEcho(){
@@ -371,19 +362,33 @@ function loading() {
         Harap pilih pasien terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
-        <div 
-          v-if="isFetchingData"
-          style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;"
-        >
-          <b-spinner
-            style="width: 2rem; height: 2rem;"
-            class="mt-1"
-            variant="warning"
-            role="status"
-          />
+        <div v-if="isFetchingData">
+          <hr
+            style="height: 12px; 
+                    background-color: #F1F5F7; 
+                    border: 0 none; 
+                    color: #F1F5F7;
+                    margin-top:0;
+                    margin-bottom:0;"
+          >
+          <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
+            <b-spinner
+              style="width: 2rem; height: 2rem;"
+              class="mt-1"
+              variant="warning"
+              role="status"
+            />
+          </div>
         </div>
         <div v-if="!isFetchingData">
-          //
+          <hr
+            style="height: 12px; 
+                    background-color: #F1F5F7; 
+                    border: 0 none; 
+                    color: #F1F5F7;
+                    margin-top:0;
+                    margin-bottom:0;"
+          >
         </div>
       </div>
     </div>

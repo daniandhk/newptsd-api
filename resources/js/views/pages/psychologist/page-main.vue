@@ -45,6 +45,7 @@ export default {
       activeUser: this.$route.params.activeUser ? this.$route.params.activeUser : {id: null},
       relationId: this.$route.params.relationId ? this.$route.params.relationId : null,
       tabIndex: this.$route.params.page_index ? this.$route.params.page_index : 0,
+      tabChat: this.$route.params.tabChat ? this.$route.params.tabChat : 0,
     }
   },
   computed: {
@@ -54,22 +55,16 @@ export default {
 
     getTabIndex() {
       return this.tabIndex;
+    },
+
+    getActiveUser() {
+      return this.activeUser;
     }
   },
   mounted: async function () {
     await this.refreshData(this.getTabIndex);
   },
   methods: {
-    getRequestParams(relation_id) {
-      let params = {};
-
-      if (relation_id) {
-        params["relation_id"] = relation_id;
-      }
-
-      return params;
-    },
-
     refreshData(value){
       this.changeHeight(345);
       if(this.activeUser.id){
@@ -146,7 +141,7 @@ function loading() {
         style="border-radius: 0.25rem;"
       >
         <PatientsCard
-          :active-user-id="activeUser.id"
+          :active-user-id="getActiveUser.id"
           :max-height="getMaxHeight"
           @changeActiveUser="changeActiveUser"
         />
@@ -184,7 +179,7 @@ function loading() {
                 >
                   <Test
                     ref="Test"
-                    :active-user="activeUser"
+                    :active-user="getActiveUser"
                     :relation-id="relationId"
                     @changeHeight="changeHeight"
                   />
@@ -215,8 +210,9 @@ function loading() {
                 >
                   <Consult
                     ref="Consult"
-                    :active-user="activeUser"
+                    :active-user="getActiveUser"
                     :relation-id="relationId"
+                    :set-tab-index="tabChat"
                     @changeHeight="changeHeight"
                   />
                 </div>
@@ -246,7 +242,7 @@ function loading() {
                 >
                   <Journal
                     ref="Journal"
-                    :active-user="activeUser"
+                    :active-user="getActiveUser"
                     :relation-id="relationId"
                     @changeHeight="changeHeight"
                   />

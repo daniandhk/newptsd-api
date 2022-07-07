@@ -214,7 +214,7 @@ class PatientController extends BaseController
                 $nextDate = date("Y-m-d", strtotime($next_date));
                 $last_date = $consult->created_at;
                 $lastDate = date("Y-m-d", strtotime($last_date));
-                if($date <= $nextDate && $date > $lastDate){
+                if($date <= $nextDate && $date >= $lastDate){
                     if(count($consult->note_questions) > 0){
                         foreach($consult->note_questions as $question) {
                             if(count($question->note_answers) > 0){
