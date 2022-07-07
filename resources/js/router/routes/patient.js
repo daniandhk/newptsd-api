@@ -56,4 +56,12 @@ export default [
         },
         component: () => import('../../views/pages/patient/test/tests-page')
     },
+    {
+        path: '/test/:test_type/review',      
+        name: 'test-show',
+        meta: {
+            authRequired: true,
+        },
+        component: () => import('../../views/pages/patient/test/tests-page')
+    },
 ]

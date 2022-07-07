@@ -936,7 +936,10 @@ function loading() {
                           class="col-6"
                           style="display: flex; align-items: center; justify-content: left;"
                         >
-                          <h5 class="font-size-14">
+                          <h5
+                            class="font-size-14 mt-2 mb-3"
+                            style="color:#005C9A;"
+                          >
                             Pilih Psikolog
                           </h5>
                         </div>
@@ -1048,7 +1051,10 @@ function loading() {
                       </div> -->
                     </div>
                     <div v-if="haveRelation">
-                      <h5 class="font-size-14 px-3 mb-3 mt-2">
+                      <h5
+                        class="font-size-14 px-3 mb-4 mt-3"
+                        style="color:#005C9A;"
+                      >
                         Psikolog Anda
                       </h5>
                       <simplebar

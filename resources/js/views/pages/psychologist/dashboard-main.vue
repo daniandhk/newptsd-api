@@ -45,10 +45,10 @@ export default {
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
         { key: "status", sortable: true, label: "Aksi", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "test", sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "test", class: 'left-border', sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_test", sortable: false, label: "Jadwal Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_status", sortable: false, label: "Status Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "consult", sortable: false, label: "Konsultasi Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "consult", class: 'left-border', sortable: false, label: "Konsultasi Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "consult_status", sortable: false, label: "Status Konsultasi", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
       ],
 
@@ -149,6 +149,10 @@ export default {
 
     dateFormatted(string){
       return moment(string).locale('id').format('DD MMMM YYYY')
+    },
+
+    dateFormattedConsult(string){
+      return moment(string).locale('id').format('DD MMMM YYYY, HH:mm')
     },
 
     checkStatus(status){
@@ -385,7 +389,7 @@ function loading() {
                 </div>
               </div>
             </div>
-            <div class="table-responsive border-bottom text-center">
+            <div class="table-responsive text-center">
               <b-table
                 class="table-centered"
                 :items="related_patients"
@@ -575,7 +579,7 @@ function loading() {
                       <b class="font-size-14">Konsultasi ke-{{ data.item.relations[0].consults[0].consult_index }}</b>
                     </p>
                     <p class="mb-0 font-size-12">
-                      pada {{ dateFormatted(data.item.relations[0].consults[0].videocall_date) }}
+                      {{ dateFormattedConsult(data.item.relations[0].consults[0].videocall_date) }}
                     </p>
                   </div>
                 </template>
@@ -691,7 +695,7 @@ function loading() {
                 </div>
               </div>
             </div>
-            <div class="table-responsive border-bottom">
+            <div class="table-responsive text-center">
               <b-table
                 class="table-centered"
                 :items="available_patients"
@@ -774,3 +778,9 @@ function loading() {
     </div>
   </Layout>
 </template>
+
+<style>
+  .b-table .left-border {
+    border-left: 1.5px solid #EFF2F7;
+  }
+</style>

@@ -8,7 +8,7 @@ import { required } from "vuelidate/lib/validators"
 
 export default {
   page: {
-    title: 'Konsultasi',
+    title: 'Tes Penilaian Diri',
     meta: [{ name: 'description' }]
   },
   components: {
@@ -267,7 +267,7 @@ function loading() {
                   >
                   <h5 class="text-center font-size-15 text-uppercase">
                     <div
-                      class="hover-effect my-1"
+                      class="hover-effect my-2"
                       style="display:inline-block"
                     >
                       <a
@@ -277,13 +277,6 @@ function loading() {
                       >Tes {{ test_type.name }}</a>
                     </div>
                   </h5>
-                  <hr
-                    style="height: 2px; 
-                            background-color: #eee; 
-                            border: 0 none; 
-                            color: #eee;
-                            margin-bottom:0;"
-                  >
                   <div class="table-responsive">
                     <b-table
                       class="table-centered"

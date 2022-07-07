@@ -82,8 +82,14 @@ export default {
     },
 
     changeActiveUser(patient){
-      this.activeUser = patient.user
-      this.relationId = patient.relations[0].id
+      if(patient != null){
+        this.activeUser = patient.user
+        this.relationId = patient.relations[0].id
+      }
+      else{
+        this.activeUser = {id: null}
+        this.relationId = null
+      }
     },
 
     changeHeight(container_height){

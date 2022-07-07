@@ -24,12 +24,11 @@ export default {
 
       user: store.getters.getLoggedUser,
       backendUrl: process.env.MIX_STORAGE_URL,
-
-      isLoading: false,
       
       related_patients: [],
       filter: "",
       isFetchingUsers: false,
+      current_patient: null,
 
       onlineUsers: [],
 
@@ -86,7 +85,15 @@ export default {
 
     async changeActiveUser(patient){
       this.isFetchingUsers = true;
+      this.current_patient = patient;
       this.$emit('changeActiveUser', patient);
+      this.isFetchingUsers = false;
+    },
+
+    async removeActiveUser(){
+      this.isFetchingUsers = true;
+      this.current_patient = null;
+      this.$emit('changeActiveUser', null);
       this.isFetchingUsers = false;
     },
 
@@ -140,6 +147,18 @@ export default {
       await sleep(500);
       this.isFetchingUsers = false;
     },
+
+    showCallPopup(){
+      this.$bvModal.show('modal-call');
+    },
+
+    showModal(){
+      $("html").css({"overflow-y":"visible"});
+    },
+
+    hideModal(){
+      $("html").css({"overflow-y":"scroll"});
+    },
   },
 }
 
@@ -165,11 +184,75 @@ function loading() {
       <b-card-text>
         <div class="row px-3">
           <div
+            v-if="activeUserId != null"
+            class="row m-0 w-100 border-bottom"
+          >
+            <div
+              class="col-12"
+              style="display: flex; align-items: center; justify-content: left;"
+            >
+              <h5
+                class="font-size-14 my-3"
+                style="color:#005C9A;"
+              >
+                Pasien Saat Ini
+              </h5>
+            </div>
+            <div class="w-100 m-0">
+              <ul class="list-unstyled chat-list">
+                <li>
+                  <a
+                    style="cursor: pointer;"
+                    @click="showCallPopup()"
+                  >
+                    <div class="media">
+                      <div
+                        class="user-img align-self-center mr-3"
+                        :class="isOnline(current_patient) ? 'online' : null"
+                      >
+                        <img
+                          :src="backendUrl + current_patient.image"
+                          class="rounded-circle avatar-xs"
+                          alt
+                        >
+                        <span class="user-status" />
+                      </div>
+                      <div
+                        v-b-tooltip.hover
+                        class="media-body overflow-hidden"
+                        title="lihat profil"
+                      >
+                        <h5 class="text-truncate font-size-14 mb-1">
+                          {{ current_patient.first_name + " " + current_patient.last_name }}
+                        </h5>
+                        <p class="text-truncate mb-0 font-size-13">
+                          {{ getAge(current_patient.datebirth) }}
+                        </p>
+                        <p class="text-truncate mb-0 font-size-13">
+                          {{ current_patient.city + ", " + current_patient.province }}
+                        </p>
+                      </div>
+                      <div
+                        v-b-tooltip.hover
+                        class="font-size-16 ml-2 align-self-center text-danger"
+                        title="batal pilih"
+                        @click.stop.prevent="removeActiveUser()"
+                      ><i class="ri-delete-bin-2-line" /></div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div
             class="col-12"
             style="display: flex; align-items: center; justify-content: left;"
           >
-            <h5 class="font-size-14 my-3">
-              Pasien Anda
+            <h5
+              class="font-size-14 my-3"
+              style="color:#005C9A;"
+            >
+              Pilih Pasien
             </h5>
           </div>
         </div>
@@ -248,6 +331,118 @@ function loading() {
           </simplebar>
         </div>
       </b-card-text>
+    </div>
+
+    <div
+      v-if="current_patient"
+      name="modalCall"
+    >
+      <b-modal 
+        id="modal-call" 
+        class="modal-dialog"
+        size="md"
+        title="Profil Lengkap"
+        hide-footer 
+        title-class="font-18" 
+        @show="showModal" 
+        @hidden="hideModal"
+      >
+        <template>
+          <div class="text-center">
+            <label 
+              class="mb-0"
+              style="color:#005C9A;"
+            >Profil Pasien</label>
+            <div
+              class="text-left mt-1"
+              style="display: flex; align-items: center; justify-content: center;"
+            >
+              <div
+                class="card"
+                style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
+              >
+                <div class="card-body">
+                  <div class="media mx-4">
+                    <div class="user-img align-self-center mr-3">
+                      <img
+                        :src="backendUrl + current_patient.image"
+                        class="rounded-circle avatar-xs"
+                        alt
+                      >
+                      <span class="user-status" />
+                    </div>
+                    <div class="media-body overflow-hidden">
+                      <h5 class="text-truncate font-size-14 mb-1">
+                        {{ current_patient.first_name + " " + current_patient.last_name }}
+                      </h5>
+                      <p class="text-truncate mb-0 font-size-13">
+                        {{ getAge(current_patient.datebirth) }}
+                      </p>
+                      <p class="text-truncate mb-0 font-size-13">
+                        {{ current_patient.city + ", " + current_patient.province }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <label 
+              class="mb-0 mt-4"
+              style="color:#005C9A;"
+            >Wali Pasien</label>
+            <div
+              v-if="current_patient.guardian && current_patient.guardian.is_available"
+              class="text-center"
+              style="width: 100%;display: flex; flex-direction: column; align-items: center; justify-content: center;"
+            >
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-light"
+                  size="sm"
+                  style="width: 100%;"
+                >
+                  <p class="mb-0">
+                    <b class="font-size-18">{{ current_patient.guardian.full_name }}</b>
+                  </p>
+                  <p class="mb-0 font-size-14">
+                    {{ current_patient.guardian.status }}
+                  </p>
+                </b-button>
+              </div>
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-dark"
+                  size="sm"
+                  style="width: 100%;"
+                  @click="copyPhone(current_patient.guardian.phone.toString())"
+                >
+                  <b-icon 
+                    icon="files"
+                    style=""
+                  /><b> {{ current_patient.guardian.phone.toString() }}</b>
+                </b-button>
+              </div>
+              <div class="col-6 mt-1">
+                <b-button
+                  variant="outline-success"
+                  size="sm"
+                  style="width: 100%;"
+                  @click="goToWhatsapp(current_patient.guardian.phone.toString())"
+                >
+                  <b-icon 
+                    icon="whatsapp"
+                  /> WhatsApp
+                </b-button>
+              </div>
+            </div>
+            <div v-if="!current_patient.guardian || !current_patient.guardian.is_available">
+              <p class="mt-1">
+                Pasien tidak mengizinkan informasi wali diakses.<br>Hubungi pasien jika informasi diperlukan.
+              </p>
+            </div>
+          </div>
+        </template>
+      </b-modal>
     </div>
   </div>
 </template>

@@ -8,6 +8,10 @@ import moment from 'moment';
 import DatePicker from "vue2-datepicker";
 
 export default {
+  page: {
+    title: 'Tes Penilaian Diri',
+    meta: [{ name: 'description' }]
+  },
   components: {
     DatePicker
   },
@@ -57,6 +61,7 @@ export default {
       isReview: false,
       isLoading: true,
       isSubmitted: false,
+      isShowTest: false,
 
       submitted: false,
       isThisPageInvalid: false,
@@ -121,7 +126,7 @@ export default {
   created() {
     document.body.classList.add("auth-body-bg");
 
-    if(!this.isSubmitted && !this.isReview){
+    if(!this.isSubmitted && !this.isReview && !this.isShowTest){
       window.addEventListener("beforeunload", this.preventNav);
       this.$once("hook:beforeDestroy", () => {
         window.removeEventListener("beforeunload", this.preventNav);
@@ -157,7 +162,7 @@ export default {
     ...notificationMethods,
 
     preventNav(event) {
-      if (this.isSubmitted || this.isReview){
+      if (this.isSubmitted || this.isReview || this.isShowTest){
         return
       }
       event.preventDefault()
@@ -307,6 +312,9 @@ export default {
           }
         }
       }
+      else if(!this.test_id && !this.patient_id){
+        this.isShowTest = true
+      }
       const params = this.getRequestParams(
         this.test_type, null, null
       );
@@ -422,9 +430,17 @@ export default {
         this.$router.push({name: 'home'});
       }
       else if(this.user.role == 'psychologist'){
-        this.$router.push({
-            name: 'psychologist-main', params: { activeUser: this.active_user, page_index: 0 }
-        });
+        if(this.isReview){
+          this.$router.push({
+              name: 'psychologist-main', params: { activeUser: this.active_user, page_index: 0 }
+          });
+        }
+        else if(this.isShowTest){
+          this.$router.push({name: 'list-test'});
+        }
+        else{
+          this.$router.push({name: 'home'});
+        }
       }
     },
 
@@ -432,7 +448,7 @@ export default {
       this.submitted = false
       this.submitted = true
 
-      if(!this.isReview){
+      if(!this.isReview && !this.isShowTest){
         for (let i = 0; i < this.data_input.pages[this.currentPageIndex].questions.length; i++) {
           if(this.isAnswerEmpty(this.data_input.pages[this.currentPageIndex].questions[i].answers, i)){
             break
@@ -1231,7 +1247,7 @@ function loading() {
                     :name="'checkbox-' + index + '-' + index_answer"
                     :value="isReview ? answer.id : answer"
                     style="vertical-align: middle; float: left; margin-top:5px;"
-                    :disabled="isReview"
+                    :disabled="isReview || isShowTest"
                   >
                   <div
                     v-if="answer.description || answer.text"
@@ -1260,7 +1276,7 @@ function loading() {
                         type="text"
                         class="form-control"
                         :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                        :disabled="isReview"
+                        :disabled="isReview || isShowTest"
                         @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
                       />
                       <div 
@@ -1279,7 +1295,7 @@ function loading() {
                     :name="'radio-' + index + '-' + index_answer"
                     :value="isReview ? answer.id : answer"
                     style="vertical-align: middle; float: left; margin-top:4.8px;"
-                    :disabled="isReview"
+                    :disabled="isReview || isShowTest"
                   >
                   <div
                     v-if="answer.description || answer.text"
@@ -1307,7 +1323,7 @@ function loading() {
                         type="text"
                         class="form-control"
                         :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                        :disabled="isReview"
+                        :disabled="isReview || isShowTest"
                         @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
                       />
                       <div 
@@ -1326,7 +1342,7 @@ function loading() {
                     :name="'radio-' + index + '-' + index_answer"
                     :value="isReview ? answer.id : answer"
                     style="vertical-align: middle; float: left; margin-top:4.8px;"
-                    :disabled="isReview"
+                    :disabled="isReview || isShowTest"
                   >
                   <div
                     v-if="answer.description || answer.text"
@@ -1346,7 +1362,7 @@ function loading() {
                     type="text"
                     class="form-control"
                     :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                    :disabled="isReview"
+                    :disabled="isReview || isShowTest"
                     @input="onEssayChanged(index, answer)"
                   />
                   <div 
@@ -1374,7 +1390,7 @@ function loading() {
               Sebelumnya
             </b-button>
             <b-button
-              v-if="currentPage == 1 && !isReview"
+              v-if="currentPage == 1 && !isReview && !isShowTest"
               variant="danger"
               style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
               @click="onCancelButtonClick()" 
@@ -1382,7 +1398,7 @@ function loading() {
               Batalkan
             </b-button>
             <b-button
-              v-if="currentPage == 1 && isReview"
+              v-if="currentPage == 1 && (isReview || isShowTest)"
               variant="secondary"
               style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
               @click="onExitButtonClick()" 
@@ -1412,7 +1428,7 @@ function loading() {
               v-if="currentPage == test.total_page"
               variant="success"
               style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              :disabled="isReview"
+              :disabled="isReview || isShowTest"
               @click="onFinishButtonClick()"
             >
               Selesai

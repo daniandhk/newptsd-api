@@ -9,7 +9,7 @@ import 'vue2-datepicker/locale/id'
 
 export default {
   page: {
-    title: 'Konsultasi',
+    title: 'Jurnal & Catatan Psikolog',
     meta: [{ name: 'description' }]
   },
   components: {
