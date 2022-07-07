@@ -41,8 +41,6 @@ export default {
         backgroundColor: "#F0F4F6",
       },
 
-      currentPage: 1,
-      perPage: 10,
       sortBy: "question_text",
       sortDesc: false,
       dataNotes: [],
@@ -135,7 +133,6 @@ export default {
 
             if(this.dashboard.note_questions){
                 this.dataNotes = this.dashboard.note_questions
-                this.perPage = this.dashboard.note_questions.length
             }
         }
     },
@@ -161,7 +158,7 @@ export default {
                 // eslint-disable-next-line no-unused-vars
                 .then(response => {
                 loading();
-                window.location.reload();
+                this.getDashboard(this.today);
                 })
                 .catch(error => {
                 loading();
@@ -503,8 +500,6 @@ function loading() {
                               :items="dataNotes"
                               :fields="fields"
                               responsive="sm"
-                              :per-page="perPage"
-                              :current-page="currentPage"
                               :sort-by="sortBy"
                               :sort-desc="sortDesc"
                               head-variant="light"

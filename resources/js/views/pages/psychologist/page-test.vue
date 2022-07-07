@@ -27,17 +27,7 @@ export default {
 
       isLoading: false,
       isFetchingData: false,
-      isChatLoading: false,
       maxHeight: "max-height: 345px;",
-
-      message: {
-        text: null,
-      },
-      typingUser: {},
-      allMessages: [],
-      typingClock: null,
-      submitted_chat: false,
-      tabIndex: this.$route.params.tabIndex ? this.$route.params.tabIndex : 0,
 
       allTests: [],
       testData: [],
@@ -83,13 +73,6 @@ export default {
   watch: {
     activeUser() {
       this.refreshData()
-    },
-
-    isChatLoading() {
-      this.maxHeight = "max-height: 345px;";
-      if(this.isChatLoading == true){
-        setTimeout(this.changeHeight,500);
-      }
     },
 
     isFetchingData() {
@@ -138,33 +121,6 @@ export default {
           this.$emit('changeHeight', height);
         }
       }
-    },
-
-    storeNotification(message){
-      let data = {
-        user_id: this.activeUser.id,
-        type: 'message',
-        header: message.receiver.profile.full_name ? 
-                message.receiver.profile.full_name : 
-                message.receiver.profile.first_name + " " + message.receiver.profile.last_name,
-        body: message.text,
-        avatar: message.receiver.profile.image
-      }
-
-      return (
-        api.storeNotification(data)
-          .then(response => {
-              //
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
     },
 
     formatDate(date, format){

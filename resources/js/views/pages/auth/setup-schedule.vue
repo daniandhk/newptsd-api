@@ -61,16 +61,6 @@ export default {
         },
       ],
 
-      currentPage: 1,
-      perPage: 10,
-      fields: [
-        { key: "index", sortable: false, label: "No." },
-        { key: "day", sortable: false, label: "Hari" },
-        { key: "time_start", sortable: false, label: "Jam Mulai" },
-        { key: "time_end", sortable: false, label: "Jam Berakhir" },
-        { key: "action", label: "Aksi", sortable: false, thClass: 'text-center', tdClass: 'text-center', }
-      ],
-
       submitted: false,
       registerError: null,
       isRegisterError: false,

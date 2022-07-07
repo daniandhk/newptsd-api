@@ -4,7 +4,8 @@ import * as api from '../../../api';
 import { notificationMethods } from '../../../state/helpers'
 import Swal from "sweetalert2"
 import moment from 'moment'
-import { required } from "vuelidate/lib/validators"
+import DatePicker from "vue2-datepicker";
+import 'vue2-datepicker/locale/id'
 
 export default {
   page: {
@@ -12,7 +13,7 @@ export default {
     meta: [{ name: 'description' }]
   },
   components: {
-    //
+    DatePicker,
   },
   props: {
     activeUser: {
@@ -31,40 +32,27 @@ export default {
 
       isLoading: false,
       isFetchingData: false,
-      isChatLoading: false,
       maxHeight: "max-height: 345px;",
 
-      message: {
-        text: null,
+      today: moment().format('YYYY-MM-DD'),
+      date: moment().format('YYYY-MM-DD'),
+      dashboard: {
+          journal: null,
+          note_questions: [],
       },
-      typingUser: {},
-      allMessages: [],
-      typingClock: null,
-      submitted_chat: false,
-      tabIndex: this.$route.params.tabIndex ? this.$route.params.tabIndex : 0,
+      isToday: true,
+      data_journal: {
+          patient_id: "",
+          text: ""
+      },
 
-      allConsults: [],
-      currentPageConsults: 1,
-      perPageConsults: 5,
-      sortDescConsults: true,
-      sortByConsults: 'consult_index',
-      fieldsConsults: [
-        { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "videocall_date", sortable: false, label: "Tanggal", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "total_note_questions", label: "Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+      sortBy: "question_text",
+      sortDesc: false,
+      dataNotes: [],
+      fields: [
+        { key: "question_text", sortable: true, label: "Catatan Psikolog", thStyle: { color: "black" } },
+        { key: "answer", sortable: false, label: "Jawaban Pasien", thStyle: { color: "black" } },
       ],
-
-      dataConsult: {
-        consult_index: 0,
-        note_questions: [],
-      },
-
-    }
-  },
-  validations: {
-    message: {
-      text: { required },
     }
   },
   computed: {
@@ -81,13 +69,6 @@ export default {
       this.refreshData()
     },
 
-    isChatLoading() {
-      this.maxHeight = "max-height: 345px;";
-      if(this.isChatLoading == true){
-        setTimeout(this.changeHeight,500);
-      }
-    },
-
     isFetchingData() {
       this.maxHeight = "max-height: 345px;";
       if(this.isFetchingData == true){
@@ -96,95 +77,77 @@ export default {
     },
   },
   mounted: async function () {
-    await this.setEcho();
+    //
   },
   methods: {
     ...notificationMethods,
 
-    getRequestParams(relation_id) {
+   getRequestParams(date) {
       let params = {};
 
-      if (relation_id) {
-        params["relation_id"] = relation_id;
+      if (date) {
+        params["date"] = date;
       }
 
       return params;
     },
 
-    async getDashboard(){
+    async getDashboard(date){
       if(this.activeUser.id){
-        if(this.tabIndex == 0){
-          await this.fetchMessages();
+        //emptying
+        this.dashboard = {
+            journal: null,
+            note_questions: [],
         }
-        else if(this.tabIndex == 1){
-          await this.fetchConsults();
-        }
+        this.dataNotes = []
+        this.data_journal = {
+            user_id: "",
+            text: ""
+        },
+
+        this.date = date
+        const params = this.getRequestParams(
+            date,
+        );
+
+        return (
+          api.getJournalDashboard(this.activeUser.profile.id, params)
+            // eslint-disable-next-line no-unused-vars
+            .then(response => {
+                if(response.data.data){
+                    this.dashboard = response.data.data;
+                    this.setDashboard();
+                }
+            })
+            .catch(error => {
+              //
+            })
+        );
       }
     },
 
-    async fetchMessages() {
-      // if(!this.activeUserId){
-      //   return alert('Please select friend');
-      // }
-      return (
-        api.getPrivateMessages(this.activeUser.id)
-          .then(response => {
-              this.allMessages = response.data.data;
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
+    setDashboard(){
+        if(moment(this.today).isSame(this.date)){
+            this.isToday = true;
+        }
+        else{
+            this.isToday = false;
+        }
+        if(this.dashboard){
+            if(this.dashboard.journal){
+                this.data_journal = this.dashboard.journal
+            }
+            if(this.dashboard.note_questions){
+                this.dataNotes = this.dashboard.note_questions
+            }
+        }
     },
 
-    async fetchConsults() {
-      const params = this.getRequestParams(
-          this.relationId
-      );
-      return (
-        api.getConsults(params)
-          .then(response => {
-              this.allConsults = response.data.data;
-              this.perPageConsults = response.data.data.length;
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
-    },
-
-    async refreshData(){
+    async refreshData(date){
       this.isFetchingData = true;
-      await this.getDashboard();
+      await this.getDashboard(date ? date : this.today);
       setTimeout(this.changeHeight,500);
       this.isFetchingData = false;
-    },
-
-    async setEcho(){
-      // eslint-disable-next-line no-undef
-      Echo.private('privaterelation.'+this.user.id)
-        .listen('PrivateRelation',(e)=>{
-          this.allMessages.push(e.message);
-        })
-        .listenForWhisper('typing', (e) => {
-          if(e.user.id == this.activeUser.id){
-            this.typingUser = e.user;
-            if(this.typingClock) clearTimeout();
-            this.typingClock = setTimeout(()=>{
-                                  this.typingUser = {};
-                                },9000);
-          }
-        });
     },
 
     changeHeight(){
@@ -195,33 +158,6 @@ export default {
           this.$emit('changeHeight', height);
         }
       }
-    },
-
-    storeNotification(message){
-      let data = {
-        user_id: this.activeUser.id,
-        type: 'message',
-        header: message.receiver.profile.full_name ? 
-                message.receiver.profile.full_name : 
-                message.receiver.profile.first_name + " " + message.receiver.profile.last_name,
-        body: message.text,
-        avatar: message.receiver.profile.image
-      }
-
-      return (
-        api.storeNotification(data)
-          .then(response => {
-              //
-          })
-          .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
     },
 
     formatDate(date, format){
@@ -238,85 +174,22 @@ export default {
       }
     },
 
-    getHeader(index, datas){
-      let isHeader = false;
-      if(index == 0){
-        isHeader = true;
-      }
-      else if(!this.isDateSame(moment(datas[index-1].created_at), datas[index].created_at)){
-        isHeader = true;
-      }
-
-      if(isHeader){
-        if(this.isDateSame(moment(), datas[index].created_at)){
-          return 'Hari Ini';
-        }
-        else if(this.isYesterday(datas[index].created_at)){
-          return 'Kemarin';
-        }
-        else {
-          return moment(datas[index].created_at).format('DD/MM/YYYY')
-        }
-      }
-
-      return null;
+    onTodayButtonClick(){
+        this.refreshData(this.today);
     },
 
-    isDateSame(data1, data2){
-      if(!data1){
-        data1 = moment();
-      }
-      return data1.isSame(data2, 'day');
+    onPrevButtonClick(){
+        this.date = moment(this.date).subtract(1, 'days').format('YYYY-MM-DD');
+        this.refreshData(this.date);
     },
 
-    isYesterday(data){
-      return moment().add(-1, 'days').isSame(data, 'day');
+    onNextButtonClick(){
+        this.date = moment(this.date).add(1, 'days').format('YYYY-MM-DD');
+        this.refreshData(this.date);
     },
 
-    onNoteQuestionsClick(data){
-      this.dataConsult = data
-      this.$bvModal.show('modal-notes');
-    },
-
-    onTyping(){
-      // eslint-disable-next-line no-undef
-      Echo.private('privaterelation.'+this.activeUser.id)
-      .whisper('typing',{
-        user: this.user
-      });
-    },
-    sendMessage(){
-      this.isChatLoading = true;
-      this.submitted_chat = true;
-      //check if there message
-      this.$v.message.$touch();
-      if (this.$v.message.$invalid) {
-        return;
-      }
-      // if(!this.activeUserId){
-      //   return alert('Please select friend');
-      // }
-      return (
-        api.sendPrivateMessage(this.message, this.activeUser.id)
-          // eslint-disable-next-line no-unused-vars
-          .then(response => {
-              this.submitted_chat = false;
-              this.message.text = null;
-              this.allMessages.push(response.data.data);
-              this.isChatLoading = false;
-              this.storeNotification(response.data.data);
-          })
-          .catch(error => {
-            this.submitted_chat = false;
-            this.isChatLoading = false;
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan!',
-                footer: error.response ? error.response : error
-            })
-          })
-      );
+    onDateButtonClick(){
+      this.refreshData(this.date);
     },
   },
 }
@@ -362,16 +235,112 @@ function loading() {
         Harap pilih pasien terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
-        <div v-if="isFetchingData">
+        <hr
+          style="height: 12px; 
+                  background-color: #F1F5F7; 
+                  border: 0 none; 
+                  color: #F1F5F7;
+                  margin-top:0;
+                  margin-bottom:0;"
+        >
+        <div class="text-center my-4 mt-4">
+          <div class="row">
+            <div class="col-lg-4 mt-2 mb-2">
+              <!-- <a href="/">
+                      <i
+                        class="mdi mdi-home-variant"
+                        style="font-size:25px; color:grey;"
+                      />
+                    </a> -->
+            </div>
+            <div class="col-lg-4 mt-2 mb-2">
+              <div style="display: flex; align-items: center; justify-content: center;">
+                <a
+                  href="#"
+                  @click="onPrevButtonClick()"
+                >
+                  <i
+                    class="mdi mdi-skip-previous"
+                    style="font-size:25px; color:#005C9A;"
+                  />
+                </a>
+                <div
+                  v-if="isToday"
+                  v-b-tooltip.hover
+                  title="pilih tanggal"
+                  class="datepicker-today mr-2 ml-2"
+                >
+                  <date-picker
+                    v-model="date"
+                    :first-day-of-week="1" 
+                    lang="id"
+                    format="dddd, D MMMM YYYY"
+                    value-type="YYYY-MM-DD"
+                    :clearable="false"
+                    :editable="false"
+                    @input="onDateButtonClick"
+                  />
+                </div>
+                <div
+                  v-if="!isToday"
+                  v-b-tooltip.hover
+                  title="pilih tanggal"
+                  class="datepicker-other mr-2 ml-2"
+                >
+                  <date-picker
+                    v-model="date"
+                    :first-day-of-week="1" 
+                    lang="id"
+                    format="dddd, D MMMM YYYY"
+                    value-type="YYYY-MM-DD"
+                    :clearable="false"
+                    :editable="false"
+                    @input="onDateButtonClick"
+                  />
+                </div>
+                <a
+                  href="#"
+                  @click="onNextButtonClick()"
+                >
+                  <i
+                    class="mdi mdi-skip-next"
+                    style="font-size:25px; color:#005C9A;"
+                  />
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-4 mt-2 mb-2">
+              <button 
+                v-if="!isToday"
+                type="button"
+                class="btn btn-primary m-1 btn-sm"
+                style="background-color:#005C9A;"
+                @click="onTodayButtonClick()"
+              >
+                Ke Hari Ini
+              </button>
+              <button 
+                v-if="isToday"
+                type="button"
+                disabled
+                class="btn btn-outline-dark m-1 btn-sm"
+              >
+                Hari Ini
+              </button>
+            </div>
+          </div>
           <hr
-            style="height: 12px; 
-                    background-color: #F1F5F7; 
+            style="height: 4px; 
+                    background-color: #eee; 
                     border: 0 none; 
-                    color: #F1F5F7;
-                    margin-top:0;
-                    margin-bottom:0;"
+                    color: #eee;"
           >
-          <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
+        </div>
+        <div v-if="isFetchingData">
+          <div
+            class="load-journal"
+            style="position: absolute; top: 50%; transform: translateY(-50%) translateX(-50%);"
+          >
             <b-spinner
               style="width: 2rem; height: 2rem;"
               class="mt-1"
@@ -380,17 +349,134 @@ function loading() {
             />
           </div>
         </div>
-        <div v-if="!isFetchingData">
-          <hr
-            style="height: 12px; 
-                    background-color: #F1F5F7; 
-                    border: 0 none; 
-                    color: #F1F5F7;
-                    margin-top:0;
-                    margin-bottom:0;"
-          >
+        <div>
+          <div class="text-center mx-4 mt-2 mb-0">
+            <div
+              class="row mt-3"
+              style="display: flex; justify-content: center;"
+            >
+              <div style="width:100%;">
+                <h5
+                  class="p-2 text-center font-size-15 text-uppercase"
+                  style="color:#005C9A;"
+                >
+                  Jurnal Harian Pasien
+                </h5>
+                <div class="mr-5 ml-5">
+                  <textarea 
+                    v-model="data_journal.text"
+                    rows="4"
+                    type="text"
+                    placeholder="data masih kosong."
+                    class="form-control"
+                    :disabled="true"
+                  />
+                  <button 
+                    type="button"
+                    class="btn btn-outline-dark mt-2 btn-sm"
+                    style=" width:100%;"
+                    disabled
+                  >
+                    Jurnal dan jawaban catatan di isi per hari oleh pasien.
+                  </button>
+                </div>
+              </div>
+              <div
+                class="mt-4"
+                style="width:100%;"
+              >
+                <hr
+                  style="margin-left: -12px; 
+                            margin-right: -12px; 
+                            height: 2px; 
+                            background-color: #eee; 
+                            border: 0 none; 
+                            color: #eee;"
+                >
+                <div style="width:100%;">
+                  <h5
+                    class="p-2 text-center font-size-15 text-uppercase"
+                    style="color:#005C9A;"
+                  >
+                    Catatan Psikolog
+                  </h5>
+                  <div class="table-responsive">
+                    <b-table
+                      class="table-centered"
+                      :items="dataNotes"
+                      :fields="fields"
+                      responsive="sm"
+                      :sort-by="sortBy"
+                      :sort-desc="sortDesc"
+                      head-variant="light"
+                      show-empty
+                    >
+                      <!-- eslint-disable-next-line vue/no-unused-vars -->
+                      <template #empty="scope">
+                        data masih kosong untuk saat ini.
+                      </template>
+                      <template v-slot:cell(answer)="data">
+                        <input
+                          v-model="data.item.answer"
+                          type="text"
+                          class="form-control"
+                          placeholder="data masih kosong."
+                          style="min-width: 150px;"
+                          :disabled="true" 
+                        >
+                      </template>
+                    </b-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+  .datepicker-other >>> input {
+    height:38.64px;
+    background-color: #005C9A;
+    color: white;
+    text-align:center;
+  }
+  .datepicker-other >>> i {
+    color: white;
+  }
+
+  .datepicker-today >>> input {
+    height:38.64px;
+    background-color: #eff2f7;
+    color: #212529;
+    text-align:center;
+  }
+  .datepicker-today >>> i {
+    color: #212529;
+  }
+
+  @media only screen and (max-width: 992px) { 
+    .load-journal { 
+      left: 50%; 
+    }
+  }
+
+  @media only screen and (min-width: 992px) { 
+    .load-journal { 
+      left: 70%; 
+    }
+  }
+
+  input::placeholder {
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  textarea::placeholder {
+    font-size: 12px;
+    font-style: italic;
+  }
+</style>
