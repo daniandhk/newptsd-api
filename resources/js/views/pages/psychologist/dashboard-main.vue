@@ -385,7 +385,7 @@ function loading() {
                 </div>
               </div>
             </div>
-            <div class="table-responsive border-bottom">
+            <div class="table-responsive border-bottom text-center">
               <b-table
                 class="table-centered"
                 :items="related_patients"

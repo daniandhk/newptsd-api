@@ -32,6 +32,11 @@ export default {
       return this.$store ? this.$store.state.notification : null;
     },
   },
+  watch: {
+    getPage() {
+      this.tabIndex = this.getPage;
+    }
+  },
   mounted() {
     this.refreshData(this.tabIndex);
   },

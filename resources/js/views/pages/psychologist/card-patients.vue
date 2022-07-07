@@ -91,14 +91,16 @@ export default {
     },
 
     async sortOnlineUsers(array, sortOrder){
-      array.sort( function (a, b) {
-        var A = a['user_id'], B = b['user_id'];
-        if (sortOrder.findIndex(x => x.id === A) < sortOrder.findIndex(x => x.id === B)) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
+      if(sortOrder.length > 1){
+        array.sort( function (a, b) {
+          var A = a['user_id'], B = b['user_id'];
+          if (sortOrder.findIndex(x => x.id === A) < sortOrder.findIndex(x => x.id === B)) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+      }
     },
 
     async setEcho(){
