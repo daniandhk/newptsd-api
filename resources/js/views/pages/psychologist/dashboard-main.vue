@@ -337,7 +337,10 @@ function loading() {
         />
       </div>
       <div v-if="!isLoading">
-        <div class="card">
+        <div
+          class="card"
+          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
+        >
           <div class="card-body">
             <div class="row my-2">
               <div class="col-sm-12 col-md-7">
@@ -643,7 +646,10 @@ function loading() {
             </div>
           </div>
         </div>
-        <div class="card">
+        <div
+          class="card"
+          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
+        >
           <div class="card-body">
             <div class="row my-2">
               <div class="col-sm-12 col-md-7">

@@ -21,7 +21,19 @@ class CreateTestTypesTable extends Migration
             $table->string('description');
             $table->integer('total_page');
             $table->integer('total_score');
+            $table->char('submitter_id', 26);
+            $table->char('updater_id', 26)->nullable();
             $table->timestamps();
+
+            $table->foreign('submitter_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+                $table->foreign('updater_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

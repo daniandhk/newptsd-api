@@ -37,6 +37,12 @@ export const menuItems = [
     },
     {
         id: 7,
+        label: 'menuitems.help.list',
+        icon: 'mdi mdi-account-box-multiple-outline',
+        link: 'home'
+    },
+    {
+        id: 8,
         label: 'menuitems.help.admin',
         icon: 'mdi mdi-account-cog-outline',
         link: 'mail-admin'

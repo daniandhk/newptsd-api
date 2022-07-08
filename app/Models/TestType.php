@@ -14,7 +14,8 @@ class TestType extends BaseModel
         'name',
         'delay_days',
         'description',
-        'total_page'
+        'submitter_id',
+        'updater_id'
     ];
 
     public static function boot() {
@@ -44,5 +45,13 @@ class TestType extends BaseModel
 
     public function test_pages() {
         return $this->hasMany(TestPage::class)->orderBy('number');
+    }
+
+    public function submitter() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function updater() {
+        return $this->belongsTo(User::class);
     }
 }

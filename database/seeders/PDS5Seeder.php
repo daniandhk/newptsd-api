@@ -6,6 +6,8 @@ use App\Models\TestAnswer;
 use App\Models\TestPage;
 use App\Models\TestQuestion;
 use App\Models\TestType;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
 class PDS5Seeder extends Seeder
@@ -17,13 +19,22 @@ class PDS5Seeder extends Seeder
      */
     public function run()
     {
+        $admin = User::create([
+            'email' => 'admin@admin.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin'),
+            'email_verified_at' => '2021-12-10 02:42:41'
+        ]);
+        $admin->assignRole('admin');
+
         $test_type = TestType::create([
             'type' => 'pds5',
             'name' => 'Posttraumatic Diagnostic Scale (PDS-5)',
             'total_score' => 80,
             'total_page' => 6,
             'delay_days' => 30,
-            'description' => "Tes dengan 24 item yang menilai tingkat keparahan gejala PTSD dengan kriteria DSM-5"
+            'description' => "Tes dengan 24 item yang menilai tingkat keparahan gejala PTSD dengan kriteria DSM-5",
+            'submitter_id' => $admin->id,
         ]);
 
         $test_page = TestPage::create([

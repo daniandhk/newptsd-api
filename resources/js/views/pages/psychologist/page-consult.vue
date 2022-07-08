@@ -51,8 +51,6 @@ export default {
       tabIndex: this.setTabIndex,
 
       allConsults: [],
-      currentPageConsults: 1,
-      perPageConsults: 5,
       sortDescConsults: true,
       sortByConsults: 'consult_index',
       fieldsConsults: [
@@ -196,7 +194,6 @@ export default {
         api.getConsults(params)
           .then(response => {
               this.allConsults = response.data.data;
-              this.perPageConsults = response.data.data.length;
           })
           .catch(error => {
             Swal.fire({
@@ -966,8 +963,6 @@ function loading() {
                       :items="allConsults"
                       :fields="fieldsConsults"
                       responsive="sm"
-                      :per-page="perPageConsults"
-                      :current-page="currentPageConsults"
                       :sort-by="sortByConsults"
                       :sort-desc="sortDescConsults"
                       head-variant="light"

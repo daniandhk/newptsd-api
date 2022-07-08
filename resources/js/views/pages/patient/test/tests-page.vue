@@ -436,7 +436,7 @@ export default {
           });
         }
         else if(this.isShowTest){
-          this.$router.push({name: 'list-test'});
+          this.$router.push({name: 'list-tests'});
         }
         else{
           this.$router.push({name: 'home'});

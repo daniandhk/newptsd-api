@@ -75,6 +75,14 @@ class User extends Authenticatable
         return $this->hasMany(Message::class);
     }
 
+    public function submitted_test_types() {
+        return $this->hasMany(TestType::class)->where('submitter_id', $this->id)->get();
+    }
+
+    public function updated_test_types() {
+        return $this->hasMany(TestType::class)->where('updater_id', $this->id)->get();
+    }
+
     public function isAdmin() {
         return ($this->role == 'admin');
     }

@@ -16,7 +16,8 @@
       "add": "Tambah Tes"
     },
     "help": {
-      "text": "Bantuan",
+      "text": "Informasi / Bantuan",
+      "list": "Psikolog Terdaftar",
       "admin": "Hubungi Admin"
     }
   }

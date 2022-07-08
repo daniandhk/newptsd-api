@@ -10,10 +10,13 @@ class TestTypeController extends BaseController
 {
     public function index(Request $request)
     {
-        $types = TestType::all();
+        $types = TestType::with(['submitter', 'updater']);
         if($request->has('test_type')) {
             $test_type = $request->get('test_type');
             $types = $types->where('type', $test_type)->first();
+        }
+        else{
+            $types = $types->get();
         }
         return $this->respond($types);
     }
@@ -45,7 +48,9 @@ class TestTypeController extends BaseController
         $this->validate($request, [
             'type' => 'required',
             'name' => 'required',
-            'total_score' => 'required',
+            'description' => 'required',
+            'delay_days' => 'required',
+            'submitter_id' => 'required',
         ]);
         $type = TestType::create($request->all());
         return $this->respond($type);
@@ -70,7 +75,9 @@ class TestTypeController extends BaseController
         $this->validate($request, [
             'type' => 'required',
             'name' => 'required',
-            'total_score' => 'required',
+            'description' => 'required',
+            'delay_days' => 'required',
+            'submitter_id' => 'required',
         ]);
         if (TestType::find($id) != null) {
             $TestType = TestType::findOrFail($id);
