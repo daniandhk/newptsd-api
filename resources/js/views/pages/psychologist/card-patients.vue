@@ -10,9 +10,9 @@ export default {
     simplebar,
   },
   props: {
-    activeUserId: {
-      type: String,
-      default: null,
+    activeUser: {
+      type: Object,
+      default: () => ({id: null})
     },
     maxHeight: {
       type: String,
@@ -28,7 +28,7 @@ export default {
       related_patients: [],
       filter: "",
       isFetchingUsers: false,
-      current_patient: null,
+      current_patient: this.activeUser.profile ? this.activeUser.profile : null,
 
       onlineUsers: [],
 
@@ -179,12 +179,15 @@ function loading() {
 </script>
 
 <template>
-  <div class="chat-leftsidebar m-lg-1 my-md-2">
+  <div
+    class="chat-leftsidebar m-lg-1 my-md-2"
+    style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
+  >
     <div class="chat-leftsidebar-nav">
       <b-card-text>
         <div class="row px-3">
           <div
-            v-if="activeUserId != null"
+            v-if="activeUser.id != null"
             class="row m-0 w-100 border-bottom"
           >
             <div
@@ -297,7 +300,7 @@ function loading() {
                 v-for="(patient, index) in related_patients"
                 :key="index"
                 class
-                :class="{ active: patient.user_id == activeUserId }"
+                :class="{ active: patient.user_id == activeUser.id }"
                 @click="changeActiveUser(patient)"
               >
                 <a style="cursor: pointer;">

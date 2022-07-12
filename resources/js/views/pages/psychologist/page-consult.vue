@@ -729,6 +729,7 @@ function loading() {
   <div
     id="main-container-consult"
     class="w-100"
+    style="border-radius:0px 0px 0.25rem 0.25rem; box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
   >
     <div 
       v-if="isLoading"
@@ -751,14 +752,6 @@ function loading() {
       </div>
       <div v-if="activeUser.id">
         <div v-if="isFetchingData">
-          <hr
-            style="height: 12px; 
-                    background-color: #F1F5F7; 
-                    border: 0 none; 
-                    color: #F1F5F7;
-                    margin-top:0;
-                    margin-bottom:0;"
-          >
           <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
             <b-spinner
               style="width: 2rem; height: 2rem;"
@@ -769,14 +762,6 @@ function loading() {
           </div>
         </div>
         <div v-if="!isFetchingData">
-          <hr
-            style="height: 12px; 
-                    background-color: #F1F5F7; 
-                    border: 0 none; 
-                    color: #F1F5F7;
-                    margin-top:0;
-                    margin-bottom:0;"
-          >
           <b-tabs
             v-model="tabIndex"
             nav-class="nav-tabs-custom"

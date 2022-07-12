@@ -48,35 +48,40 @@ class TestController extends BaseController
     public function createTest(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'test_type' => 'required',
-            'data_input' => 'required',
+            'type'  => 'required',
+            'name' => 'required',
+            'delay_days' => 'required',
+            'description' => 'required',
+            'test_pages' => 'required',
+            'submitter_id' => 'required',
         ]);
         if($validation->fails()) {
             return $this->validationError();
         }
-        $test_type = TestType::where('type', $request->test_type->type)->first();
+        $test_type = TestType::where('type', $request->type)->first();
         if($test_type){
             return $this->errorForbidden('code test already used');
         }
 
         $test_type = TestType::create([
-            'type'  => $request->test_type->type,
-            'name' => $request->test_type->name,
-            'delay_days' => $request->test_type->delay_days,
-            'description' => $request->test_type->description,
-            'total_page' => $request->test_type->total_page,
+            'type'  => $request->type,
+            'name' => $request->name,
+            'delay_days' => $request->delay_days,
+            'description' => $request->description,
+            'total_page' => count($request->test_pages),
+            'submitter_id' => $request->submitter_id
          ]);
 
          $total_score = 0;
-         foreach($request->data_input as $key1=>$data) {
+         foreach($request->test_pages as $key1=>$data) {
             $test_page = TestPage::create([
                 'test_type_id' => $test_type['id'],
-                'number' => $data['page_number'],
-                'title' => $data['page_title'],
-                'description' => $data['page_description'],
+                'number' => $data['number'],
+                'title' => $data['title'],
+                'description' => $data['description'],
             ]);
 
-            foreach($data['questions'] as $key2=>$q) {
+            foreach($data['test_questions'] as $key2=>$q) {
                 $qstion = TestQuestion::create([
                     'test_page_id' => $test_page['id'],
                     'text' => $q['text'],
@@ -84,11 +89,11 @@ class TestController extends BaseController
                 ]);
     
                 $max_score = 0;
-                foreach($q['answers'] as $key3=>$ans) {
+                foreach($q['test_answers'] as $key3=>$ans) {
                     $answer = TestAnswer::create([
                         'test_question_id' => $qstion['id'],
-                        'text' => $ans['text'],
-                        'description' => $ans['description'],
+                        'text' => $ans['is_essay'] ? "" : $ans['text'],
+                        'description' => $ans['is_essay'] ? ($ans['description'] ? $ans['description'] : "Lainnya, harap dijelaskan") : null,
                         'weight' => $ans['weight'],
                         'is_essay' => $ans['is_essay'],
                     ]);
@@ -107,7 +112,7 @@ class TestController extends BaseController
          $test_type->total_score = $total_score;
          $test_type->save();
 
-         return $this->respond(null);
+         return $this->respond($test_type);
     }
 
     public function storePatientAnswers(Request $request)
@@ -126,7 +131,7 @@ class TestController extends BaseController
             return $this->errorNotFound('invalid test type id');
         }
 
-        $count = count(Test::where('patient_id', $request->patient_id)->get());
+        $count = count(Test::where([['test_type_id', $request->test_type_id],['patient_id', $request->patient_id]])->get());
 
         $test = Test::create([
             'patient_id'  => $request->patient_id,

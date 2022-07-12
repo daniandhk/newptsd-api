@@ -82,3 +82,11 @@ export function getTestPage(patient_id){
         method: 'GET',
     })
 }
+
+export function createTest(data){
+    return httpAxios({
+        url: '/test/createTest',
+        method: 'POST',
+        data: data
+    })
+}

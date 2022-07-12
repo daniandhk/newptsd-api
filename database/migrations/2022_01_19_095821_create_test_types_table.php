@@ -20,7 +20,7 @@ class CreateTestTypesTable extends Migration
             $table->integer('delay_days');
             $table->string('description');
             $table->integer('total_page');
-            $table->integer('total_score');
+            $table->integer('total_score')->default(0);
             $table->char('submitter_id', 26);
             $table->char('updater_id', 26)->nullable();
             $table->timestamps();

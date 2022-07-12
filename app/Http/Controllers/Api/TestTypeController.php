@@ -99,15 +99,4 @@ class TestTypeController extends BaseController
         $TestType->delete();
         return $this->respond($TestType);
     }
-
-    public function getLatestTest($patient_id)
-    {
-        $patient = Patient::find($patient_id);
-        if(!$patient) {
-            return $this->errorNotFound('invalid patient id');
-        }
-
-        $test_types = TestType::FilteredTest($patient_id)->get();
-        $this->respond($test_types);
-    }
 }

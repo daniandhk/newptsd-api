@@ -214,6 +214,7 @@ function loading() {
   <div
     id="main-container-journal"
     class="w-100"
+    style="border-radius:0px 0px 0.25rem 0.25rem; box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
   >
     <div 
       v-if="isLoading"
@@ -235,14 +236,6 @@ function loading() {
         Harap pilih pasien terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
-        <hr
-          style="height: 12px; 
-                  background-color: #F1F5F7; 
-                  border: 0 none; 
-                  color: #F1F5F7;
-                  margin-top:0;
-                  margin-bottom:0;"
-        >
         <div class="text-center my-4 mt-4">
           <div class="row">
             <div class="col-lg-4 mt-2 mb-2">
@@ -256,7 +249,7 @@ function loading() {
             <div class="col-lg-4 mt-2 mb-2">
               <div style="display: flex; align-items: center; justify-content: center;">
                 <a
-                  href="#"
+                  style="cursor: pointer;"
                   @click="onPrevButtonClick()"
                 >
                   <i
@@ -299,7 +292,7 @@ function loading() {
                   />
                 </div>
                 <a
-                  href="#"
+                  style="cursor: pointer;"
                   @click="onNextButtonClick()"
                 >
                   <i

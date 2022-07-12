@@ -328,7 +328,7 @@ function loading() {
                     <div class="col-lg-4 mt-2 mb-2">
                       <div style="display: flex; align-items: center; justify-content: center;">
                         <a
-                          href="#"
+                          style="cursor: pointer;"
                           @click="onPrevButtonClick()"
                         >
                           <i
@@ -371,7 +371,7 @@ function loading() {
                           />
                         </div>
                         <a
-                          href="#"
+                          style="cursor: pointer;"
                           @click="onNextButtonClick()"
                         >
                           <i

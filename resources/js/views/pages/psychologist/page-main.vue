@@ -147,17 +147,17 @@ function loading() {
         style="border-radius: 0.25rem;"
       >
         <PatientsCard
-          :active-user-id="getActiveUser.id"
+          :active-user="getActiveUser"
           :max-height="getMaxHeight"
           @changeActiveUser="changeActiveUser"
         />
-        <div class="full-width w-100 user-chat m-lg-1 my-md-1">
+        <div class="full-width w-100 m-lg-1 my-md-1">
           <b-tabs
             v-model="tabIndex"
             fill
             justified
             nav-class="nav-tabs-custom"
-            style="align-items: center; justify-content: center;"
+            style="align-items: center; justify-content: center; border-radius:0.25rem;"
             :active-nav-item-class="'tab-active-class'"
             @input="refreshData"
           >
@@ -181,7 +181,9 @@ function loading() {
               <template>
                 <div
                   class="d-lg-flex"
-                  style="border-radius: 0.25rem;"
+                  :class="getActiveUser.id ? 'mt-0' : 'mt-3'"
+                  style="border-radius:0px 0px 0.25rem 0.25rem;"
+                  :style="getActiveUser.id ? 'background-color: #F1F5F7' : 'background-color: white'"
                 >
                   <Test
                     ref="Test"
@@ -211,8 +213,8 @@ function loading() {
               </template>
               <template>
                 <div
-                  class="d-lg-flex"
-                  style="border-radius: 0.25rem;"
+                  class="d-lg-flex mt-3"
+                  style="border-radius:0px 0px 0.25rem 0.25rem; background-color:white;"
                 >
                   <Consult
                     ref="Consult"
@@ -243,8 +245,8 @@ function loading() {
               </template>
               <template>
                 <div
-                  class="d-lg-flex"
-                  style="border-radius: 0.25rem;"
+                  class="d-lg-flex mt-3"
+                  style="border-radius:0px 0px 0.25rem 0.25rem; background-color:white;"
                 >
                   <Journal
                     ref="Journal"

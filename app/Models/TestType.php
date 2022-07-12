@@ -14,6 +14,7 @@ class TestType extends BaseModel
         'name',
         'delay_days',
         'description',
+        'total_page',
         'submitter_id',
         'updater_id'
     ];
@@ -28,14 +29,8 @@ class TestType extends BaseModel
     }
 
     public function scopeFilteredTest($query, $patient_id) {
-        return $query->with(["tests" => function($q) use($patient_id) {
-            $q->where('tests.patient_id', '=', $patient_id)->orderBy('created_at', 'desc')->first();
-        }]);
-    }
-
-    public function scopeFilteredAllTest($query, $patient_id) {
-        return $query->with(["tests" => function($q) use($patient_id) {
-            $q->where('tests.patient_id', '=', $patient_id)->orderBy('created_at', 'desc')->get();
+        return $query->with(["tests" => function($query) use($patient_id) {
+            $query->where('patient_id', $patient_id)->orderBy('created_at', 'desc');
         }]);
     }
 

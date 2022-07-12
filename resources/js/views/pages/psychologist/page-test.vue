@@ -210,6 +210,7 @@ function loading() {
   <div
     id="main-container-test"
     class="w-100"
+    :style="activeUser.id ? '' : 'border-radius:0px 0px 0.25rem 0.25rem; box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);'"
   >
     <div 
       v-if="isLoading"
@@ -232,14 +233,6 @@ function loading() {
       </div>
       <div v-if="activeUser.id">
         <div v-if="isFetchingData">
-          <hr
-            style="height: 12px; 
-                    background-color: #F1F5F7; 
-                    border: 0 none; 
-                    color: #F1F5F7;
-                    margin-top:0;
-                    margin-bottom:0;"
-          >
           <div style="display: flex; justify-content: center; padding-top: 26px; padding-bottom: 27px;">
             <b-spinner
               style="width: 2rem; height: 2rem;"
@@ -253,26 +246,22 @@ function loading() {
           <div
             v-for="(test_type, index) in allTests"
             :key="index"
-            class="mb-4"
+            class="mt-3"
           >
-            <div :id="'card-' + index">
-              <div class="pb-2">
+            <div
+              :id="'card-' + index"
+              class="card mb-0"
+              style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
+            >
+              <div class="card-body">
                 <div class="text-center form-group mb-0">
-                  <hr
-                    style="height: 12px; 
-                            background-color: #F1F5F7; 
-                            border: 0 none; 
-                            color: #F1F5F7;
-                            margin-top:0;"
-                  >
                   <h5 class="text-center font-size-15 text-uppercase">
                     <div
                       class="hover-effect my-2"
                       style="display:inline-block"
                     >
                       <a
-                        href="#"
-                        style="color:#005C9A;"
+                        style="color:#005C9A; cursor: pointer;"
                         @click="showDescPopup(test_type)"
                       >Tes {{ test_type.name }}</a>
                     </div>

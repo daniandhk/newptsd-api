@@ -162,7 +162,7 @@ export default {
     goToCard(index){
       let id = 'card-' + index.toString();
       if(!this.isLoading){
-        document.getElementById(id).scrollIntoView();
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     },
 
@@ -271,8 +271,7 @@ function loading() {
                   >
                     <div class="hover-effect">
                       - <a
-                        href="#"
-                        style="color:#005C9A;"
+                        style="color:#005C9A; cursor: pointer;"
                         @click="goToCard(index)"
                       >{{ test_type.name }}</a>
                     </div>
@@ -292,7 +291,7 @@ function loading() {
             class="mb-4"
           >
             <div
-              :id="'card-' + index"
+              :id="'card-' + index.toString()"
               class="card"
               style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
             >
@@ -304,8 +303,7 @@ function loading() {
                       style="display:inline-block"
                     >
                       <a
-                        href="#"
-                        style="color:#005C9A;"
+                        style="color:#005C9A; cursor: pointer;"
                         @click="showDescPopup(test_type)"
                       >Tes {{ test_type.name }}</a>
                     </div>
@@ -549,7 +547,7 @@ function loading() {
                                     Tingkat Keparahan Gejala
                                   </p>
                                   <vue-gauge
-                                    :refid="'type-unique-id'"
+                                    :refid="'gauge-' + index.toString()"
                                     :options="{
                                       'needleValue':test_type.tests[0].score,
                                       'arcDelimiters':[30,75], 
@@ -688,8 +686,7 @@ function loading() {
               >
                 <p>
                   *psikolog mengetahui informasi wali Anda, ubah izin di <a
-                    href="#"
-                    style="color:#505d69;"
+                    style="color:#505d69; cursor: pointer;"
                     @click="goToSettingsMenu()"
                   ><b>Pengaturan Akun</b></a>
                 </p>
@@ -698,8 +695,7 @@ function loading() {
             <div v-if="!user.profile.guardian">
               <p class="mt-1">
                 Submit data wali Anda di <a
-                  href="#"
-                  style="color:#505d69;"
+                  style="color:#505d69; cursor: pointer;"
                   @click="goToSettingsMenu()"
                 ><b>Pengaturan Akun</b></a>.
               </p>

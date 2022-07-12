@@ -16,7 +16,7 @@ export default {
     DatePicker
   },
   beforeRouteLeave(to, from, next) {
-    if(!this.isSubmitted && !this.isReview){
+    if(!this.isSubmitted && !this.isReview && !this.isShowTest){
       const answer = window.confirm('Keluar dan batalkan tes?');
       answer ? next() : next(false);
     }
@@ -312,9 +312,13 @@ export default {
           }
         }
       }
-      else if(!this.test_id && !this.patient_id){
-        this.isShowTest = true
+      else{
+        let path = /[^/]*$/.exec(this.$route.path)[0];
+        if(path == 'review'){
+          this.isShowTest = true;
+        }
       }
+
       const params = this.getRequestParams(
         this.test_type, null, null
       );
@@ -415,13 +419,13 @@ export default {
     },
 
     onBackButtonClick(){
-      // window.scrollTo({ top: 0, behavior: 'smooth' });
       this.currentPage -= 1
       this.questionData = this.test.test_pages[this.currentPageIndex].test_questions
       this.pageData = this.test.test_pages[this.currentPageIndex]
 
       this.submitted = false
       this.isThisPageInvalid = false
+      document.getElementById('div-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     onExitButtonClick(){
@@ -457,18 +461,17 @@ export default {
         this.$v.data_input.pages.$each[this.currentPageIndex].$touch();
 
         if (this.isThisPageInvalid || this.$v.data_input.pages.$each[this.currentPageIndex].$invalid) {
-          // window.scrollTo(0,document.body.scrollHeight);
           return;
         }
       }
       
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.currentPage += 1
       this.questionData = this.test.test_pages[this.currentPageIndex].test_questions
       this.pageData = this.test.test_pages[this.currentPageIndex]
 
       this.submitted = false
       this.isThisPageInvalid = false
+      document.getElementById('div-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     onFinishButtonClick(){
@@ -477,7 +480,6 @@ export default {
       this.$v.data_input.pages.$each[this.currentPageIndex].$touch();
 
       if (this.isThisPageInvalid || this.$v.data_input.pages.$each[this.currentPageIndex].$invalid) {
-        // window.scrollTo(0,document.body.scrollHeight);
         return;
       }
       
@@ -582,7 +584,7 @@ export default {
       let id = 'card-' + index.toString()
       if(array.length == 0){
         this.isThisPageInvalid = true
-        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
         return true
       }
 
@@ -591,7 +593,7 @@ export default {
       for (let i = 0; i < array.length; i++) {
         if(array[i].text == null || array[i].text == ""){
           isEmpty = true
-          document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+          document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
           break
         }
       }
@@ -656,12 +658,12 @@ export default {
         this.submitted_consult = true;
         this.$v.input_consult.$touch();
         if (this.$v.input_consult.$invalid) {
-          document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
         if(this.input_consult.videocall_link){
           if (!this.isUrlValid(this.input_consult.videocall_link)){
-            document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('card_scoring').scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
           }
         }
@@ -875,7 +877,6 @@ function loading() {
                         <hr style="margin-bottom: 0;margin-left: -20px!important; margin-right: -20px!important;">
                         <div class="font-size-13 text-center mt-2 mb-2">
                           <a
-                            href="#"
                             style="color:#505d69;"
                             @click="showHistory()"
                           ><b>Lihat riwayat tes</b></a>
@@ -1184,255 +1185,257 @@ function loading() {
             </div>
           </div>
         </div>
-        <div
-          v-if="pageData.title || pageData.description"
-          class="card h-100 mt-2 mb-3 ml-5 mr-5"
-          style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 6px; display: flex; justify-content: center; align-items: center;"
-        >
-          <div class="card-body">
-            <div class="p-2">
-              <div>
-                <h4
-                  v-if="pageData.title"
-                  class="font-size-20"
-                  style="font-weight: bold; text-decoration: underline;"
-                >
-                  {{ pageData.title }}
-                </h4>
-                <p
-                  v-if="pageData.description"
-                  class="mb-0"
-                >
-                  {{ pageData.description }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          v-for="(question, index) in questionData"
-          :key="index"
-          class="mt-2 mb-3 ml-5 mr-5"
-          :set="v_question = $v.data_input.pages.$each[currentPageIndex].questions.$each[index]"
-        >
+        <div id="div-main">
           <div
-            :id="'card-' + index"
-            class="card h-100 mb-3"
-            style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 6px; display: flex; justify-content: center; align-items: left;"
-            :class="{ 'card-invalid': submitted && isAnswerEmpty(data_input.pages[currentPageIndex].questions[index].answers, index) }"
+            v-if="pageData.title || pageData.description"
+            class="card h-100 mt-2 mb-3 ml-5 mr-5"
+            style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 6px; display: flex; justify-content: center; align-items: center;"
           >
             <div class="card-body">
-              <div :class="{ 'is-invalid': submitted && v_question.answers.$error }">
-                <label class="font-size-16 mb-0">{{ question.text }}</label>
-              </div>
-              <label
-                v-if="question.answer_type == 'mc_multi'"
-                class="mb-0"
-              >(Pilih salah satu atau lebih)</label>
-              <div
-                v-if="submitted && !v_question.answers.$error.required"
-                class="invalid-feedback font-size-14 mt-0"
-              >
-                {{ question.answer_type == 'essay' ? 'Jawaban harus diisi!' : 'Jawaban harus dipilih!' }}
-              </div>
-              <div
-                v-for="(answer, index_answer) in question.test_answers"
-                :key="index_answer"
-                class="mt-4"
-              >
-                <div v-if="question.answer_type == 'mc_multi'">
-                  <input
-                    v-model="data_input.pages[currentPageIndex].questions[index].answers"
-                    type="checkbox"
-                    :name="'checkbox-' + index + '-' + index_answer"
-                    :value="isReview ? answer.id : answer"
-                    style="vertical-align: middle; float: left; margin-top:5px;"
-                    :disabled="isReview || isShowTest"
+              <div class="p-2">
+                <div>
+                  <h4
+                    v-if="pageData.title"
+                    class="font-size-20"
+                    style="font-weight: bold; text-decoration: underline;"
                   >
-                  <div
-                    v-if="answer.description || answer.text"
-                    class="text-left"
-                    style="margin-left: 25px;"
+                    {{ pageData.title }}
+                  </h4>
+                  <p
+                    v-if="pageData.description"
+                    class="mb-0"
                   >
-                    {{ answer.is_essay ? answer.description : answer.text }}
-                  </div>
-                  <div
-                    v-if="answer.is_essay"
-                    class="mb-4 mt-2"
-                    style="display: flex;"
-                  >
-                    <input
-                      id="a"
-                      type="radio"
-                      name="a"
-                      value="a"
-                      style="vertical-align: middle; float: left; margin-top:4.8px; visibility: hidden;"
-                    >
-                    <div style="width:100%; margin-left: 12px;">
-                      <textarea 
-                        v-model="answer.text"
-                        :name="'textarea-' + index + '-' + index_answer"
-                        rows="4"
-                        type="text"
-                        class="form-control"
-                        :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                        :disabled="isReview || isShowTest"
-                        @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
-                      />
-                      <div 
-                        v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
-                        class="invalid-feedback"
-                      >
-                        Harus diisi!
-                      </div>
-                    </div>
-                  </div>
+                    {{ pageData.description }}
+                  </p>
                 </div>
-                <div v-if="question.answer_type == 'mc_one'">
-                  <input
-                    v-model="data_input.pages[currentPageIndex].questions[index].answers[0]"
-                    type="radio"
-                    :name="'radio-' + index + '-' + index_answer"
-                    :value="isReview ? answer.id : answer"
-                    style="vertical-align: middle; float: left; margin-top:4.8px;"
-                    :disabled="isReview || isShowTest"
-                  >
-                  <div
-                    v-if="answer.description || answer.text"
-                    style="margin-left: 25px;"
-                  >
-                    {{ answer.is_essay ? answer.description : answer.text }}
-                  </div>
-                  <div
-                    v-if="answer.is_essay"
-                    class="mb-4 mt-2"
-                    style="display: flex;"
-                  >
-                    <input
-                      id="a"
-                      type="radio"
-                      name="a"
-                      value="a"
-                      style="vertical-align: middle; float: left; margin-top:4.8px; visibility: hidden;"
-                    >
-                    <div style="width:100%; margin-left: 12px;">
-                      <textarea 
-                        v-model="answer.text"
-                        :name="'textarea-' + index + '-' + index_answer"
-                        rows="4"
-                        type="text"
-                        class="form-control"
-                        :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                        :disabled="isReview || isShowTest"
-                        @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
-                      />
-                      <div 
-                        v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
-                        class="invalid-feedback"
-                      >
-                        Harus diisi!
-                      </div>
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+          <div
+            v-for="(question, index) in questionData"
+            :key="index"
+            class="mt-2 mb-3 ml-5 mr-5"
+            :set="v_question = $v.data_input.pages.$each[currentPageIndex].questions.$each[index]"
+          >
+            <div
+              :id="'card-' + index"
+              class="card h-100 mb-3"
+              style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); border-radius: 6px; display: flex; justify-content: center; align-items: left;"
+              :class="{ 'card-invalid': submitted && isAnswerEmpty(data_input.pages[currentPageIndex].questions[index].answers, index) }"
+            >
+              <div class="card-body">
+                <div :class="{ 'is-invalid': submitted && v_question.answers.$error }">
+                  <label class="font-size-16 mb-0">{{ question.text }}</label>
                 </div>
-                <div v-if="question.answer_type == 'score'">
-                  <input
-                    v-model="data_input.pages[currentPageIndex].questions[index].answers[0]"
-                    type="radio"
-                    :name="'radio-' + index + '-' + index_answer"
-                    :value="isReview ? answer.id : answer"
-                    style="vertical-align: middle; float: left; margin-top:4.8px;"
-                    :disabled="isReview || isShowTest"
-                  >
-                  <div
-                    v-if="answer.description || answer.text"
-                    style="margin-left: 25px;"
-                  >
-                    <b class="mr-2">[ {{ answer.weight }} ]</b> {{ answer.is_essay ? answer.description : answer.text }}
-                  </div>
+                <label
+                  v-if="question.answer_type == 'mc_multi'"
+                  class="mb-0"
+                >(Pilih salah satu atau lebih)</label>
+                <div
+                  v-if="submitted && !v_question.answers.$error.required"
+                  class="invalid-feedback font-size-14 mt-0"
+                >
+                  {{ question.answer_type == 'essay' ? 'Jawaban harus diisi!' : 'Jawaban harus dipilih!' }}
                 </div>
                 <div
-                  v-if="question.answer_type == 'essay'"
-                  style="margin-top: -12px!important;"
+                  v-for="(answer, index_answer) in question.test_answers"
+                  :key="index_answer"
+                  class="mt-4"
                 >
-                  <textarea 
-                    v-model="answer.text"
-                    :name="'textarea-' + index + '-' + index_answer"
-                    rows="4"
-                    type="text"
-                    class="form-control"
-                    :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
-                    :disabled="isReview || isShowTest"
-                    @input="onEssayChanged(index, answer)"
-                  />
-                  <div 
-                    v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
-                    class="invalid-feedback"
+                  <div v-if="question.answer_type == 'mc_multi'">
+                    <input
+                      v-model="data_input.pages[currentPageIndex].questions[index].answers"
+                      type="checkbox"
+                      :name="'checkbox-' + index + '-' + index_answer"
+                      :value="isReview ? answer.id : answer"
+                      style="vertical-align: middle; float: left; margin-top:5px;"
+                      :disabled="isReview || isShowTest"
+                    >
+                    <div
+                      v-if="answer.description || answer.text"
+                      class="text-left"
+                      style="margin-left: 25px;"
+                    >
+                      {{ answer.is_essay ? answer.description : answer.text }}
+                    </div>
+                    <div
+                      v-if="answer.is_essay"
+                      class="mb-4 mt-2"
+                      style="display: flex;"
+                    >
+                      <input
+                        id="a"
+                        type="radio"
+                        name="a"
+                        value="a"
+                        style="vertical-align: middle; float: left; margin-top:4.8px; visibility: hidden;"
+                      >
+                      <div style="width:100%; margin-left: 12px;">
+                        <textarea 
+                          v-model="answer.text"
+                          :name="'textarea-' + index + '-' + index_answer"
+                          rows="4"
+                          type="text"
+                          class="form-control"
+                          :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
+                          :disabled="isReview || isShowTest"
+                          @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
+                        />
+                        <div 
+                          v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
+                          class="invalid-feedback"
+                        >
+                          Harus diisi!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-if="question.answer_type == 'mc_one'">
+                    <input
+                      v-model="data_input.pages[currentPageIndex].questions[index].answers[0]"
+                      type="radio"
+                      :name="'radio-' + index + '-' + index_answer"
+                      :value="isReview ? answer.id : answer"
+                      style="vertical-align: middle; float: left; margin-top:4.8px;"
+                      :disabled="isReview || isShowTest"
+                    >
+                    <div
+                      v-if="answer.description || answer.text"
+                      style="margin-left: 25px;"
+                    >
+                      {{ answer.is_essay ? answer.description : answer.text }}
+                    </div>
+                    <div
+                      v-if="answer.is_essay"
+                      class="mb-4 mt-2"
+                      style="display: flex;"
+                    >
+                      <input
+                        id="a"
+                        type="radio"
+                        name="a"
+                        value="a"
+                        style="vertical-align: middle; float: left; margin-top:4.8px; visibility: hidden;"
+                      >
+                      <div style="width:100%; margin-left: 12px;">
+                        <textarea 
+                          v-model="answer.text"
+                          :name="'textarea-' + index + '-' + index_answer"
+                          rows="4"
+                          type="text"
+                          class="form-control"
+                          :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
+                          :disabled="isReview || isShowTest"
+                          @input="onIsEssayChanged(data_input.pages[currentPageIndex].questions[index].answers, answer)"
+                        />
+                        <div 
+                          v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
+                          class="invalid-feedback"
+                        >
+                          Harus diisi!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-if="question.answer_type == 'score'">
+                    <input
+                      v-model="data_input.pages[currentPageIndex].questions[index].answers[0]"
+                      type="radio"
+                      :name="'radio-' + index + '-' + index_answer"
+                      :value="isReview ? answer.id : answer"
+                      style="vertical-align: middle; float: left; margin-top:4.8px;"
+                      :disabled="isReview || isShowTest"
+                    >
+                    <div
+                      v-if="answer.description || answer.text"
+                      style="margin-left: 25px;"
+                    >
+                      <b class="mr-2">[ {{ answer.weight }} ]</b> {{ answer.is_essay ? answer.description : answer.text }}
+                    </div>
+                  </div>
+                  <div
+                    v-if="question.answer_type == 'essay'"
+                    style="margin-top: -12px!important;"
                   >
-                    Harus diisi!
+                    <textarea 
+                      v-model="answer.text"
+                      :name="'textarea-' + index + '-' + index_answer"
+                      rows="4"
+                      type="text"
+                      class="form-control"
+                      :class="{ 'is-invalid': submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer) }"
+                      :disabled="isReview || isShowTest"
+                      @input="onEssayChanged(index, answer)"
+                    />
+                    <div 
+                      v-if="submitted && !answer.text && isEmptyAnswerChecked(data_input.pages[currentPageIndex].questions[index].answers, answer)" 
+                      class="invalid-feedback"
+                    >
+                      Harus diisi!
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          class="row mt-2 ml-4 mr-4 mb-3 text-center"
-          style="padding-left:12px ; padding-right:10.5px ;"
-        >
-          <div class="col-md-3 pt-1 pb-1">
-            <b-button
-              v-if="currentPage > 1"
-              variant="secondary"
-              style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              @click="onBackButtonClick()" 
-            >
-              Sebelumnya
-            </b-button>
-            <b-button
-              v-if="currentPage == 1 && !isReview && !isShowTest"
-              variant="danger"
-              style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              @click="onCancelButtonClick()" 
-            >
-              Batalkan
-            </b-button>
-            <b-button
-              v-if="currentPage == 1 && (isReview || isShowTest)"
-              variant="secondary"
-              style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              @click="onExitButtonClick()" 
-            >
-              Keluar
-            </b-button>
-          </div>
           <div
-            class="col-md-4 pt-1 pb-1"
-            style="display: flex; align-items: center; justify-content: center;"
+            class="row mt-2 ml-4 mr-4 mb-3 text-center"
+            style="padding-left:12px ; padding-right:10.5px ;"
           >
-            <label
-              class="mt-2"
-              style="color: white;"
-            >Halaman {{ currentPage }} dari {{ test.total_page }}</label>
-          </div>
-          <div class="col-md-5 pt-1 pb-1">
-            <b-button
-              v-if="currentPage < test.total_page"
-              variant="light"
-              style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              @click="onNextButtonClick()" 
+            <div class="col-md-3 pt-1 pb-1">
+              <b-button
+                v-if="currentPage > 1"
+                variant="secondary"
+                style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
+                @click="onBackButtonClick()" 
+              >
+                Sebelumnya
+              </b-button>
+              <b-button
+                v-if="currentPage == 1 && !isReview && !isShowTest"
+                variant="danger"
+                style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
+                @click="onCancelButtonClick()" 
+              >
+                Batalkan
+              </b-button>
+              <b-button
+                v-if="currentPage == 1 && (isReview || isShowTest)"
+                variant="secondary"
+                style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
+                @click="onExitButtonClick()" 
+              >
+                Keluar
+              </b-button>
+            </div>
+            <div
+              class="col-md-4 pt-1 pb-1"
+              style="display: flex; align-items: center; justify-content: center;"
             >
-              Berikutnya
-            </b-button>
-            <b-button
-              v-if="currentPage == test.total_page"
-              variant="success"
-              style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
-              :disabled="isReview || isShowTest"
-              @click="onFinishButtonClick()"
-            >
-              Selesai
-            </b-button>
+              <label
+                class="mt-2"
+                style="color: white;"
+              >Halaman {{ currentPage }} dari {{ test.total_page }}</label>
+            </div>
+            <div class="col-md-5 pt-1 pb-1">
+              <b-button
+                v-if="currentPage < test.total_page"
+                variant="light"
+                style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
+                @click="onNextButtonClick()" 
+              >
+                Berikutnya
+              </b-button>
+              <b-button
+                v-if="currentPage == test.total_page"
+                variant="success"
+                style="width:100%; box-shadow: 0 8px 15px rgb(0 0 0 / 0.2);"
+                :disabled="isReview || isShowTest"
+                @click="onFinishButtonClick()"
+              >
+                Selesai
+              </b-button>
+            </div>
           </div>
         </div>
       </div>
