@@ -7,3 +7,18 @@ export function getPatients(params){
 export function getPsychologists(params){
     return httpAxios.get(`/psychologist`, { params });
 }
+
+export function getRegisterToken(){
+    return httpAxios.get(`/tokenreg`);
+}
+
+export function generateToken(){
+    return httpAxios({
+        url: '/tokenreg/create',
+        method: 'POST',
+    })
+}
+
+export function deleteTest(id) {
+    return httpAxios.delete(`/testtype/delete/${id}`);
+}

@@ -24,6 +24,7 @@ class CreateTestTypesTable extends Migration
             $table->char('submitter_id', 26);
             $table->char('updater_id', 26)->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('submitter_id')
                 ->references('id')

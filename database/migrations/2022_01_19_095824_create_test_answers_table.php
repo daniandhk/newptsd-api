@@ -21,6 +21,7 @@ class CreateTestAnswersTable extends Migration
             $table->integer('weight');
             $table->boolean('is_essay');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('test_question_id')
                 ->references('id')

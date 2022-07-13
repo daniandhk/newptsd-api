@@ -217,11 +217,20 @@ function loading() {
                   >
                     <div class="card-body">
                       <div class="text-center">
-                        <img
-                          :src="backendUrl + psychologist.image"
-                          alt
-                          class="avatar-lg mt-2 mb-4 rounded-circle"
-                        >
+                        <div style="position: relative;">
+                          <img
+                            :src="backendUrl + psychologist.image"
+                            alt
+                            class="avatar-lg mt-2 mb-4 rounded-circle"
+                          >
+                          <p
+                            v-if="psychologist.is_dummy"
+                            class="text-truncate mb-0 font-size-13 font-weight-bolder"
+                            style="position: absolute; top: 70%; left: 64%;"
+                          >
+                            dummy
+                          </p>
+                        </div>
                         <div class="media-body">
                           <h5 class="text-truncate">
                             <a
@@ -229,22 +238,15 @@ function loading() {
                             >{{ psychologist.full_name }}</a>
                           </h5>
                           <p class="text-muted">
-                            <i class="mdi mdi-account mr-1" /> {{ psychologist.speciality }}
+                            <i class="mdi mdi-account mr-1" /> {{ psychologist.user.username }}
                           </p>
-                          <hr class="my-3">
                           <p class="text-truncate mb-0 font-size-13">
-                            {{ psychologist.user.username }}
+                            {{ psychologist.speciality }}
                           </p>
                           <div v-if="user.role == 'admin'">
+                            <hr class="my-3">
                             <p class="text-truncate mb-0 font-size-13">
                               {{ psychologist.user.email }}
-                            </p>
-                            <p
-                              v-if="psychologist.is_dummy"
-                              class="text-truncate mb-0 font-size-13"
-                              style="font-style: italic;"
-                            >
-                              dummy
                             </p>
                           </div>
                         </div>
@@ -347,7 +349,7 @@ function loading() {
                       class="mt-3 mb-2"
                       style="margin-left: -16px; margin-right: -16px;"
                     >
-                    <b>Jadwal Chat</b>
+                    <b style="color:#005C9A;">Jadwal Chat</b>
                     <hr
                       class="mt-2 mb-3"
                       style="margin-left: -16px; margin-right: -16px;"

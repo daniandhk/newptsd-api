@@ -19,6 +19,7 @@ class CreateTestQuestionsTable extends Migration
             $table->string('text');
             $table->string('answer_type');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('test_page_id')
                 ->references('id')

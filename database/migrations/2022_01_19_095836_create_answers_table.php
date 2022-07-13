@@ -20,6 +20,7 @@ class CreateAnswersTable extends Migration
             $table->char('test_question_id', 26);
             $table->text('text');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('test_id')
                 ->references('id')

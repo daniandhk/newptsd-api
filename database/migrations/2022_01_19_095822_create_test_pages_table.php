@@ -20,6 +20,7 @@ class CreateTestPagesTable extends Migration
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('test_type_id')
                 ->references('id')

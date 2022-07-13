@@ -24,6 +24,7 @@ class CreateTestsTable extends Migration
             $table->boolean('is_finished')->default(0);
             $table->integer('index');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('patient_id')
                 ->references('id')

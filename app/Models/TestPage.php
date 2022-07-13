@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class TestPage extends BaseModel
 {
+    use SoftDeletes, CascadeSoftDeletes;
     protected $table = 'test_pages';
+
+    protected $cascadeDeletes = ['test_questions'];
 
     protected $fillable = [
         'test_type_id',

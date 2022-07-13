@@ -109,6 +109,40 @@ export default {
           params: { test_type: data.type }
       });
     },
+
+    onDeleteButtonClick(data){
+      Swal.fire({
+            title: "PERINGATAN!",
+            text: "Tes dengan semua hasil tes pasien akan terhapus!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#34c38f",
+            cancelButtonColor: "#f46a6a",
+            confirmButtonText: "Ya, hapus!"
+        }).then(result => {
+            if (result.value) {
+              this.deleteTest(data);
+            }
+        });
+    },
+
+    deleteTest(data){
+      return (
+        api.deleteTest(data.id)
+          .then(response => {
+              Swal.fire("Berhasil dihapus!", "Tes telah terhapus.", "success");
+              this.refreshData();
+          })
+          .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan!',
+                footer: error.response ? error.response : error
+            })
+          })
+      );
+    }
   },
 }
 
@@ -230,6 +264,16 @@ function loading() {
                   @click="onEditButtonClick(data.item)" 
                 >
                   Perbarui
+                </b-button>
+                <b-button
+                  v-if="user.role == 'admin'"
+                  variant="outline-danger"
+                  size="sm"
+                  class="m-1"
+                  style="min-width: 110px;"
+                  @click="onDeleteButtonClick(data.item)" 
+                >
+                  Hapus
                 </b-button>
               </template>
             </b-table>

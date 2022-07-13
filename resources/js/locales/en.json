@@ -24,7 +24,9 @@
   "adminitems": {
     "menu": {
       "list-patients": "Pasien Terdaftar",
-      "list-psychologists": "Psikolog Terdaftar"
+      "list-psychologists": "Psikolog Terdaftar",
+      "register": "Pendaftaran",
+      "register-token": "Registrasi Psikolog"
     }
   },
   "settingsitems": {

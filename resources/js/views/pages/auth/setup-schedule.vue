@@ -273,7 +273,12 @@ function loading() {
                     class="card-title-desc"
                     style="font-size: 14px; margin: 0 !important;"
                   >
-                    - <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat dan saat Anda membuka menu Chat,<br>
+                    - Status <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat<br>
+                  </p>
+                  <p class="mb-0 ml-2">
+                    dan saat Anda membuka menu Chat,
+                  </p>
+                  <p>
                     - Jadwal Chat juga digunakan untuk informasi saat Anda <b>Offline</b>,<br>
                     - Jadwal Chat dapat diubah kapan saja di <b>Pengaturan Akun</b>.<br>
                   </p>

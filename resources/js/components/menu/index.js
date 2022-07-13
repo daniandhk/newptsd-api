@@ -126,6 +126,17 @@ export const adminItems = [
         icon: 'mdi mdi-file-plus-outline',
         link: 'add-test'
     },
+    {
+        id: 6,
+        label: "adminitems.menu.register",
+        isTitle: true
+    },
+    {
+        id: 7,
+        label: 'adminitems.menu.register-token',
+        icon: 'mdi mdi-web',
+        link: 'register-token'
+    },
 ]
 
 export const adminSettings = [

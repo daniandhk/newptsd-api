@@ -4,10 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 class Test extends BaseModel
 {
+    use SoftDeletes, CascadeSoftDeletes;
     protected $table = 'tests';
+
+    protected $cascadeDeletes = ['answers'];
 
     protected $fillable = [
         'patient_id',

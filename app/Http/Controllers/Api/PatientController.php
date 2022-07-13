@@ -21,7 +21,7 @@ class PatientController extends BaseController
 {
     public function index(Request $request)
     {
-        $patients = Patient::with('user');
+        $patients = Patient::with(['user', 'guardian']);
         if($request->has('search')) {
             $search = $request->get('search');
             $patients = $patients->where('first_name', 'ILIKE', '%'.$search.'%')->orWhere('last_name', 'ILIKE', '%'.$search.'%');
