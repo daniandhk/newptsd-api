@@ -61,6 +61,7 @@ export default {
 
       user: store.getters.getLoggedUser,
       backendUrl: process.env.MIX_STORAGE_URL,
+      test_type: this.$route.params.test_type,
 
       isLoading: false,
       submitted: false,
@@ -68,6 +69,7 @@ export default {
       isUnsavedData: false,
       isLoadedData: false,
       isInputFailed: false,
+      isEditingData: false,
 
       dataInput: {
         submitter_id: store.getters.getLoggedUser.id,
@@ -172,25 +174,181 @@ export default {
   computed: {
     //
   },
+  watch: {
+    $route: async function() {
+      window.location.reload();
+    }
+  },
   mounted: async function () {
     await this.refreshData();
   },
   methods: {
+    getRequestParams(test_type) {
+      let params = {};
+
+      if (test_type) {
+        params["test_type"] = test_type;
+      }
+
+      return params;
+    },
     async getDashboard(){
-    //   return (
-    //     api.getTestTypes()
-    //       .then(response => {
-    //           this.dataTests = response.data.data;
-    //       })
-    //       .catch(error => {
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Oops...',
-    //             text: 'Terjadi kesalahan!',
-    //             footer: error.response ? error.response : error
-    //         })
-    //       })
-    //   );
+      if(this.test_type){
+        const params = this.getRequestParams(
+          this.test_type
+        );
+        return (
+          api.getTestTypeQuestions(params)
+            .then(response => {
+                this.dataInput = response.data.data;
+                this.setLocal(response.data.data);
+                this.dataInput.updater_id = this.user.id;
+                this.isLoadedData = true;
+
+                this.title = this.test_type;
+                this.items[2].text = this.test_type;
+                this.isEditingData = true;
+            })
+            .catch(error => {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Tipe tes tidak valid!'
+              })
+              this.$router.push({
+                  name: 'list-tests'
+              });
+            })
+        );
+      }
+      else{
+        this.resetData();
+      }
+    },
+
+    setLocal(data){
+
+      this.dataPageLocal = [];
+      data.test_pages.forEach((page, index_page, array_page) => {
+        let local_page = {
+          questions: []
+        };
+        page.test_questions.forEach((question, index_question, array_question) => {
+          let type = null;
+          switch(question.answer_type) {
+            case "mc_one":
+              type = this.dropdownAnswerType[0]
+              break;
+            case "mc_multi":
+              type = this.dropdownAnswerType[1]
+              break;
+            case "score":
+              type = this.dropdownAnswerType[2]
+              break;
+            case "essay":
+              type = this.dropdownAnswerType[3]
+              break;
+            default:
+              type = this.dropdownAnswerType[2]
+              break;
+          }
+          let local_question = {
+            answertype_data: type,
+            score_data: (question.answer_type == 'score' ? question.test_answers[0].weight : 0),
+            test_answers_bak: []
+          }
+
+          question.test_answers.forEach((answer, index_answer, array_answer) => {
+            if(answer.is_essay){
+              answer.text = 'essay';
+            }
+            let local_answer = {
+              text: answer.text,
+              description: answer.description,
+              weight: answer.weight,
+              is_essay: answer.is_essay
+            }
+
+            local_question.test_answers_bak.push(local_answer);
+          })
+
+          local_page.questions.push(local_question);
+        })
+
+        this.dataPageLocal.push(local_page);
+      })
+    },
+
+    resetData(){
+      this.title = "Tambah Tes";
+      this.items[2].text = "Tambah Tes";
+      this.isEditingData = false;
+      this.submitted = false;
+      this.inputSuccess = false;
+      this.isUnsavedData = false;
+      this.isLoadedData = false;
+      this.isInputFailed = false;
+      this.isEditingData = false;
+
+      this.dataInput = {
+        submitter_id: store.getters.getLoggedUser.id,
+        type: "",
+        name: "",
+        description: "",
+        delay_days: 1,
+        test_pages: [
+          {
+            title: "",
+            description: "",
+            number: 1,
+            test_questions: [
+              {
+                text: "",
+                answer_type: "score",
+                test_answers: [
+                  {
+                    text: "",
+                    description: "",
+                    weight: 0,
+                    is_essay: false,
+                  },
+                  {
+                    text: "",
+                    description: "",
+                    weight: 0,
+                    is_essay: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ]
+      };
+
+      this.dataPageLocal = [
+        {
+          questions: [
+            {
+              answertype_data: {name: "Pilihan Skor/Poin", type: "score"},
+              score_data: 0,
+              test_answers_bak: [
+                {
+                  text: "",
+                  description: "",
+                  weight: 0,
+                  is_essay: false,
+                },
+                {
+                  text: "",
+                  description: "",
+                  weight: 0,
+                  is_essay: false,
+                },
+              ]
+            }
+          ]
+        }
+      ]
     },
 
     async refreshData(){
@@ -218,7 +376,7 @@ export default {
       }
       Swal.fire({
         title: "Simpan tes?",
-        text: "Form akan dikosongkan dan data akan disimpan.",
+        text: "Data akan disimpan.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#005C9A",
@@ -227,7 +385,12 @@ export default {
         cancelButtonText: "Batalkan"
       }).then(result => {
         if (result.value) {
-          this.createTest();
+          if(!this.isEditingData){
+            this.createTest();
+          }
+          else{
+            this.updateTest();
+          }
         }
       });
     },
@@ -238,15 +401,19 @@ export default {
         api.createTest(this.dataInput)
           .then(response => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            this.resetForm();
             this.inputSuccess = true;
             this.isUnsavedData = false;
-            this.isInputFailed = false;
             this.isLoadedData = false;
+            this.isInputFailed = false;
             this.submitted = false;
+            
+            this.title = this.dataInput.type;
+            this.items[2].text = this.dataInput.type;
+            this.isEditingData = true;
             loading();
           })
           .catch(error => {
+            this.isInputFailed = true;
             loading();
             //pop up
             Swal.fire({
@@ -259,14 +426,39 @@ export default {
       );
     },
 
-    resetForm(){
-
+    updateTest(){
+      loading();
+      return (
+        api.updateTest(this.dataInput, this.dataInput.id)
+          .then(response => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.inputSuccess = true;
+            this.isUnsavedData = false;
+            this.isLoadedData = false;
+            this.isInputFailed = false;
+            this.submitted = false;
+            loading();
+          })
+          .catch(error => {
+            console.log(error)
+            this.isInputFailed = true;
+            loading();
+            //pop up
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Terjadi kesalahan!',
+              footer: error.response.data.message
+            })
+          })
+      );
     },
 
     inputedData(){
       this.isUnsavedData = true;
-      this.inputSuccess = false;
       this.isLoadedData = false;
+      this.inputSuccess = false;
+      this.isInputFailed = false;
     },
 
     setAnswerType(data, index_page, index_question){
@@ -531,19 +723,24 @@ function loading() {
         style="box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);"
       >
         <div class="card-body">
-          <p
-            style="color: black; font-size: 14px; margin-bottom: 0 !important;"
+          <div
+            v-if="!isEditingData"
+            class="mb-4"
           >
-            Terdapat dua cara untuk menambahkan Tes Baru, yaitu :
-          </p>
-          <p class="mb-0">
-            - Input seluruh data dibawah ini, <b>atau</b>
-          </p>
-          <p class="mb-0">
-            - Kirimkan file tes melalui <b>Hubungi Admin</b> untuk diproses oleh Admin.
-          </p>
+            <p
+              style="color: black; font-size: 14px; margin-bottom: 0 !important;"
+            >
+              Terdapat dua cara untuk menambahkan Tes Baru, yaitu :
+            </p>
+            <p class="mb-0">
+              - Input seluruh data dibawah ini, <b>atau</b>
+            </p>
+            <p class="mb-0">
+              - Kirimkan file tes melalui <b>Hubungi Admin</b> untuk diproses oleh Admin.
+            </p>
+          </div>
           <p
-            class="mt-4 mb-1"
+            class="mb-1"
             style="color: red; font-size: 12px;"
           >
             PENTING – HARAP DIBACA DENGAN TELITI
@@ -551,13 +748,13 @@ function loading() {
           <p
             style="color: black; font-size: 14px; margin-bottom: 0 !important;"
           >
-            Deskripsi input Tes Baru :
+            Deskripsi input / edit Tes :
           </p>
           <p
             class="card-title-desc"
             style="font-size: 14px; margin: 0 !important;"
           >
-            - <b>KODE TES</b> hanya boleh terdiri dari huruf (Aa-Zz), angka (0-9), strip (-), underscore (_), dan <b>TANPA SPASI</b>,<br>
+            - <b>KODE TES</b> harus unik dan hanya boleh terdiri dari huruf (Aa-Zz), angka (0-9), strip (-), underscore (_), dan <b>TANPA SPASI</b>,<br>
             - <b>JEDA TES</b> adalah jeda pasien dalam melakukan kembali tes yang sama,<br>
             - Pastikan setiap data yang diisi telah sesuai dan benar!
           </p>
@@ -580,6 +777,13 @@ function loading() {
           dismissible
         >
           Ada data yang kosong atau ada kesalahan format! Harap periksa kembali.
+        </b-alert>
+        <b-alert
+          v-model="isLoadedData"
+          variant="success"
+          dismissible
+        >
+          Data berhasil dimuat!
         </b-alert>
         <b-alert
           v-model="isUnsavedData"
@@ -768,7 +972,7 @@ function loading() {
                     id="description"
                     v-model="test_page.description"
                     placeholder="Isi deskripsi halaman disini (opsional)"
-                    rows="1"
+                    rows="3"
                     name="description"
                     type="text"
                     class="form-control"
@@ -832,7 +1036,7 @@ function loading() {
                               v-model="test_question.text"
                               placeholder="Masukkan pertanyaan disini"
                               name="question"
-                              rows="1"
+                              rows="2"
                               type="text"
                               class="form-control"
                               :class="{ 'is-invalid': submitted && v_question.text.$error }"
@@ -962,7 +1166,7 @@ function loading() {
                                           v-model="test_answer.text"
                                           placeholder="Masukkan opsi disini"
                                           name="opsi"
-                                          rows="1"
+                                          rows="2"
                                           type="text"
                                           class="form-control"
                                           :class="{ 'is-invalid': submitted && v_answer.text.$error }"
@@ -983,7 +1187,7 @@ function loading() {
                                           v-model="test_answer.description"
                                           placeholder="Isi deskripsi pengisian disini (opsional)"
                                           name="description"
-                                          rows="1"
+                                          rows="2"
                                           type="text"
                                           class="form-control"
                                           @input="inputedData"
@@ -1100,6 +1304,7 @@ function loading() {
             style="display: flex; align-items: center; justify-content: left;"
           >
             <b-button
+              v-if="!isEditingData"
               variant="success"
               size="md"
               class="m-1"
@@ -1107,6 +1312,16 @@ function loading() {
               @click="onSaveButtonClick()" 
             >
               Simpan
+            </b-button>
+            <b-button
+              v-if="isEditingData"
+              variant="warning"
+              size="md"
+              class="m-1"
+              style="min-width: 110px;"
+              @click="onSaveButtonClick()" 
+            >
+              Perbarui
             </b-button>
           </div>
         </div>

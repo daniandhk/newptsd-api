@@ -90,3 +90,11 @@ export function createTest(data){
         data: data
     })
 }
+
+export function updateTest(data, test_id){
+    return httpAxios({
+        url: `/test/updateTest/${test_id}`,
+        method: 'PUT',
+        data: data
+    })
+}

@@ -46,6 +46,7 @@ Route::group([
     Route::put('/video/{test_id}', 'TestController@updateVideoCall');
     Route::put('/finish/{test_id}', 'TestController@finishTest');
     Route::post('/createTest', 'TestController@createTest');
+    Route::put('/updateTest/{test_id}', 'TestController@updateTest');
     Route::post('/storePatientAnswers', 'TestController@storePatientAnswers');
 });
 

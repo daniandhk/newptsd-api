@@ -95,7 +95,14 @@ export default {
           name: 'test-show', 
           params: { test_type: data.type }
       });
-    }
+    },
+
+    onEditButtonClick(data){
+      this.$router.push({
+          name: 'edit-test', 
+          params: { test_type: data.type }
+      });
+    },
   },
 }
 
@@ -194,7 +201,7 @@ function loading() {
                     <b class="font-size-14">{{ data.item.updater.username }}</b>
                   </p>
                   <p class="mb-0 font-size-12">
-                    pada {{ dateFormatted(data.item.created_at) }}
+                    pada {{ dateFormatted(data.item.updated_at) }}
                   </p>
                 </div>
                 <div v-if="!data.item.updater">

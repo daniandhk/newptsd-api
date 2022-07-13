@@ -30,8 +30,13 @@ class TestTypeController extends BaseController
                 'test_pages.test_questions.test_answers',
             );
             $test_type = $request->get('test_type');
-            $type = $types->where('type', $test_type)->first();
-            return $this->respond($type);
+            $type = $types->where('type', 'ilike', $test_type)->first();
+            if($type){
+                return $this->respond($type);
+            }
+            else{
+                return $this->errorNotFound('invalid TestType');
+            }
         }
         else{
             return $this->errorNotFound('invalid TestType');

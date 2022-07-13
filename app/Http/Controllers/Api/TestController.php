@@ -31,7 +31,7 @@ class TestController extends BaseController
         }
 
         if($request->test_type) {
-            $test_type = TestType::where('type', $request->test_type)->first();
+            $test_type = TestType::where('type', 'ilike', $request->test_type)->first();
             if ($test_type) {
                 $test_taken = $test_taken->where('test_type_id', $test_type->id);
             } 
@@ -58,13 +58,13 @@ class TestController extends BaseController
         if($validation->fails()) {
             return $this->validationError();
         }
-        $test_type = TestType::where('type', $request->type)->first();
+        $test_type = TestType::where('type', 'ilike', $request->type)->first();
         if($test_type){
-            return $this->errorForbidden('code test already used');
+            return $this->errorForbidden('Kode tes sudah terpakai!');
         }
 
         $test_type = TestType::create([
-            'type'  => $request->type,
+            'type'  => strtolower($request->type),
             'name' => $request->name,
             'delay_days' => $request->delay_days,
             'description' => $request->description,
@@ -97,6 +97,86 @@ class TestController extends BaseController
                         'weight' => $ans['weight'],
                         'is_essay' => $ans['is_essay'],
                     ]);
+    
+                    if ($ans['weight'] > $max_score){
+                        $max_score = $ans['weight'];
+                    }
+                }
+    
+                $total_score += $max_score;
+            }
+
+         }
+
+         $test_type = TestType::find($test_type['id']);
+         $test_type->total_score = $total_score;
+         $test_type->save();
+
+         return $this->respond($test_type);
+    }
+
+    public function updateTest(Request $request, $test_id)
+    {
+        $validation = Validator::make($request->all(), [
+            'type'  => 'required',
+            'name' => 'required',
+            'delay_days' => 'required',
+            'description' => 'required',
+            'test_pages' => 'required',
+            'updater_id' => 'required',
+        ]);
+        if($validation->fails()) {
+            return $this->validationError();
+        }
+        $test_type = TestType::find($test_id);
+        if(strtolower($request->type) != strtolower($test_type->type)){
+            $find_type = TestType::where('type', 'ilike', $request->type)->first();
+            if($find_type){
+                return $this->errorForbidden('Kode tes sudah terpakai!');
+            }
+        }
+
+        $test_type->fill([
+            'type'  => strtolower($request->type),
+            'name' => $request->name,
+            'delay_days' => $request->delay_days,
+            'description' => $request->description,
+            'total_page' => count($request->test_pages),
+            'updater_id' => $request->updater_id,
+         ]);
+         $test_type->save();
+
+         $total_score = 0;
+         foreach($request->test_pages as $key1=>$data) {
+            $test_page = TestPage::find($data['id']);
+            $test_page->fill([
+                'test_type_id' => $test_type['id'],
+                'number' => $data['number'],
+                'title' => $data['title'],
+                'description' => $data['description'],
+            ]);
+            $test_page->save();
+
+            foreach($data['test_questions'] as $key2=>$q) {
+                $qstion = TestQuestion::find($q['id']);
+                $qstion->fill([
+                    'test_page_id' => $test_page['id'],
+                    'text' => $q['text'],
+                    'answer_type' => $q['answer_type'],
+                ]);
+                $qstion->save();
+    
+                $max_score = 0;
+                foreach($q['test_answers'] as $key3=>$ans) {
+                    $answer = TestAnswer::find($ans['id']);
+                    $answer->fill([
+                        'test_question_id' => $qstion['id'],
+                        'text' => $ans['is_essay'] ? "" : $ans['text'],
+                        'description' => $ans['is_essay'] ? ($ans['description'] ? $ans['description'] : "Lainnya, harap dijelaskan") : null,
+                        'weight' => $ans['weight'],
+                        'is_essay' => $ans['is_essay'],
+                    ]);
+                    $answer->save();
     
                     if ($ans['weight'] > $max_score){
                         $max_score = $ans['weight'];
