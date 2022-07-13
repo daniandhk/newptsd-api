@@ -37,7 +37,7 @@ export function getMainDashboard(psychologist_id, params){
 }
 
 export function getPatientList(psychologist_id, params){
-    return httpAxios.get(`/psychologist/patients//${psychologist_id}`, { params });
+    return httpAxios.get(`/psychologist/patients/${psychologist_id}`, { params });
 }
 
 export function storeNoteQuestion(data){

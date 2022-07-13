@@ -1,7 +1,7 @@
 <script>
 import simplebar from 'simplebar-vue'
 
-import { menuItems } from './menu'
+import { menuItems, adminItems, patientSettings, psychologistSettings, adminSettings } from './menu'
 import store from '../store'
 
 export default {
@@ -12,12 +12,16 @@ export default {
     isCondensed: {
       type: Boolean,
       default: false
-    }
+    },
+    isSettings: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
       menuItems: menuItems,
-      getRole: store.getters.getRoleUser,
+      user: store.getters.getLoggedUser,
     }
   },
   computed: {
@@ -31,25 +35,31 @@ export default {
     },
   },
   beforeMount: function () {
-    // switch(this.getRole) {
-    //   case "staff":
-    //     this.menuItems = staffItems
-    //     break;
-    //   case "aslab":
-    //     this.menuItems = aslabItems
-    //     break;
-    //   case "asprak":
-    //     this.menuItems = asprakItems
-    //     break;
-    //   case "laboran":
-    //     this.menuItems = laboranItems
-    //     break;
-    //   case "student":
-    //     this.menuItems = praktikanItems
-    //     break;
-    //   default:
-    //     this.menuItems = menuItems
-    // }
+    switch(this.user.role) {
+      case "admin":
+        if(this.isSettings){
+          this.menuItems = adminSettings
+        }
+        else{
+          this.menuItems = adminItems
+        }
+        break;
+      case "patient":
+        if(this.isSettings){
+          this.menuItems = patientSettings
+        }
+        break;
+      case "psychologist":
+        if(this.isSettings){
+          this.menuItems = psychologistSettings
+        }
+        else{
+          this.menuItems = menuItems
+        }
+        break;
+      default:
+        this.menuItems = menuItems
+    }
   },
   mounted: function () {
     // eslint-disable-next-line no-unused-vars

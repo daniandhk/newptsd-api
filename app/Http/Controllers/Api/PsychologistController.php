@@ -15,9 +15,18 @@ use stdClass;
 
 class PsychologistController extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
-        $psychologists = Psychologist::all();
+        $psychologists = Psychologist::with(['user', 'chat_schedules']);
+        if($request->has('search')) {
+            $search = $request->get('search');
+            $psychologists = $psychologists->where('full_name', 'ILIKE', '%'.$search.'%');
+        }
+        if($request->has('is_dummy')) {
+            $is_dummy = $request->get('is_dummy');
+            $psychologists = $psychologists->where('is_dummy', $is_dummy);
+        }
+        $psychologists = $psychologists->get();
         return $this->respond($psychologists);
     }
 
@@ -214,7 +223,7 @@ class PsychologistController extends BaseController
         if(!$patient){
             return $this->errorNotFound('invalid user id');
         }
-        $test_types = TestType::FilteredTest($patient_id)->get();
+        $test_types = TestType::FilteredTest($patient_id)->orderBy('created_at', 'asc')->get();
 
         return $this->respond($test_types);
     }

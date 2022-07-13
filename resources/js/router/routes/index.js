@@ -2,6 +2,7 @@ import etcRoutes from "./etc.js";
 import authRoutes from "./auth.js";
 import patientRoutes from "./patient.js";
 import psychologistRoutes from "./psychologist.js";
+import adminRoutes from "./admin.js";
 
 const baseRoutes = [
     {
@@ -19,5 +20,5 @@ const baseRoutes = [
     },
 ]
 
-const routes = baseRoutes.concat(etcRoutes, authRoutes, patientRoutes, psychologistRoutes);
+const routes = baseRoutes.concat(etcRoutes, authRoutes, patientRoutes, psychologistRoutes, adminRoutes);
 export default routes;

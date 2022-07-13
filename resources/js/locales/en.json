@@ -20,5 +20,19 @@
       "list": "Psikolog Terdaftar",
       "admin": "Hubungi Admin"
     }
+  },
+  "adminitems": {
+    "menu": {
+      "list-patients": "Pasien Terdaftar",
+      "list-psychologists": "Psikolog Terdaftar"
+    }
+  },
+  "settingsitems": {
+    "menu": {
+      "change-password": "Ubah Password",
+      "edit-profile": "Ubah Profil",
+      "chat-schedule": "Jadwal Chat",
+      "guardian": "Informasi Wali"
+    }
   }
 }

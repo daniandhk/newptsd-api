@@ -19,9 +19,18 @@ use Intervention\Image\Facades\Image;
 
 class PatientController extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Patient::all();
+        $patients = Patient::with('user');
+        if($request->has('search')) {
+            $search = $request->get('search');
+            $patients = $patients->where('first_name', 'ILIKE', '%'.$search.'%')->orWhere('last_name', 'ILIKE', '%'.$search.'%');
+        }
+        if($request->has('is_dummy')) {
+            $is_dummy = $request->get('is_dummy');
+            $patients = $patients->where('is_dummy', $is_dummy);
+        }
+        $patients = $patients->get();
         return $this->respond($patients);
     }
 
@@ -122,7 +131,7 @@ class PatientController extends BaseController
         $data = new stdClass();
 
         //tests
-        $data->test_types = TestType::FilteredTest($patient_id)->get();
+        $data->test_types = TestType::FilteredTest($patient_id)->orderBy('created_at', 'asc')->get();
 
         //chat and consult
         $relation = $patient->relations->where('is_active', true)->first();

@@ -288,7 +288,7 @@ function loading() {
           <div
             v-for="(test_type, index) in dashboard.test_types"
             :key="index"
-            class="mb-4"
+            class="mb-5"
           >
             <div
               :id="'card-' + index.toString()"

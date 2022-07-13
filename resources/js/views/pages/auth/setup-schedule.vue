@@ -273,9 +273,9 @@ function loading() {
                     class="card-title-desc"
                     style="font-size: 14px; margin: 0 !important;"
                   >
-                    - <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat dan saat Anda membuka web,<br>
+                    - <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat dan saat Anda membuka menu Chat,<br>
                     - Jadwal Chat juga digunakan untuk informasi saat Anda <b>Offline</b>,<br>
-                    - Jadwal Chat dapat diubah kapan saja.<br>
+                    - Jadwal Chat dapat diubah kapan saja di <b>Pengaturan Akun</b>.<br>
                   </p>
                 </div>
 

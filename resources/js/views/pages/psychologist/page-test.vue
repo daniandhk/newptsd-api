@@ -246,7 +246,7 @@ function loading() {
           <div
             v-for="(test_type, index) in allTests"
             :key="index"
-            class="mt-3"
+            :class="index == allTests.length-1 ? 'mt-3 mb-0' : 'mt-3 pb-3'"
           >
             <div
               :id="'card-' + index"

@@ -57,7 +57,7 @@ export default {
         { key: "consult_index", sortable: false, label: "Konsultasi Ke", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "videocall_date", sortable: false, label: "Jadwal", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "videocall_link", sortable: false, label: "Tautan", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "total_note_questions", label: "Edit Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
+        { key: "total_note_questions", label: "Ubah Catatan Psikolog", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "status", label: "Status", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "action", label: "Aksi", sortable: false, thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
       ],
@@ -685,7 +685,7 @@ export default {
 
     getTitle(){
       if(this.isConsultUpdate && !this.isConsultFinish){
-        return "Edit Konsultasi"
+        return "Ubah Konsultasi"
       }
       else if(!this.isConsultUpdate && !this.isConsultFinish){
         return "Tambah Konsultasi"
@@ -1063,7 +1063,7 @@ function loading() {
                             style="min-width: 110px;"
                             @click="onEditConsultButtonClick(data.item)" 
                           >
-                            Edit
+                            Perbarui
                           </b-button>
                         </div>
                         <div v-if="data.item.is_finished">

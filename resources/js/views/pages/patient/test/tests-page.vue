@@ -340,7 +340,9 @@ export default {
     },
 
     async setData(){
-      this.data_input.patient_id = this.user.profile.id
+      if(this.user.role != 'admin'){
+        this.data_input.patient_id = this.user.profile.id
+      }
       this.data_input.test_type_id = this.test.id
       this.questionData = this.test.test_pages[0].test_questions
       this.pageData = this.test.test_pages[0]
@@ -445,6 +447,9 @@ export default {
         else{
           this.$router.push({name: 'home'});
         }
+      }
+      else if(this.user.role == 'admin'){
+        this.$router.push({name: 'list-tests'});
       }
     },
 

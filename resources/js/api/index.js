@@ -3,6 +3,7 @@ import httpAxios from '../httpAxios.js';
 
 export * from "./patient.js";
 export * from "./psychologist.js";
+export * from "./admin.js";
 
 //auth
 export function login(data){

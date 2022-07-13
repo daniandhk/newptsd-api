@@ -20,7 +20,7 @@ export default {
       title: 'Tipe Tes',
       items: [
         {
-          text: 'Psikolog'
+          text: 'User'
         },
         {
           text: 'Tipe Tes',
@@ -53,6 +53,12 @@ export default {
     //
   },
   mounted: async function () {
+    if(this.user.role == 'admin'){
+      this.items[0].text = 'Admin'
+    }
+    if(this.user.role == 'psychologist'){
+      this.items[0].text = 'Psikolog'
+    }
     await this.refreshData();
   },
   methods: {
@@ -223,7 +229,7 @@ function loading() {
                   style="min-width: 110px;"
                   @click="onEditButtonClick(data.item)" 
                 >
-                  Edit
+                  Perbarui
                 </b-button>
               </template>
             </b-table>

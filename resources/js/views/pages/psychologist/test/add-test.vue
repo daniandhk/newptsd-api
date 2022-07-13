@@ -47,7 +47,7 @@ export default {
       title: 'Tambah Tes',
       items: [
         {
-          text: 'Psikolog'
+          text: 'User'
         },
         {
           text: 'Tipe Tes',
@@ -180,6 +180,12 @@ export default {
     }
   },
   mounted: async function () {
+    if(this.user.role == 'admin'){
+      this.items[0].text = 'Admin'
+    }
+    if(this.user.role == 'psychologist'){
+      this.items[0].text = 'Psikolog'
+    }
     await this.refreshData();
   },
   methods: {
@@ -437,6 +443,10 @@ export default {
             this.isLoadedData = false;
             this.isInputFailed = false;
             this.submitted = false;
+
+            this.title = this.dataInput.type;
+            this.items[2].text = this.dataInput.type;
+            this.isEditingData = true;
             loading();
           })
           .catch(error => {

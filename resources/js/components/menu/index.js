@@ -38,13 +38,101 @@ export const menuItems = [
     {
         id: 7,
         label: 'menuitems.help.list',
-        icon: 'mdi mdi-account-box-multiple-outline',
+        icon: 'mdi mdi-account-tie',
         link: 'home'
     },
     {
         id: 8,
         label: 'menuitems.help.admin',
-        icon: 'mdi mdi-account-cog-outline',
+        icon: 'ri-customer-service-2-line',
         link: 'mail-admin'
+    },
+]
+
+export const psychologistSettings = [
+    {
+        id: 3,
+        label: "menuitems.test.text",
+        isTitle: true
+    },
+    {
+        id: 1,
+        label: 'adminitems.menu.edit-profile',
+        icon: 'mdi mdi-account-cog-outline',
+        link: 'home'
+    },
+    {
+        id: 2,
+        label: 'settingsitems.menu.chat-schedule',
+        icon: 'ri-file-ppt-line',
+        link: 'home'
+    },
+    {
+        id: 3,
+        label: 'settingsitems.menu.change-password',
+        icon: 'ri-settings-3-fill',
+        link: 'home'
+    },
+]
+
+export const patientSettings = [
+    {
+        id: 1,
+        label: 'adminitems.menu.edit-profile',
+        icon: 'mdi mdi-account-cog-outline',
+        link: 'home'
+    },
+    {
+        id: 2,
+        label: 'settingsitems.menu.guardian',
+        icon: 'ri-parent-line',
+        link: 'home'
+    },
+    {
+        id: 3,
+        label: 'settingsitems.menu.change-password',
+        icon: 'ri-settings-3-fill',
+        link: 'home'
+    },
+]
+
+export const adminItems = [
+    {
+        id: 1,
+        label: 'adminitems.menu.list-patients',
+        icon: 'mdi mdi-account-group',
+        link: 'home'
+    },
+    {
+        id: 2,
+        label: 'adminitems.menu.list-psychologists',
+        icon: 'mdi mdi-account-tie',
+        link: 'list-psychologists'
+    },
+    {
+        id: 3,
+        label: "menuitems.test.text",
+        isTitle: true
+    },
+    {
+        id: 4,
+        label: 'menuitems.test.list',
+        icon: 'mdi mdi-file-find-outline',
+        link: 'list-tests'
+    },
+    {
+        id: 5,
+        label: 'menuitems.test.add',
+        icon: 'mdi mdi-file-plus-outline',
+        link: 'add-test'
+    },
+]
+
+export const adminSettings = [
+    {
+        id: 1,
+        label: 'settingsitems.menu.change-password',
+        icon: 'ri-settings-3-fill',
+        link: 'home'
     },
 ]

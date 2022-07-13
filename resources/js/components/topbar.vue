@@ -339,7 +339,7 @@ export default {
             {{ user.email }}
           </a> -->
           <a
-            v-if="user.profile"
+            v-if="user.profile || user.role == 'admin'"
             class="dropdown-item d-block"
             href="/settings/change-password"
             style="display: flex; align-items: center; justify-content: left;"
