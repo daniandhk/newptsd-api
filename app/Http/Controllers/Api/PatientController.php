@@ -105,7 +105,7 @@ class PatientController extends BaseController
 
             $patient->fill($request->all());
             $patient->save();
-            return $this->respond($patient);
+            $user = User::whereRelation('patient', 'id', $id)->first();
         } else {
             return $this->errorNotFound('invalid patient id');
         }

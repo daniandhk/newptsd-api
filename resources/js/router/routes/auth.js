@@ -98,12 +98,12 @@ export default [
             },
         },
     },
-    // {
-    //     path: '/settings/change-password',      
-    //     name: 'settings',
-    //     meta: {
-    //         authRequired: true,
-    //     },
-    //     component: () => import('../../views/pages/pengaturan/change-password')
-    // },
+    {
+        path: '/settings/change-password',      
+        name: 'change-password',
+        meta: {
+            authRequired: true,
+        },
+        component: () => import('../../views/pages/settings/change-password')
+    },
 ]

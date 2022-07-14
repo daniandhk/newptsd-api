@@ -1,5 +1,13 @@
 import httpAxios from '../httpAxios.js';
 
+export function updatePsychologist(data, id){
+    return httpAxios({
+        url: `/psychologist/update/${id}`,
+        method: 'PUT',
+        data: data
+    })
+}
+
 export function inputProfilePsychologist(data){
     return httpAxios({
         url: '/psychologist/create',

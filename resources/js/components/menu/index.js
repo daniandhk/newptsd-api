@@ -50,49 +50,44 @@ export const menuItems = [
 ]
 
 export const psychologistSettings = [
-    {
-        id: 3,
-        label: "menuitems.test.text",
-        isTitle: true
-    },
-    {
-        id: 1,
-        label: 'adminitems.menu.edit-profile',
-        icon: 'mdi mdi-account-cog-outline',
-        link: 'home'
-    },
-    {
-        id: 2,
-        label: 'settingsitems.menu.chat-schedule',
-        icon: 'ri-file-ppt-line',
-        link: 'home'
-    },
+    // {
+    //     id: 1,
+    //     label: 'settingsitems.menu.edit-profile',
+    //     icon: 'mdi mdi-account-cog-outline',
+    //     link: 'settings'
+    // },
+    // {
+    //     id: 2,
+    //     label: 'settingsitems.menu.chat-schedule',
+    //     icon: 'ri-file-ppt-line',
+    //     link: 'home'
+    // },
     {
         id: 3,
         label: 'settingsitems.menu.change-password',
         icon: 'ri-settings-3-fill',
-        link: 'home'
+        link: 'change-password'
     },
 ]
 
 export const patientSettings = [
-    {
-        id: 1,
-        label: 'adminitems.menu.edit-profile',
-        icon: 'mdi mdi-account-cog-outline',
-        link: 'home'
-    },
-    {
-        id: 2,
-        label: 'settingsitems.menu.guardian',
-        icon: 'ri-parent-line',
-        link: 'home'
-    },
+    // {
+    //     id: 1,
+    //     label: 'settingsitems.menu.edit-profile',
+    //     icon: 'mdi mdi-account-cog-outline',
+    //     link: 'settings'
+    // },
+    // {
+    //     id: 2,
+    //     label: 'settingsitems.menu.guardian',
+    //     icon: 'ri-parent-line',
+    //     link: 'home'
+    // },
     {
         id: 3,
         label: 'settingsitems.menu.change-password',
         icon: 'ri-settings-3-fill',
-        link: 'home'
+        link: 'change-password'
     },
 ]
 
@@ -144,6 +139,6 @@ export const adminSettings = [
         id: 1,
         label: 'settingsitems.menu.change-password',
         icon: 'ri-settings-3-fill',
-        link: 'home'
+        link: 'change-password'
     },
 ]

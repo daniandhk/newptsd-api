@@ -118,6 +118,28 @@ class AuthController extends BaseController
         return $this->respond($user);
 	}
 
+	public function changePassword(Request $request)
+    {
+        $user = $request->user();
+        $this->validate($request, [
+            'old_password' => [
+                'required',
+                'min:5',
+                function($attribute, $value, $fail) use ($user) {
+                    if(!Hash::check($value, $user['password'])) {
+                        $fail("Password lama salah!");
+                    }
+                }
+            ],
+            'new_password' => 'required|min:6',
+            'new_password_confirmation' => 'required|same:new_password'
+        ]);
+
+        $user['password'] = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return $this->respond(null);
+    }
 
 	public function sendPasswordResetLinkEmail(Request $request) {
 		$validation = Validator::make($request->all(), [

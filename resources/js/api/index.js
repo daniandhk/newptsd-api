@@ -144,3 +144,11 @@ export function storeNotification(data){
         data: data
     })
 }
+
+export function changePassword(data){
+    return httpAxios({
+        url: `/auth/password/change`,
+        method: 'PUT',
+        data: data
+    })
+}

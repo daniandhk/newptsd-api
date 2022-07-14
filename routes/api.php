@@ -29,6 +29,7 @@ Route::prefix('auth')->group(function () {
     Route::get('password/verify/{token}', 'Api\Auth\AuthController@validateTokenPasswordReset')->name('password.verify');
 	Route::post('password/email', 'Api\Auth\AuthController@sendPasswordResetLinkEmail')->middleware('throttle:5,1')->name('password.email');
 	Route::post('password/reset', 'Api\Auth\AuthController@resetPassword')->name('password.reset');
+    Route::put('password/change', 'Api\Auth\AuthController@changePassword')->middleware('auth:sanctum');
 	
 	Route::get('email/verify/{id}', 'Api\VerificationController@verify')->name('verification.verify');
     Route::get('email/resend', 'Api\VerificationController@resend')->middleware('auth:sanctum')->name('verification.resend');

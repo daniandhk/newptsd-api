@@ -6,6 +6,12 @@ import SideBar from "../../components/side-bar";
 
 export default {
   components: { Topbar, SideBar },
+  props: {
+    isSettings: {
+      type: Boolean,
+      default: false
+    },
+  },
   data() {
     return {
       isMenuCondensed: false,
@@ -79,6 +85,7 @@ export default {
         @changePage="changePage"
       />
       <SideBar
+        :is-settings="isSettings"
         :is-condensed="isMenuCondensed"
       />
       <!-- ============================================================== -->

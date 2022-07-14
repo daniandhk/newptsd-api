@@ -1,5 +1,13 @@
 import httpAxios from '../httpAxios.js';
 
+export function updatePatient(data, id){
+    return httpAxios({
+        url: `/patient/update/${id}`,
+        method: 'PUT',
+        data: data
+    })
+}
+
 export function inputTest(data){
     return httpAxios({
         url: '/test/storePatientAnswers',

@@ -1,9 +1,9 @@
 <script>
-import * as api from '../../../api';
+import store from '../../../store'
+import * as api from '../../../api'
 import Swal from "sweetalert2";
 import Layout from "../../layouts/main";
 import PageHeader from "../../../components/page-header";
-
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
 
 /**
@@ -20,7 +20,7 @@ export default {
       items: [
         {
           text: "Pengaturan",
-          href: "/settings/change-password"
+          href: "/settings"
         },
         {
           text: "Ubah Password",
@@ -55,32 +55,37 @@ export default {
         return (
           api.changePassword(this.typeform)
               .then(response => {
-                Swal.fire("Updated!", "You password has been updated.", "success");
+                Swal.fire("Berhasil!", "Password Anda sudah diperbarui.", "success");
+                this.typesubmit = false;
+                this.typeform = {
+                  old_password: "",
+                  new_password: "",
+                  new_password_confirmation: "",
+                }
               })
               .catch(error => {
-                  if(error.response.status == 401){
-                    this.$router.replace({
-                        name: 'login', params: { tokenExpired: true }
-                    });
-                  }
-                  else{
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan!',
-                        footer: error.response.data.message
-                    })
-                  }
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'Terjadi kesalahan!',
+                      footer: error.response.data.message
+                  })
               })
           );
       }
+    },
+
+    onForgotButtonClick() {
+      this.$router.push({
+          name: 'forgot-password'
+      });
     },
   }
 };
 </script>
 
 <template>
-  <Layout>
+  <Layout :is-settings="true">
     <PageHeader
       :title="title"
       :items="items"
@@ -127,7 +132,7 @@ export default {
                     name="new_password"
                     class="form-control"
                     :class="{ 'is-invalid': typesubmit && $v.typeform.new_password.$error }"
-                    placeholder="Password"
+                    placeholder="Password Baru"
                   >
                   <div
                     v-if="typesubmit && $v.typeform.new_password.$error"
@@ -146,7 +151,7 @@ export default {
                     name="new_password_confirmation"
                     class="form-control"
                     :class="{ 'is-invalid': typesubmit && $v.typeform.new_password_confirmation.$error }"
-                    placeholder="Re-Type Password"
+                    placeholder="Konfirmasi Password Baru"
                   >
                   <div
                     v-if="typesubmit && $v.typeform.new_password_confirmation.$error"
@@ -164,10 +169,19 @@ export default {
                 <div>
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="btn btn-primary m-1"
+                    style="background-color:#005C9A;"
                   >
                     Simpan
                   </button>
+                  <b-button
+                    class="m-1"
+                    variant="outline-light"
+                    size="md"
+                    @click="onForgotButtonClick()"
+                  >
+                    <b>Lupa Password</b>
+                  </b-button>
                 </div>
               </div>
             </form>

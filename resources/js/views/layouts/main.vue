@@ -3,6 +3,12 @@ import Vertical from "./vertical";
 
 export default {
   components: { Vertical},
+  props: {
+    isSettings: {
+      type: Boolean,
+      default: false
+    },
+  },
   data() {
     return {};
   },
@@ -21,6 +27,7 @@ export default {
   <div>
     <vertical
       layout="vertical"
+      :is-settings="isSettings"
       @changePage="changePage"
     >
       <slot />
