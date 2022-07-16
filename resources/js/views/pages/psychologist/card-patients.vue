@@ -114,15 +114,12 @@ export default {
       // eslint-disable-next-line no-undef
       Echo.join('helpptsd')
         .here((users) => {
-            console.log('here' + users)
             this.onlineUsers = users;
         })
         .joining((user) => {
-            console.log('joining' + user)
             this.onlineUsers.push(user);
         })
         .leaving((user) => {
-            console.log('leaving' + user)
             this.onlineUsers.splice(this.onlineUsers.indexOf(user),1);
         });
     },
@@ -150,14 +147,6 @@ export default {
 
     showCallPopup(){
       this.$bvModal.show('modal-call');
-    },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
     },
   },
 }
@@ -198,7 +187,7 @@ function loading() {
                 class="font-size-14 my-3"
                 style="color:#005C9A;"
               >
-                Pasien Saat Ini
+                Client Saat Ini
               </h5>
             </div>
             <div class="w-100 m-0">
@@ -255,7 +244,7 @@ function loading() {
               class="font-size-14 my-3"
               style="color:#005C9A;"
             >
-              Pilih Pasien
+              Pilih Client
             </h5>
           </div>
         </div>
@@ -346,16 +335,14 @@ function loading() {
         size="md"
         title="Profil Lengkap"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div class="text-center">
             <label 
               class="mb-0"
               style="color:#005C9A;"
-            >Profil Pasien</label>
+            >Profil Client</label>
             <div
               class="text-left mt-1"
               style="display: flex; align-items: center; justify-content: center;"
@@ -392,7 +379,7 @@ function loading() {
             <label 
               class="mb-0 mt-4"
               style="color:#005C9A;"
-            >Wali Pasien</label>
+            >Wali Client</label>
             <div
               v-if="current_patient.guardian && current_patient.guardian.is_available"
               class="text-center"
@@ -440,7 +427,7 @@ function loading() {
             </div>
             <div v-if="!current_patient.guardian || !current_patient.guardian.is_available">
               <p class="mt-1">
-                Pasien tidak mengizinkan informasi wali diakses.<br>Hubungi pasien jika informasi diperlukan.
+                Client tidak mengizinkan informasi wali diakses.<br>Hubungi client jika informasi diperlukan.
               </p>
             </div>
           </div>

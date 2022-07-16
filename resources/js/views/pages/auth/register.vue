@@ -25,7 +25,7 @@ export default {
 			},
 
       role_data: "",
-      dropdownRole: [{name: "Psikolog", role: "psychologist"}, {name: "Pasien", role: "patient"}],
+      dropdownRole: [{name: "Psikolog", role: "psychologist"}, {name: "Client", role: "patient"}],
 
       is_patient: true,
       isLoading: false,
@@ -96,7 +96,7 @@ export default {
       else{
         this.is_patient = true
         this.registerData.role = "patient"
-        this.role_data = {name: "Pasien", role: "patient"}
+        this.role_data = {name: "Client", role: "patient"}
       }
     },
 
@@ -182,7 +182,7 @@ function loading() {
                         </div>
 
                         <h4 class="font-size-18 mt-4">
-                          Registrasi {{ role_data.name }}
+                          Registrasi{{ is_patient ? null : " " + role_data.name }}
                         </h4>
                         <p
                           v-if="is_patient"

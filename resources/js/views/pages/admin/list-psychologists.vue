@@ -120,14 +120,6 @@ export default {
         await this.refreshData();
       }
     },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
-    },
   },
 };
 
@@ -297,9 +289,7 @@ function loading() {
               size="md"
               title="Profil Psikolog"
               hide-footer 
-              title-class="font-18" 
-              @show="showModal" 
-              @hidden="hideModal"
+              title-class="font-18"
             >
               <template>
                 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

@@ -456,15 +456,12 @@ export default {
       // eslint-disable-next-line no-undef
       Echo.join('helpptsd')
         .here((users) => {
-            console.log('here' + users)
             this.onlineUsers = users;
         })
         .joining((user) => {
-            console.log('joining' + user)
             this.onlineUsers.push(user);
         })
         .leaving((user) => {
-            console.log('leaving' + user)
             this.onlineUsers.splice(this.onlineUsers.indexOf(user),1);
         });
         
@@ -676,14 +673,6 @@ export default {
       else{
         return '-'
       }
-    },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
     },
   },
 };
@@ -1454,9 +1443,7 @@ function loading() {
         size="md"
         title="Profil Psikolog"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -1522,9 +1509,7 @@ function loading() {
         size="md"
         title="Catatan Psikolog"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

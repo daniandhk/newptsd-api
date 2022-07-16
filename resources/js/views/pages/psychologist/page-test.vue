@@ -179,14 +179,6 @@ export default {
       this.dataTestType = test_type;
       this.$bvModal.show('modal-testtype');
     },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
-    },
   },
 }
 
@@ -229,7 +221,7 @@ function loading() {
         class="my-4"
         style="display: flex; justify-content: center;"
       >
-        Harap pilih pasien terlebih dahulu!
+        Harap pilih client terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
         <div v-if="isFetchingData">
@@ -397,9 +389,7 @@ function loading() {
         size="md"
         :title="'Tes ' + dataTestType.name"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div

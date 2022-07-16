@@ -39,7 +39,7 @@ export const menuItems = [
         id: 7,
         label: 'menuitems.help.list',
         icon: 'mdi mdi-account-tie',
-        link: 'home'
+        link: 'list-psychologists'
     },
     {
         id: 8,

@@ -23,7 +23,7 @@
   },
   "adminitems": {
     "menu": {
-      "list-patients": "Pasien Terdaftar",
+      "list-patients": "Client Terdaftar",
       "list-psychologists": "Psikolog Terdaftar",
       "register": "Pendaftaran",
       "register-token": "Registrasi Psikolog"

@@ -698,14 +698,6 @@ export default {
     onGoToLinkButtonClick(link){
       window.open(link);
     },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
-    },
   },
 }
 
@@ -748,7 +740,7 @@ function loading() {
         class="my-4"
         style="display: flex; justify-content: center;"
       >
-        Harap pilih pasien terlebih dahulu!
+        Harap pilih client terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
         <div v-if="isFetchingData">
@@ -1106,8 +1098,6 @@ function loading() {
         :title="getTitle()"
         hide-footer 
         title-class="font-18"
-        @show="showModal" 
-        @hidden="hideModal"
       >
         <template>
           <div
@@ -1115,10 +1105,10 @@ function loading() {
             class="mb-3"
           >
             <div class="font-size-13">
-              Periksalah keadaan / kondisi pasien selama video call berlangsung.
+              Periksalah keadaan / kondisi client selama video call berlangsung.
             </div>
             <div class="mt-3">
-              <div><label>Apakah pasien perlu konsultasi video call lagi?</label></div>
+              <div><label>Apakah client perlu konsultasi video call lagi?</label></div>
               <div>
                 <input
                   v-model="isNeedConsult"
@@ -1197,7 +1187,7 @@ function loading() {
               class="mt-3"
             >
               <div class="font-size-13">
-                Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh pasien setiap harinya selama jeda berlangsung.
+                Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh client setiap harinya selama jeda berlangsung.
               </div>
               <label class="mt-3">Catatan Psikolog (opsional)</label>
               <div
@@ -1310,8 +1300,6 @@ function loading() {
         title="Catatan Psikolog" 
         hide-footer 
         title-class="font-18"
-        @show="showModal" 
-        @hidden="hideModal"
       >
         <template>
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">

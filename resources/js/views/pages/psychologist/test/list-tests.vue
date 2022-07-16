@@ -113,7 +113,7 @@ export default {
     onDeleteButtonClick(data){
       Swal.fire({
             title: "PERINGATAN!",
-            text: "Tes dengan semua hasil tes pasien akan terhapus!",
+            text: "Tes dengan semua hasil tes client akan terhapus!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#34c38f",

@@ -450,7 +450,6 @@ export default {
             loading();
           })
           .catch(error => {
-            console.log(error)
             this.isInputFailed = true;
             loading();
             //pop up
@@ -765,7 +764,7 @@ function loading() {
             style="font-size: 14px; margin: 0 !important;"
           >
             - <b>KODE TES</b> harus unik dan hanya boleh terdiri dari huruf (Aa-Zz), angka (0-9), strip (-), underscore (_), dan <b>TANPA SPASI</b>,<br>
-            - <b>JEDA TES</b> adalah jeda pasien dalam melakukan kembali tes yang sama,<br>
+            - <b>JEDA TES</b> adalah jeda client dalam melakukan kembali tes yang sama,<br>
             - Pastikan setiap data yang diisi telah sesuai dan benar!
           </p>
         </div>

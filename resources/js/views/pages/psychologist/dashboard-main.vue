@@ -43,7 +43,7 @@ export default {
       totalRowsRelated: 1,
       fieldsRelated: [
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
+        { key: "patient", sortable: false, label: "Client", thStyle: { color: "black" } },
         { key: "status", sortable: true, label: "Aksi", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "test", class: 'left-border', sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "verification_test", sortable: false, label: "Jadwal Verifikasi Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
@@ -60,7 +60,7 @@ export default {
       totalRowsAvailable: 1,
       fieldsAvailable: [
         { key: "avatar", sortable: false, label: "", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
-        { key: "patient", sortable: false, label: "Pasien", thStyle: { color: "black" } },
+        { key: "patient", sortable: false, label: "Client", thStyle: { color: "black" } },
         { key: "test_name", sortable: false, label: "Tes Terbaru", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "test_score", sortable: false, label: "Skor Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
         { key: "test_date", sortable: false, label: "Tanggal Tes", thClass: 'text-center', tdClass: 'text-center', thStyle: { color: "black" } },
@@ -193,8 +193,8 @@ export default {
 
     onPilihButtonClick(data){
       Swal.fire({
-          title: "Pilih pasien?",
-          html: data.first_name + " " + data.last_name + "<br>akan menjadi pasien Anda",
+          title: "Pilih client?",
+          html: data.first_name + " " + data.last_name + "<br>akan menjadi client Anda",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#005C9A",
@@ -348,7 +348,7 @@ function loading() {
                   class="font-size-18 font-weight-bold mb-0"
                   style="color:#005C9A;"
                 >
-                  Pasien Anda
+                  Client Anda
                 </p>
                 <p class="mb-0">
                   Tekan tombol <b>Aksi</b> untuk menuju ke halaman terkait.
@@ -657,10 +657,10 @@ function loading() {
                   class="font-size-18 font-weight-bold mb-0"
                   style="color:#005C9A;"
                 >
-                  Pasien Tersedia
+                  Client Tersedia
                 </p>
                 <p class="mb-0">
-                  Pasien tersedia jika sudah melakukan tes namun belum memilih psikolog.
+                  Client tersedia jika sudah melakukan tes namun belum memilih psikolog.
                 </p>
               </div>
               <div
@@ -758,7 +758,7 @@ function loading() {
                     class="px-3 m-1"
                     @click="onPilihButtonClick(data.item)"
                   >
-                    <b>Pilih Pasien</b>
+                    <b>Pilih Client</b>
                   </b-button>
                 </template>
               </b-table>

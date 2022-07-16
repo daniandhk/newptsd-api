@@ -65,7 +65,7 @@ export function updateJournal(data, user_id){
 
 export function inputNoteAnswer(data){
     return httpAxios({
-        url: '/consult/answer/',
+        url: '/consult/answer',
         method: 'POST',
         data: data
     })

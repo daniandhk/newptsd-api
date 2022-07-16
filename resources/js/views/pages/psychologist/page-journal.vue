@@ -51,7 +51,7 @@ export default {
       dataNotes: [],
       fields: [
         { key: "question_text", sortable: true, label: "Catatan Psikolog", thStyle: { color: "black" } },
-        { key: "answer", sortable: false, label: "Jawaban Pasien", thStyle: { color: "black" } },
+        { key: "answer", sortable: false, label: "Jawaban Client", thStyle: { color: "black" } },
       ],
     }
   },
@@ -233,7 +233,7 @@ function loading() {
         class="my-4"
         style="display: flex; justify-content: center;"
       >
-        Harap pilih pasien terlebih dahulu!
+        Harap pilih client terlebih dahulu!
       </div>
       <div v-if="activeUser.id">
         <div class="text-center my-4 mt-4">
@@ -353,7 +353,7 @@ function loading() {
                   class="p-2 text-center font-size-15 text-uppercase"
                   style="color:#005C9A;"
                 >
-                  Jurnal Harian Pasien
+                  Jurnal Harian Client
                 </h5>
                 <div class="mr-5 ml-5">
                   <textarea 
@@ -370,7 +370,7 @@ function loading() {
                     style=" width:100%;"
                     disabled
                   >
-                    Jurnal dan jawaban catatan di isi per hari oleh pasien.
+                    Jurnal dan jawaban catatan di isi per hari oleh client.
                   </button>
                 </div>
               </div>

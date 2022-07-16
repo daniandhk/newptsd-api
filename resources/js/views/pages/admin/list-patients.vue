@@ -14,13 +14,13 @@ export default {
   },
   data() {
     return {
-      title: 'Pasien Terdaftar',
+      title: 'Client Terdaftar',
       items: [
         {
           text: 'Admin'
         },
         {
-          text: 'Pasien Terdaftar',
+          text: 'Client Terdaftar',
           active: true
         }
       ],
@@ -105,14 +105,6 @@ export default {
 
     getAge(string){
       return (moment().diff(moment(string, 'YYYY-MM-DD'), 'years')).toString() + ' Tahun'
-    },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
     },
   },
 };
@@ -279,26 +271,22 @@ function loading() {
         </div>
       </div>
 
-      <div
-        v-if="current_patient"
-        name="modalCall"
-      >
+      <div name="modalCall">
         <b-modal 
+          v-if="current_patient"
           id="modal-call" 
           class="modal-dialog"
           size="md"
           title="Profil Lengkap"
           hide-footer 
-          title-class="font-18" 
-          @show="showModal" 
-          @hidden="hideModal"
+          title-class="font-18"
         >
           <template>
             <div class="text-center">
               <label 
                 class="mb-0"
                 style="color:#005C9A;"
-              >Profil Pasien</label>
+              >Profil Client</label>
               <div
                 class="text-left mt-1"
                 style="display: flex; align-items: center; justify-content: center;"
@@ -335,7 +323,7 @@ function loading() {
               <label 
                 class="mb-0 mt-4"
                 style="color:#005C9A;"
-              >Wali Pasien</label>
+              >Wali Client</label>
               <div
                 v-if="current_patient.guardian"
                 class="text-center"
@@ -383,12 +371,12 @@ function loading() {
               </div>
               <div v-if="current_patient.guardian && !current_patient.guardian.is_available">
                 <p class="mt-2">
-                  *Informasi wali tidak diizinkan pasien untuk diakses psikolog.
+                  *Informasi wali tidak diizinkan client untuk diakses psikolog.
                 </p>
               </div>
               <div v-if="!current_patient.guardian">
                 <p class="mt-1">
-                  Pasien belum mengisi Informasi Wali.
+                  Client belum mengisi Informasi Wali.
                 </p>
               </div>
             </div>

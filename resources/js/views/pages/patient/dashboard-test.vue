@@ -200,14 +200,6 @@ export default {
     goToSettingsMenu(){
       //this.$router.push({name: 'settings'});
     },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
-    },
   },
 };
 
@@ -585,9 +577,7 @@ function loading() {
         size="md"
         :title="'Tes ' + dataTestType.name"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div
@@ -609,9 +599,7 @@ function loading() {
         size="md"
         title="Hubungi"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <template>
           <div

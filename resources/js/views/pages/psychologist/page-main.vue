@@ -207,7 +207,7 @@ function loading() {
                     class="text-center font-size-12 text-uppercase font-weight-bold"
                     style="color:#005C9A;"
                   >
-                    Konsultasi Pasien
+                    Konsultasi Client
                   </p>
                 </div>
               </template>

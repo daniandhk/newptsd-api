@@ -742,14 +742,6 @@ export default {
         }
       });
     },
-
-    showModal(){
-      $("html").css({"overflow-y":"visible"});
-    },
-
-    hideModal(){
-      $("html").css({"overflow-y":"scroll"});
-    },
   },
 };
 function loading() {
@@ -1015,10 +1007,10 @@ function loading() {
                           </div>
                           <div v-if="isVideoCallStarted">
                             <div class="font-size-13">
-                              Periksalah keadaan / kondisi pasien dan verifikasi setiap jawaban pasien selama video call berlangsung.
+                              Periksalah keadaan / kondisi client dan verifikasi setiap jawaban client selama video call berlangsung.
                             </div>
                             <div class="mt-3">
-                              <div><label>1. Apakah pasien perlu konsultasi video call lagi?</label></div>
+                              <div><label>1. Apakah client perlu konsultasi video call lagi?</label></div>
                               <div>
                                 <input
                                   v-model="isNeedConsult"
@@ -1101,7 +1093,7 @@ function loading() {
                               </div>
                               <div class="mt-3">
                                 <div class="font-size-13">
-                                  Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh pasien setiap harinya selama jeda berlangsung.
+                                  Selama jeda dengan konsultasi selanjutnya, psikolog dapat memberikan <b>catatan psikolog</b> (seperti 'Tidur 8 jam sehari' atau 'Minum obat 2x sehari') yang dapat dicek dan diberi keterangan oleh client setiap harinya selama jeda berlangsung.
                                 </div>
                                 <label class="mt-3">4. Isi catatan psikolog (opsional)</label>
                                 <div
@@ -1451,11 +1443,9 @@ function loading() {
         id="modal-history" 
         class="modal-dialog"
         size="md"
-        title="Riwayat Tes Pasien"
+        title="Riwayat Tes Client"
         hide-footer 
-        title-class="font-18" 
-        @show="showModal" 
-        @hidden="hideModal"
+        title-class="font-18"
       >
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <label>{{ test.name }}</label>

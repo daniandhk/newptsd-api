@@ -125,13 +125,11 @@ export default {
           api.updatePatient(dataInput, this.user.profile.id)
             // eslint-disable-next-line no-unused-vars
             .then(response => {
-              console.log(response.data.data)
               Swal.fire("Berhasil!", "Profil Anda sudah diperbarui.", "success");
               loading();
             })
             .catch(error => {
               loading();
-              console.log(error.response)
               this.registerError = error.response ? error.response.data.message : error;
               this.isRegisterError = true;
             })
@@ -140,7 +138,6 @@ export default {
     },
 
     async toFormData(data){
-      console.log('bro')
       let formData = new FormData;
       if(this.croppa.hasImage()){
         const blob = await this.croppa.promisedBlob();
