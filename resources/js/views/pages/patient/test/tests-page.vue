@@ -1,5 +1,4 @@
 <script>
-import { notificationMethods } from "../../../../state/helpers";
 import * as api from '../../../../api';
 import { required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
@@ -108,9 +107,6 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
     currentPageIndex() {
       return this.currentPage-1;
     },
@@ -159,8 +155,6 @@ export default {
     await this.loadData();
   },
   methods: {
-    ...notificationMethods,
-
     preventNav(event) {
       if (this.isSubmitted || this.isReview || this.isShowTest){
         return
@@ -1477,7 +1471,7 @@ function loading() {
     border: 4px solid #ff3d60 !important;
   }
 
-  .datepicker-div >>> input {
+  .datepicker-div :deep() input {
     height:38.64px;
   }
 

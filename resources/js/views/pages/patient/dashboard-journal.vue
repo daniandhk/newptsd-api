@@ -1,6 +1,5 @@
 <script>
 import store from '../../../store';
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import moment from 'moment';
 import Swal from "sweetalert2";
@@ -55,9 +54,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
+    //
   },
   beforeMount: async function(){
     document.body.setAttribute("data-topbar", "dark");
@@ -68,8 +65,6 @@ export default {
   //   this.isLoading = false;
   // },
   methods: {
-    ...notificationMethods,
-
     getRequestParams(date) {
       let params = {};
 
@@ -567,23 +562,23 @@ function loading() {
 </template>
 
 <style scoped>
-  .datepicker-other >>> input {
+  .datepicker-other :deep() input {
     height:38.64px;
     background-color: #005C9A;
     color: white;
     text-align:center;
   }
-  .datepicker-other >>> i {
+  .datepicker-other :deep() i {
     color: white;
   }
 
-  .datepicker-today >>> input {
+  .datepicker-today :deep() input {
     height:38.64px;
     background-color: #eff2f7;
     color: #212529;
     text-align:center;
   }
-  .datepicker-today >>> i {
+  .datepicker-today :deep() i {
     color: #212529;
   }
 </style>

@@ -1,6 +1,5 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import store from '../../../store';
 
@@ -29,9 +28,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+    //
   },
   beforeMount() {
     this.checkToken();
@@ -48,8 +45,6 @@ export default {
     }
   },
   methods: {
-    ...notificationMethods,
-
     getRequestParams(email) {
       let params = {};
 
@@ -183,16 +178,6 @@ function loading() {
                           dismissible
                         >
                           {{ registerError }}
-                        </b-alert>
-
-                        <b-alert
-                          v-if="notification.message"
-                          variant="danger"
-                          class="mt-3"
-                          show
-                          dismissible
-                        >
-                          {{ notification.message }}
                         </b-alert>
 
                         <form

@@ -431,23 +431,23 @@ function loading() {
 </template>
 
 <style scoped>
-  .datepicker-other >>> input {
+  .datepicker-other :deep() input {
     height:38.64px;
     background-color: #005C9A;
     color: white;
     text-align:center;
   }
-  .datepicker-other >>> i {
+  .datepicker-other :deep() i {
     color: white;
   }
 
-  .datepicker-today >>> input {
+  .datepicker-today :deep() input {
     height:38.64px;
     background-color: #eff2f7;
     color: #212529;
     text-align:center;
   }
-  .datepicker-today >>> i {
+  .datepicker-today :deep() i {
     color: #212529;
   }
 

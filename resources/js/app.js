@@ -1,12 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import VueApexCharts from 'vue-apexcharts'
 import Vuelidate from 'vuelidate'
 import VueSweetalert2 from 'vue-sweetalert2'
 import VueMask from 'v-mask'
 import vco from "v-click-outside"
-import Notification from 'vue-notification'
 import router from './router'
 import i18n from './i18n'
 import store from './store'
@@ -44,9 +42,6 @@ Vue.use(vco);
 Vue.use(Vuelidate);
 Vue.use(VueSweetalert2);
 Vue.use(VueMask);
-Vue.use(Notification);
-Vue.use(require('vue-chartist'));
-Vue.component('Apexchart', VueApexCharts);
 Vue.use(VueScreen);
 Vue.use(Croppa);
 

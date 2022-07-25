@@ -4,9 +4,7 @@ import ConfirmEmail from "../../views/pages/auth/confirm-email";
 import SetupProfile from "../../views/pages/auth/setup-psychologist";
 import SetupSchedule from "../../views/pages/auth/setup-schedule";
 import MainPage from "./psychologist/dashboard-main";
-
 import store from '../../store';
-import { notificationMethods } from "../../state/helpers";
 
 export default {
   page: {
@@ -40,16 +38,12 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
+    //
   },
   beforeMount: function(){
     this.checkUser();
   },
   methods: {
-    ...notificationMethods,
-
     checkUser(){
       if(this.user){
         if(this.user.email_verified_at == null){

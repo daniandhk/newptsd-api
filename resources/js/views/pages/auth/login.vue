@@ -1,6 +1,5 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 
 export default {
@@ -28,9 +27,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+    //
   },
   created() {
     document.body.classList.add("auth-body-bg");
@@ -42,7 +39,6 @@ export default {
     },
   },
   methods: {
-    ...notificationMethods,
     // Try to log the user in with the email
     // and password they provided.
     tryToLogIn() {
@@ -198,16 +194,6 @@ function loading() {
                           dismissible
                         >
                           {{ authError }}
-                        </b-alert>
-
-                        <b-alert
-                          v-if="notification.message"
-                          variant="danger"
-                          class="mt-3"
-                          show
-                          dismissible
-                        >
-                          {{ notification.message }}
                         </b-alert>
 
                         <form

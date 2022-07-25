@@ -1,5 +1,4 @@
 <script>
-import { notificationMethods } from "../../../../state/helpers";
 import * as api from '../../../../api';
 
 export default {
@@ -15,9 +14,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+    //
   },
   created() {
     document.body.classList.add("auth-body-bg");
@@ -26,8 +23,6 @@ export default {
       this.checkAuth();
   },
   methods: {
-    ...notificationMethods,
-
     getRequestParams(test_type) {
       let params = {};
 

@@ -1,6 +1,5 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import Multiselect from "vue-multiselect";
 
@@ -32,9 +31,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+    //
   },
   beforeMount() {
     this.checkToken();
@@ -52,8 +49,6 @@ export default {
     }
   },
   methods: {
-    ...notificationMethods,
-
     onOrButtonClick() {
       this.$router.push({
           name: 'login'
@@ -200,16 +195,6 @@ function loading() {
                           dismissible
                         >
                           {{ registerError }}
-                        </b-alert>
-
-                        <b-alert
-                          v-if="notification.message"
-                          variant="danger"
-                          class="mt-3"
-                          show
-                          dismissible
-                        >
-                          {{ notification.message }}
                         </b-alert>
 
                         <form

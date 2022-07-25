@@ -37,10 +37,6 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
-
     rows() {
       return this.totalRows;
     },
@@ -438,7 +434,7 @@ function loading() {
 </template>
 
 <style scoped>
-  .datepicker-div >>> input {
+  .datepicker-div :deep() input {
     height:38.04px;
   }
 </style>

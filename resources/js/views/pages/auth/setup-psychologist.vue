@@ -1,6 +1,5 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import Multiselect from "vue-multiselect";
 import regions from './regions.json';
@@ -50,16 +49,12 @@ export default {
     }
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+    //
   },
   created() {
     document.body.classList.add("auth-body-bg");
   },
   methods: {
-    ...notificationMethods,
-
     async tryToRegister(){
       loading();
       this.submitted = true;
@@ -196,16 +191,6 @@ function loading() {
                     dismissible
                   >
                     {{ registerError }}
-                  </b-alert>
-
-                  <b-alert
-                    v-if="notification.message"
-                    variant="danger"
-                    class="mt-3"
-                    show
-                    dismissible
-                  >
-                    {{ notification.message }}
                   </b-alert>
 
                   <form
@@ -552,7 +537,7 @@ function loading() {
 </template>
 
 <style scoped>
-  .datepicker-div >>> input {
+  .datepicker-div :deep() input {
     height:38.64px;
   }
 

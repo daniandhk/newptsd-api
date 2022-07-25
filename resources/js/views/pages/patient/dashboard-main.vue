@@ -1,10 +1,8 @@
 <script>
 import store from '../../../store';
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import moment from 'moment';
 import Swal from "sweetalert2";
-
 import Test from "./dashboard-test";
 import Consult from "./dashboard-consult";
 import Journal from "./dashboard-journal";
@@ -28,9 +26,7 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
+    //
   },
   watch: {
     getPage() {
@@ -41,8 +37,6 @@ export default {
     this.refreshData(this.tabIndex);
   },
   methods: {
-    ...notificationMethods,
-    
     refreshData(value){
       switch(value) {
         case 0:

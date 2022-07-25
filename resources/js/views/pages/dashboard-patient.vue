@@ -1,6 +1,5 @@
 <script>
 import store from '../../store';
-import { notificationMethods } from "../../state/helpers";
 import * as api from '../../api';
 import Topbar from "../../components/topbar";
 import ConfirmEmail from "../../views/pages/auth/confirm-email";
@@ -30,10 +29,6 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
-
     getIndex() {
       return this.index;
     }
@@ -43,8 +38,6 @@ export default {
     this.checkUser();
   },
   methods: {
-    ...notificationMethods,
-
     checkUser(){
       if(this.user){
         if(this.user.email_verified_at == null){

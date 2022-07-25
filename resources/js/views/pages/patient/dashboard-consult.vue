@@ -1,6 +1,5 @@
 <script>
 import store from '../../../store';
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import moment from 'moment';
 import Swal from "sweetalert2";
@@ -80,10 +79,6 @@ export default {
     };
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
-
     // rows() {
     //   return this.totalRows;
     // },
@@ -123,8 +118,6 @@ export default {
     }
   },
   methods: {
-    ...notificationMethods,
-
     getRequestParams(search, relation_id) {
       let params = {};
 

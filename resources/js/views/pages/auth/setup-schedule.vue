@@ -1,6 +1,5 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
-import { notificationMethods } from "../../../state/helpers";
 import * as api from '../../../api';
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
@@ -77,9 +76,6 @@ export default {
     }
   },
   computed: {
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
     isSmallScreen() {
       return this.$screen.breakpoint == 'xs' || this.$screen.breakpoint == 'sm';
     },
@@ -91,8 +87,6 @@ export default {
     document.body.classList.add("auth-body-bg");
   },
   methods: {
-    ...notificationMethods,
-
     tryToRegister(){
       loading();
       this.submitted = true;
@@ -293,16 +287,7 @@ function loading() {
                   >
                     {{ registerError }}
                   </b-alert>
-
-                  <b-alert
-                    v-if="notification.message"
-                    variant="danger"
-                    class="mt-3"
-                    show
-                    dismissible
-                  >
-                    {{ notification.message }}
-                  </b-alert>
+                  
                   <hr
                     v-if="!isSmallScreen"
                     class="mt-2"
@@ -451,7 +436,7 @@ function loading() {
 </template>
 
 <style scoped>
-  .datepicker-div >>> input {
+  .datepicker-div :deep() input {
     height:38.04px;
   }
 </style>
