@@ -41,10 +41,15 @@ router.beforeEach((routeTo, routeFrom, next) => {
         response.data.data.access_token = store.getters.getLoggedUser.access_token
         store.commit('LOGGED_USER', response.data.data)
 
-        let role = store.getters.getRoleUser
-        if (!role) {
-            store.commit('ROLE_USER', response.data.data.role)
-        }
+        // let role = store.getters.getRoleUser
+        // if (!role) {
+        //     store.commit('ROLE_USER', response.data.data.role)
+        // }
+        // else {
+        //   if(role != response.data.data.role){
+        //     store.commit('ROLE_USER', response.data.data.role)
+        //   }
+        // }
         next()
       })
       .catch(error => {
