@@ -263,10 +263,7 @@ function loading() {
                 </div>
 
                 <div class="text-left mt-4">
-                  <p
-                    class="card-title-desc"
-                    style="font-size: 14px; margin: 0 !important;"
-                  >
+                  <p style="font-size: 14px; margin: 0 !important;">
                     - Status <b>Online/Offline</b> Anda ditentukan dari Jadwal Chat<br>
                   </p>
                   <p class="mb-0 ml-2">

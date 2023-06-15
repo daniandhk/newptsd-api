@@ -145,6 +145,7 @@ function loading() {
                     name="nama" 
                     type="text" 
                     class="form-control"
+                    readonly
                   >
                 </div>
               </div>
@@ -158,6 +159,7 @@ function loading() {
                     name="desc"
                     type="text"
                     class="form-control"
+                    readonly
                   >
                 </div>
               </div>
