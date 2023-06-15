@@ -54,12 +54,13 @@ class AuthController extends BaseController
 
 		$created = User::create($data);
 		if($created) {
-			$created->sendEmailVerificationNotification();
-
 			$user = User::where('email', $created->email)->first();
 
 			//admin, patient, psychologist
 			$user->assignRole($request->role);
+
+			// send email verification
+			$created->sendEmailVerificationNotification();
 			
 			// original
 			return $this->respond(null);
