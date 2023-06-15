@@ -135,7 +135,7 @@ class UserSeeder extends Seeder
 
         $psychologist = Psychologist::create([
             'user_id' => $user_psychologist->id,
-            'full_name' => 'Norman Kamaru M.Psi, Psikolog',
+            'full_name' => 'Katy M.Psi, Psikolog',
             'speciality' => 'Psikolog Klinis',
             'datebirth' => "1999-04-07",
             'graduation_year' => '2020',
@@ -153,13 +153,13 @@ class UserSeeder extends Seeder
             'day' => 'Rabu',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
         $schedule = ChatSchedule::create([
             'psychologist_id' => $psychologist->id,
             'day' => 'Jumat',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
 
         //psikolog 3
         $user_psychologist = User::create([
@@ -195,7 +195,7 @@ class UserSeeder extends Seeder
             'day' => 'Senin',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
 
         //psikolog 4
         $user_psychologist = User::create([
@@ -231,7 +231,7 @@ class UserSeeder extends Seeder
             'day' => 'Selasa',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
 
         //psikolog 5
         $user_psychologist = User::create([
@@ -261,13 +261,13 @@ class UserSeeder extends Seeder
             'day' => 'Kamis',
             'time_start' => '07:00:00',
             'time_end' => '18:00:00',
-        ]); 
+        ]);
         $schedule = ChatSchedule::create([
             'psychologist_id' => $psychologist->id,
             'day' => 'Jumat',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
 
         //psikolog 6
         $user_psychologist = User::create([
@@ -297,12 +297,12 @@ class UserSeeder extends Seeder
             'day' => 'Minggu',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
         $schedule = ChatSchedule::create([
             'psychologist_id' => $psychologist->id,
             'day' => 'Sabtu',
             'time_start' => '01:00:00',
             'time_end' => '23:00:00',
-        ]); 
+        ]);
     }
 }
